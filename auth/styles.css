@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Open+Sans:wght@600&display=swap');
+body {
+    background: #222022;
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    color: #efedef;
+}
+
+header,
+footer {
+    z-index: 9999;
+    height: 35px;
+    background: #4c4947;
+    position: fixed;
+    width: 100%;
+}
+
+footer {
+    bottom: 0;
+}
+
+header span {
+    line-height: 35px;
+    float: right;
+    clear: both;
+    margin-right: 5px;
+}
+
+header a {
+    transition-duration: 0.3s;
+    font-size: 14px;
+    line-height: 35px;
+    margin-left: 5px;
+    text-decoration: none;
+    color: #efedef;
+}
+
+header a:hover {
+    transition-duration: 0.3s;
+    color: #ceccce;
+}
+
+.horiz_stub_up,
+.horiz_stub_bottom,
+.horiz_stub_left,
+.horiz_stub_right {
+    background: #222022;
+    position: fixed;
+    z-index: 9999;
+}
+
+.horiz_stub_up,
+.horiz_stub_bottom {
+    width: 100%;
+    height: 5px;
+}
+
+.horiz_stub_up {
+    margin-top: 35px;
+}
+
+.horiz_stub_bottom {
+    bottom: 35px;
+}
+
+.horiz_stub_left,
+.horiz_stub_right {
+    margin-top: 35px;
+    width: 5px;
+    height: 100%;
+}
+
+.horiz_stub_right {
+    right: 0px;
+}
+
+.content {
+    margin: 40px 5px;
+    position: absolute; 
+    overflow: auto;
+}
+
+table {
+    font-size: 12px;
+    border-collapse: collapse;
+    border: 1px solid #4c4947;
+    table-layout: fixed;
+}
+
+.table1_header {
+    z-index: 999;
+    position: fixed;
+}
+
+.table1_header,
+.table1_body {
+    width: 2000px;
+}
+
+th {
+    background: #222022;
+}
+
+th,
+td {
+    border: 1px solid #4c4947;
+    padding: 2px 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+}
+
+td {
+    background: transparent;
+    outline: none;
+}
