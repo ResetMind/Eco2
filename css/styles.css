@@ -74,8 +74,14 @@ header a:hover {
     right: 0px;
 }
 
+.wrapper {
+    /*margin: 40px 5px;*/
+}
+
 .content {
     margin: 40px 5px;
+    height: 500px;
+    width: 100%;
     position: absolute; 
     overflow: auto;
 }
