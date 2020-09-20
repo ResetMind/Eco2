@@ -13,6 +13,6 @@ function setTableEngine(n) {
     /*console.log(content.clientWidth);
     console.log(content.offsetWidth - content.clientWidth);*/
     content.onscroll = function() {
-        /*console.log(content.scrollLeft);*/
+        console.log(content.scrollLeft);
     }
 }

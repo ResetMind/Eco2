@@ -74,15 +74,18 @@ header a:hover {
     right: 0px;
 }
 
-.wrapper {
+/*.wrapper {
     margin: 40px 5px;
     position: absolute;
-}
+}*/
 
 .content {
-    margin-top: 22px; /*table row height*/
-    height: 828px;
-    width: 1440px;
+    /*margin-top: 22px;*/ /*table row height*/
+    position: absolute;
+    top: 41px;
+    bottom: 41px;
+    left: 5px;
+    right: 5px;
     overflow: auto;
 }
 
