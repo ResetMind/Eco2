@@ -82,7 +82,7 @@ header a:hover {
 .content {
     /*margin-top: 22px;*/ /*table row height*/
     position: absolute;
-    top: 41px;
+    top: 63px;
     bottom: 41px;
     left: 5px;
     right: 5px;
@@ -97,13 +97,17 @@ table {
     table-layout: fixed;
 }
 
-.table1_header {
+.table_header {
+    top: 41px;
+    right: 5px;
+    left: 5px;
     z-index: 999;
     position: fixed;
 }
 
-.table1_header,
-.table1_body {
+.table_header,
+.table_header_inv,
+.table_body {
     width: 2000px;
 }
 
