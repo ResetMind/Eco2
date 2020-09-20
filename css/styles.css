@@ -75,14 +75,14 @@ header a:hover {
 }
 
 .wrapper {
-    /*margin: 40px 5px;*/
+    margin: 40px 5px;
+    position: absolute;
 }
 
 .content {
-    margin: 40px 5px;
-    height: 500px;
-    width: 100%;
-    position: absolute; 
+    margin-top: 22px; /*table row height*/
+    height: 828px;
+    width: 1440px;
     overflow: auto;
 }
 
@@ -90,6 +90,7 @@ table {
     font-size: 12px;
     border-collapse: collapse;
     border: 1px solid #4c4947;
+    border-spacing: 0;
     table-layout: fixed;
 }
 
