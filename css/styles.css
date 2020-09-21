@@ -4,6 +4,7 @@ body {
     margin: 0;
     font-family: 'Open Sans', sans-serif;
     color: #efedef;
+    font-size: 14px;
 }
 
 header,
@@ -28,7 +29,6 @@ header span {
 
 header a {
     transition-duration: 0.3s;
-    font-size: 14px;
     line-height: 35px;
     margin-left: 5px;
     text-decoration: none;
@@ -42,8 +42,8 @@ header a:hover {
 
 .horiz_stub_up,
 .horiz_stub_bottom,
-.horiz_stub_left,
-.horiz_stub_right {
+.vert_stub_left,
+.vert_stub_right {
     background: #222022;
     position: fixed;
     z-index: 9999;
@@ -63,14 +63,14 @@ header a:hover {
     bottom: 35px;
 }
 
-.horiz_stub_left,
-.horiz_stub_right {
+.vert_stub_left,
+.vert_stub_right {
     margin-top: 35px;
     width: 5px;
     height: 100%;
 }
 
-.horiz_stub_right {
+.vert_stub_right {
     right: 0px;
 }
 
@@ -122,9 +122,68 @@ td {
     overflow: hidden;
     white-space: nowrap;
     position: relative;
+    background-clip: padding-box;
 }
 
 td {
     background: transparent;
     outline: none;
+}
+
+/*td:focus:after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    border: 1px solid #6ead3a;
+}*/
+
+.tds_selection {
+    position: fixed;
+    display: none;
+    border: 1px solid #6ead3a;
+    box-sizing: border-box;
+}
+
+.tds_selection.active {
+    display: block;
+}
+
+/*footer*/
+
+footer span {
+    float: right;
+    line-height: 35px;
+    margin-right: 5px;
+}
+
+.tabs {
+    height: 35px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.tabs>input {
+    display: none;
+}
+
+.tabs>label {
+    display: inline-block;
+    line-height: 35px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    vertical-align: middle;
+    color: #ceccce;
+    background: transparent;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+.tabs>input:checked+label {
+    color: #f4f8f9;
+    background: #3a3a3a;
+    transition-duration: 0.3s;
 }
