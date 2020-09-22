@@ -9,7 +9,7 @@ body {
 
 header,
 footer {
-    z-index: 9999;
+    z-index: 99;
     height: 35px;
     background: #4c4947;
     position: fixed;
@@ -46,7 +46,7 @@ header a:hover {
 .vert_stub_right {
     background: #222022;
     position: fixed;
-    z-index: 9999;
+    z-index: 99;
 }
 
 .horiz_stub_up,
@@ -80,7 +80,6 @@ header a:hover {
 }*/
 
 .content {
-    /*margin-top: 22px;*/ /*table row height*/
     position: absolute;
     top: 63px;
     bottom: 41px;
@@ -92,7 +91,7 @@ header a:hover {
 table {
     font-size: 12px;
     border-collapse: collapse;
-    border: 1px solid #4c4947;
+    /*border: 1px solid #4c4947;*/
     border-spacing: 0;
     table-layout: fixed;
 }
@@ -101,7 +100,7 @@ table {
     top: 41px;
     right: 5px;
     left: 5px;
-    z-index: 999;
+    z-index: 99;
     position: fixed;
 }
 
@@ -109,10 +108,6 @@ table {
 .table_header_inv,
 .table_body {
     width: 2000px;
-}
-
-th {
-    background: #222022;
 }
 
 th,
@@ -123,6 +118,10 @@ td {
     white-space: nowrap;
     position: relative;
     background-clip: padding-box;
+}
+
+th {
+    background: #222022;
 }
 
 td {
@@ -141,7 +140,8 @@ td {
 }*/
 
 .tds_selection {
-    position: fixed;
+    z-index: 999;
+    position: absolute;
     display: none;
     border: 1px solid #6ead3a;
     box-sizing: border-box;
