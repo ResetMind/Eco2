@@ -9,7 +9,7 @@ body {
 
 header,
 footer {
-    z-index: 99;
+    z-index: 9999;
     height: 35px;
     background: #4c4947;
     position: fixed;
@@ -46,7 +46,7 @@ header a:hover {
 .vert_stub_right {
     background: #222022;
     position: fixed;
-    z-index: 99;
+    z-index: 999;
 }
 
 .horiz_stub_up,
@@ -91,8 +91,6 @@ header a:hover {
 table {
     font-size: 12px;
     border-collapse: collapse;
-    /*border: 1px solid #4c4947;*/
-    border-spacing: 0;
     table-layout: fixed;
 }
 
@@ -110,6 +108,10 @@ table {
     width: 2000px;
 }
 
+th {
+    background: #222022;
+}
+
 th,
 td {
     border: 1px solid #4c4947;
@@ -118,10 +120,6 @@ td {
     white-space: nowrap;
     position: relative;
     background-clip: padding-box;
-}
-
-th {
-    background: #222022;
 }
 
 td {
