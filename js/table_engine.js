@@ -1,11 +1,12 @@
 let horiz_stub_up = document.querySelector(".horiz_stub_up");
 let vert_stub_left = document.querySelector(".vert_stub_left");
+let vert_stub_right = document.querySelector(".vert_stub_right");
 let header = document.querySelector("header");
 let footer = document.querySelector("footer");
 let table_header = document.querySelectorAll(".table_header");
 let table_body = document.querySelectorAll(".table_body");
 let content = document.querySelectorAll(".content");
-let tds_selection = document.querySelector(".tds_selection");
+let td_selection = document.querySelector(".td_selection");
 let selected_td = null;
 let selected_content = content[0];
 
@@ -33,16 +34,45 @@ function onTdSelect(tds, ths, cnt_i) {
             selected_td = tds[i];
             drawCellRect(tds[i], content[cnt_i]);
         }
+        tds[i].onmousedown = function(e) {
+            let scroll_interval = null;
+            let x_start = e.clientX;
+            let y_start = e.clientY;
+            selected_content = content[cnt_i];
+            selected_td = tds[i];
+            drawCellRect(tds[i], content[cnt_i]);
+            document.onmousemove = function(e) {
+                if(e.target == vert_stub_right && scroll_interval == null) {
+                    console.log(vert_stub_right);
+                    scroll_interval = setInterval(() => selected_content.scrollBy(tds[i].getBoundingClientRect().width, 0), 250);
+                }
+                
+                //console.log(document.documentElement.clientWidth + " " + document.documentElement.clientHeight);
+                //console.log(e.clientX + " " + e.clientY);
+                //console.log(e.target);
+                 //else if()
+                /*td_selection.style.width = td.getBoundingClientRect().width + "px";
+                td_selection.style.height = td.getBoundingClientRect().height + "px";*/
+            }
+            document.onmouseup = function() {
+                clearInterval(scroll_interval);
+                document.onmousemove = null;
+                document.onmouseup = null;
+            }
+        }
+        tds[i].ondragstart = function() {
+            return false;
+        };
     }
 }
 
 /*рисование обводки ячейки*/
 function drawCellRect(td, content) {
-    tds_selection.style.top = td.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height + "px";
-    tds_selection.style.left = td.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width + "px";
-    tds_selection.style.width = td.getBoundingClientRect().width + "px";
-    tds_selection.style.height = td.getBoundingClientRect().height + "px";
-    tds_selection.classList.add("active");
+    td_selection.style.top = td.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height + "px";
+    td_selection.style.left = td.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width + "px";
+    td_selection.style.width = td.getBoundingClientRect().width + "px";
+    td_selection.style.height = td.getBoundingClientRect().height + "px";
+    td_selection.classList.add("active");
 }
 
 window.onresize = onResize;
@@ -54,7 +84,7 @@ function onResize() {
         console.log("res " + i);
     }
     /*для корректного отображения выделения ячейки*/
-    if(selected_td != null) {
+    if (selected_td != null) {
         drawCellRect(selected_td, selected_content);
     }
 }

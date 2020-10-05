@@ -1,4 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Open+Sans:wght@600&display=swap');
+html {
+    /*-ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;*/
+}
+
 body {
     background: #222022;
     margin: 0;
@@ -74,6 +82,7 @@ header a:hover {
     right: 0px;
 }
 
+
 /*.wrapper {
     margin: 40px 5px;
     position: absolute;
@@ -86,6 +95,7 @@ header a:hover {
     left: 5px;
     right: 5px;
     overflow: auto;
+    scroll-behavior: smooth;
 }
 
 table {
@@ -127,6 +137,7 @@ td {
     outline: none;
 }
 
+
 /*td:focus:after {
     content: '';
     position: absolute;
@@ -137,17 +148,19 @@ td {
     border: 1px solid #6ead3a;
 }*/
 
-.tds_selection {
+.td_selection {
     z-index: 999;
     position: absolute;
     display: none;
     border: 1px solid #6ead3a;
     box-sizing: border-box;
+    pointer-events: none;
 }
 
-.tds_selection.active {
+.td_selection.active {
     display: block;
 }
+
 
 /*footer*/
 
