@@ -95,7 +95,7 @@ header a:hover {
     left: 5px;
     right: 5px;
     overflow: auto;
-    scroll-behavior: smooth;
+    /*scroll-behavior: smooth;*/
 }
 
 table {
