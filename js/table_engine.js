@@ -3,7 +3,8 @@ let horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
 let vert_stub_left = document.querySelector(".vert_stub_left");
 let vert_stub_right = document.querySelector(".vert_stub_right");
 let header = document.querySelector("header");
-let footer = document.querySelector("footer");
+let footer = document.querySelector(".footer");
+console.log(footer);
 let table_header = document.querySelectorAll(".table_header");
 let table_body = document.querySelectorAll(".table_body");
 let content = document.querySelectorAll(".content");
@@ -37,88 +38,136 @@ function onTdSelect(tds, ths, cnt_i) {
         }
         tds[i].onmousedown = function(e) {
             let scroll_interval = null;
-            let last_target = null;
-            let last_pos = "null";
             let x_start = e.clientX;
             let y_start = e.clientY;
             selected_content = content[cnt_i];
             selected_td = tds[i];
             drawCellRect(tds[i], content[cnt_i]);
-            /*Плавный скролл таблицы, когда драгаешь ячейку*/
+            let directions = {
+                rs: false, //right slow
+                rf: false, //right fast
+                bs: false, //bottom slow
+                bf: false, //bottom fast
+                ls: false, //left slow
+                lf: false, //left fast
+                us: false, //up slow
+                uf: false //up fast
+            };
+            /*скролл таблицы, когда драгаешь ячейку*/
             document.onmousemove = function(e) {
+                let directions_clone = {};
+                for (let key in directions) {
+                    directions_clone[key] = directions[key];
+                }
+                directions = { rs: false, rf: false, bs: false, bf: false, ls: false, lf: false, us: false, uf: false };
                 e.preventDefault();
-                //console.log(e.clie);       
-                /*if (e.target == vert_stub_right) {
-                    if (scroll_interval == null) {
-                        scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, selected_content, 250);
-                    }
-                } else if (e.target == vert_stub_left) {
-                    if (scroll_interval == null) {
-                        scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, selected_content, 250);
-                    }
-                } else if (e.target == table_header[cnt_i] || table_header[cnt_i].contains(e.target) || e.target == horiz_stub_up) {
-                    if (scroll_interval == null || last_target == header) {
-                        clearInterval(scroll_interval);
-                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, 0, selected_content, 250);
-                    }
-                } else if (e.target == header) {
-                    if (scroll_interval == null || last_target == horiz_stub_up || last_target == table_header[cnt_i] || table_header[cnt_i].contains(last_target)) {
-                        clearInterval(scroll_interval);
-                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, 0, selected_content, 150);
-                    }
-                } else if (e.target == horiz_stub_bottom) {
-                    if (scroll_interval == null) {
-                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, 0, selected_content, 250);
-                    }
-                } else {
-                    clearInterval(scroll_interval);
-                    scroll_interval = null;
-                }*/
                 let scroll_width = selected_content.offsetWidth - selected_content.clientWidth > 0 ? selected_content.offsetWidth - selected_content.clientWidth : 10;
                 let scroll_height = selected_content.offsetHeight - selected_content.clientHeight > 0 ? selected_content.offsetHeight - selected_content.clientHeight : 10;
                 let right_pos_slow = document.documentElement.clientWidth - scroll_width - vert_stub_right.getBoundingClientRect().width;
-                let left_pos_slow = scroll_width + vert_stub_right.getBoundingClientRect().width;
                 let right_pos_fast = document.documentElement.clientWidth - vert_stub_right.getBoundingClientRect().width;
+                let left_pos_slow = scroll_width + vert_stub_right.getBoundingClientRect().width;
                 let left_pos_fast = vert_stub_right.getBoundingClientRect().width;
-                console.log(selected_content.offsetWidth - selected_content.clientWidth);
-                console.log(vert_stub_left.getBoundingClientRect().width);
+                let up_pos_slow = header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + table_header[cnt_i].getBoundingClientRect().height;
+                let up_pos_fast = header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height;
+                footer = document.querySelector("footer");
+                let bottom_pos_slow = document.documentElement.clientHeight - footer.getBoundingClientRect().height - horiz_stub_bottom.getBoundingClientRect().height - scroll_height;
+                let bottom_pos_fast = document.documentElement.clientHeight - footer.getBoundingClientRect().height;
+                // right
                 if (e.clientX >= right_pos_slow && e.clientX < right_pos_fast) {
-                    if (scroll_interval == null || last_pos.includes("left_pos_fast")) {
-                        clearInterval(scroll_interval);
-                        last_pos = "right_pos_slow";
+                    directions.rs = true;
+                }
+                if (e.clientX >= right_pos_fast) {
+                    directions.rf = true;
+                }
+                // bottom
+                if (e.clientY >= bottom_pos_slow && e.clientY < bottom_pos_fast) {
+                    directions.bs = true;
+                }
+                if (e.clientY >= bottom_pos_fast) {
+                    directions.bf = true;
+                }
+                // left
+                if (e.clientX <= left_pos_slow && e.clientX > left_pos_fast) {
+                    directions.ls = true;
+                }
+                if (e.clientX <= left_pos_fast) {
+                    directions.lf = true;
+                }
+                // up
+                if (e.clientY <= up_pos_slow && e.clientY > up_pos_fast) {
+                    directions.us = true;
+                }
+                if (e.clientY <= up_pos_fast) {
+                    directions.uf = true;
+                }
+                if (!compareDirections(directions, directions_clone)) { // если направления изменились, чтобы не каждый раз интервал менять, когда двигаешь мышкой
+                    clearInterval(scroll_interval);
+                    let horiz_step = 
+                    // right-up slow
+                    if (directions.rs == true && directions.us == true) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
+                    }
+                    // right-up fast
+                    else if ((directions.rs == true && directions.uf == true) || (directions.rf == true && (directions.us == true || directions.uf == true))) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
+                    }
+                    //right-down slow
+                    else if (directions.rs == true && directions.bs == true) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
+                    }
+                    //right-down fast
+                    else if ((directions.rs == true && directions.bf == true) || (directions.rf == true && (directions.bs == true || directions.bf == true))) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
+                    }
+                    //left-down slow
+                    else if (directions.ls == true && directions.bs == true) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
+                    }
+                    //left-down fast
+                    else if ((directions.ls == true && directions.bf == true) || (directions.lf == true && (directions.bs == true || directions.bf == true))) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
+                    }
+                    //left-up slow 
+                    else if (directions.ls == true && directions.us == true) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
+                    }
+                    //left-up fast
+                    else if ((directions.ls == true && directions.uf == true) || (directions.lf == true && (directions.us == true || directions.uf == true))) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
+                    }
+                    //right slow
+                    else if (directions.rs == true) {
                         scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
                     }
-                } else if (e.clientX >= right_pos_fast) {
-                    if (scroll_interval == null || last_pos.includes("right_pos_slow")) {
-                        clearInterval(scroll_interval);
-                        last_pos = "right_pos_fast";
+                    //right fast
+                    else if (directions.rf == true) {
                         scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
                     }
-                } else if (e.clientX <= left_pos_slow && e.clientX > left_pos_fast) {
-                    if (scroll_interval == null || last_pos.includes("left_pos_fast")) {
-                        clearInterval(scroll_interval);
-                        last_pos = "left_pos_slow";
+                    //down slow
+                    else if (directions.bs == true) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, 0, "smooth", selected_content, 250);
+                    }
+                    //down fast
+                    else if (directions.bf == true) {
+                        scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, 0, "auto", selected_content, 100);
+                    }
+                    //left slow
+                    else if (directions.ls == true) {
                         scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
                     }
-                } else if (e.clientX <= left_pos_fast) {
-                    if (scroll_interval == null || last_pos.includes("left_pos_slow")) {
-                        clearInterval(scroll_interval);
-                        last_pos = "left_pos_fast";
+                    //left fast
+                    else if (directions.lf == true) {
                         scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "auto", selected_content, 100);
                     }
-                } else {
-                    clearInterval(scroll_interval);
-                    scroll_interval = null;
-                    last_pos = "null";
+                    //up slow
+                    else if (directions.us == true) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, 0, "smooth", selected_content, 250);
+                    }
+                    //up fast
+                    else if (directions.uf == true) {
+                        scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, 0, "auto", selected_content, 100);
+                    }
                 }
-                
-                last_target = e.target
-                console.log(document.documentElement.clientWidth + " " + document.documentElement.clientHeight);
-                console.log(e.clientX + " " + e.clientY);
-                //console.log(e.target);
-                //else if()
-                /*td_selection.style.width = td.getBoundingClientRect().width + "px";
-                td_selection.style.height = td.getBoundingClientRect().height + "px";*/
             }
             document.onmouseup = function() {
                 clearInterval(scroll_interval);
@@ -137,6 +186,15 @@ function onTdSelect(tds, ths, cnt_i) {
             left: left,
             behavior: behavior
         }), delay);
+    }
+
+    function compareDirections(dir, dir_clone) {
+        for (let key in dir) {
+            if (dir[key] != dir_clone[key]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
