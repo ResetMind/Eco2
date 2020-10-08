@@ -4,7 +4,6 @@ let vert_stub_left = document.querySelector(".vert_stub_left");
 let vert_stub_right = document.querySelector(".vert_stub_right");
 let header = document.querySelector("header");
 let footer = document.querySelector(".footer");
-console.log(footer);
 let table_header = document.querySelectorAll(".table_header");
 let table_body = document.querySelectorAll(".table_body");
 let content = document.querySelectorAll(".content");
@@ -26,23 +25,24 @@ function setTableEngine(n) {
 }
 
 function onTdSelect(tds, ths, cnt_i) {
+    let first_col_i, first_row_i, first_cell_top, first_cell_left;
     for (let i = 0; i < tds.length; i++) {
         tds[i].onclick = function() {
-            let col_i = i % ths.length; /*узнать в какой колонке ячейка*/
-            let row_i = Math.floor(i / ths.length); /*узнать в какой строке ячейка*/
-            /*console.log(row_i + " " + col_i);
-            console.log(tds[i].getBoundingClientRect().top + " " + tds[i].getBoundingClientRect().left);*/
+            /*console.log(tds[i].getBoundingClientRect().top + " " + tds[i].getBoundingClientRect().left);*/
             selected_content = content[cnt_i];
             selected_td = tds[i];
-            drawCellRect(tds[i], content[cnt_i]);
+            drawCellRect(tds[i], content[cnt_i], 1, 1);
         }
         tds[i].onmousedown = function(e) {
+            first_col_i = i % ths.length; /*узнать в какой колонке ячейка*/
+            first_row_i = Math.floor(i / ths.length); /*узнать в какой строке ячейка*/
+            first_cell_top = tds[i].getBoundingClientRect().top;
+            first_cell_left = tds[i].getBoundingClientRect().left;
+            //console.log(first_col_i + " " + first_row_i);
             let scroll_interval = null;
-            let x_start = e.clientX;
-            let y_start = e.clientY;
             selected_content = content[cnt_i];
             selected_td = tds[i];
-            drawCellRect(tds[i], content[cnt_i]);
+            drawCellRect(tds[i], content[cnt_i], 1, 1);
             let directions = {
                 rs: false, //right slow
                 rf: false, //right fast
@@ -102,7 +102,6 @@ function onTdSelect(tds, ths, cnt_i) {
                 }
                 if (!compareDirections(directions, directions_clone)) { // если направления изменились, чтобы не каждый раз интервал менять, когда двигаешь мышкой
                     clearInterval(scroll_interval);
-                    let horiz_step = 
                     // right-up slow
                     if (directions.rs == true && directions.us == true) {
                         scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", selected_content, 250);
@@ -168,6 +167,19 @@ function onTdSelect(tds, ths, cnt_i) {
                         scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, 0, "auto", selected_content, 100);
                     }
                 }
+                let target_cell = e.target;
+                if (arrayIndex(tds, target_cell) != -1) {
+                    let second_i = arrayIndex(tds, target_cell);
+                    //console.log(target_cell);
+                    let second_col_i = second_i % ths.length;
+                    let second_row_i = Math.floor(second_i / ths.length);
+                    let min_col = Math.min(first_col_i, second_col_i);
+                    let min_row = Math.min(first_row_i, second_row_i);
+                    let start_cell_i = min_row * ths.length + min_col;
+                    //console.log(min_col + " " + min_row + " " + start_cell_i);
+                    //console.log(Math.abs(first_col_i - second_col_i) + 1 + " " + Math.abs(first_row_i - second_row_i) + 1);
+                    drawCellRect(tds[start_cell_i], selected_content, Math.abs(first_col_i - second_col_i) + 1, Math.abs(first_row_i - second_row_i) + 1);
+                }
             }
             document.onmouseup = function() {
                 clearInterval(scroll_interval);
@@ -199,12 +211,17 @@ function onTdSelect(tds, ths, cnt_i) {
 }
 
 /*рисование обводки ячейки*/
-function drawCellRect(td, content) {
+function drawCellRect(td, content, x_num, y_num) { 
     td_selection.style.top = td.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height + "px";
     td_selection.style.left = td.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width + "px";
-    td_selection.style.width = td.getBoundingClientRect().width + "px";
-    td_selection.style.height = td.getBoundingClientRect().height + "px";
+    td_selection.style.width = td.getBoundingClientRect().width * x_num + "px";
+    td_selection.style.height = td.getBoundingClientRect().height * y_num + "px";
     td_selection.classList.add("active");
+}
+
+function resizeCellRect(width, height) {
+    td_selection.style.width = width + "px";
+    td_selection.style.height = height + "px";
 }
 
 window.onresize = onResize;
@@ -213,10 +230,19 @@ function onResize() {
     /*для корректного отображения стыка заголовка и таблицы*/
     for (let i = 0; i < content.length; i++) {
         content[i].style.top = table_header[i].getBoundingClientRect().height + header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + "px";
-        console.log("res " + i);
+        //console.log("res " + i);
     }
     /*для корректного отображения выделения ячейки*/
     if (selected_td != null) {
-        drawCellRect(selected_td, selected_content);
+        drawCellRect(selected_td, selected_content, 1, 1);
     }
+}
+
+function arrayIndex(arr, el) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == el) {
+            return i;
+        }
+    }
+    return -1;
 }
