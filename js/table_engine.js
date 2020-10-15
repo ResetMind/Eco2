@@ -30,15 +30,17 @@ function setTableEngine(n) {
 
 function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
+    let scroll_interval = null;
     for (let i = 0; i < tds.length; i++) {
         tds[i].onclick = function() {
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
         }
         tds[i].onmousedown = function(e) {
+            
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
-            let scroll_interval = null;
+            scroll_interval = null;
             let last_target = null;
             let directions = {
                 rs: false, //right slow
@@ -48,7 +50,8 @@ function onTdSelect(tds, ths, cnt_i) {
                 ls: false, //left slow
                 lf: false, //left fast
                 us: false, //up slow
-                uf: false //up fast
+                uf: false, //up fast
+                end: false
             };
             let directions_mini = {
                 r: false,
@@ -62,7 +65,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 for (let key in directions) {
                     directions_clone[key] = directions[key];
                 }
-                directions = { rs: false, rf: false, bs: false, bf: false, ls: false, lf: false, us: false, uf: false };
+                directions = { rs: false, rf: false, bs: false, bf: false, ls: false, lf: false, us: false, uf: false, end: false };
                 directions_mini = { r: false, b: false, l: false, u: false };
                 e.preventDefault();
                 let scroll_width = selected_content.offsetWidth - selected_content.clientWidth;
@@ -113,6 +116,9 @@ function onTdSelect(tds, ths, cnt_i) {
                     directions.uf = true;
                 }
                 if (areDirections(directions) || areDirections(directions_clone)) {
+                    /*if(selected_content.scrollHeight - selected_content.scrollTop == selected_content.clientHeight || selected_content.scrollTop == 0) {
+                        clearInterval(scroll_interval);
+                    }*/
                     if (!compareDirections(directions, directions_clone)) { // если направления изменились, чтобы не каждый раз интервал менять, когда двигаешь мышкой
                         clearInterval(scroll_interval);
                         // right-up slow
@@ -210,7 +216,7 @@ function onTdSelect(tds, ths, cnt_i) {
                     }
 
                     if (directions_mini.r == true && directions_mini.u == true) {
-                        console.log("ru");
+                        //console.log("ru");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("ru");
                             right--;
@@ -218,7 +224,7 @@ function onTdSelect(tds, ths, cnt_i) {
                             cell = document.elementFromPoint(right, top);
                         }
                     } else if (directions_mini.u == true && directions_mini.l == true) {
-                        console.log("lu");
+                        //console.log("lu");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("lu");
                             left++;
@@ -226,7 +232,7 @@ function onTdSelect(tds, ths, cnt_i) {
                             cell = document.elementFromPoint(left, top);
                         }
                     } else if (directions_mini.l == true && directions_mini.b == true) {
-                        console.log("lb");
+                        //console.log("lb");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("lb");
                             left++;
@@ -234,7 +240,7 @@ function onTdSelect(tds, ths, cnt_i) {
                             cell = document.elementFromPoint(left, bottom);
                         }
                     } else if (directions_mini.b == true && directions_mini.r == true) {
-                        console.log("rb");
+                        //console.log("rb");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("rb");
                             right--;
@@ -242,28 +248,28 @@ function onTdSelect(tds, ths, cnt_i) {
                             cell = document.elementFromPoint(right, bottom);
                         }
                     } else if (directions_mini.r == true) {
-                        console.log("r");
+                        //console.log("r");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("r");
                             right--;
                             cell = document.elementFromPoint(right, e.clientY);
                         }
                     } else if (directions_mini.u == true) {
-                        console.log("u");
+                        //console.log("u");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("u");
                             top++;
                             cell = document.elementFromPoint(e.clientX, top);
                         }
                     } else if (directions_mini.l == true) {
-                        console.log("l");
+                        //console.log("l");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("l");
                             left++;
                             cell = document.elementFromPoint(left, e.clientY);
                         }
                     } else if (directions_mini.b == true) {
-                        console.log("b");
+                        //console.log("b");
                         while (arrayIndex(tds, cell) == -1) {
                             console.log("b");
                             bottom--;
@@ -301,13 +307,17 @@ function onTdSelect(tds, ths, cnt_i) {
                 document.onmouseup = null;
             }
         }
-        tds[i].ondragstart = function() {
+        tds[i].ondragstart = function(e) {
             return false;
         };
     }
 
     function scrollOnDrag(top, left, behavior, selected_content, delay, step_col, step_row) {
+        //let isScrollEndVert = false;
         function scroll() {
+            /*if(isScrollEndVert) {
+                return;
+            }*/
             second_col_i += step_col;
             second_row_i += step_row;
             second_col_i = second_col_i < 0 ? 0 : second_col_i;
@@ -316,17 +326,28 @@ function onTdSelect(tds, ths, cnt_i) {
             second_row_i = second_row_i >= tds.length / ths.length ? tds.length / ths.length - 1 : second_row_i;
             [start_cell_i, end_cell_i] = getStartEndCells();
             drawCellRect(tds[start_cell_i], tds[end_cell_i], selected_content);
+            /*console.log(selected_content.scrollHeight - selected_content.scrollTop);
+            console.log(selected_content.clientHeight);*/
             selected_content.scrollBy({
                 top: top,
                 left: left,
                 behavior: behavior
             })
+            /*if(selected_content.offsetHeight + selected_content.scrollTop >= selected_content.scrollHeight || selected_content.scrollTop == 0) {
+                console.log("top");
+            }*/
+            /*console.log(selected_content.scrollWidth - selected_content.clientWidth);
+            console.log(selected_content.scrollLeft + " left");*/
+            /*if(selected_content.offsetWidth + selected_content.scrollLeft >= selected_content.scrollWidth || selected_content.scrollLeft == 0) {
+                left = 0;
+                console.log("left");
+            }*/
         };
         return setInterval(scroll, delay);
     }
 
     td_selection_frame.onresize = function(){
-        console.log("size");
+        //console.log("size");
         for(let k = 0; k < tds.length; k++) {
             tds[k].classList.remove("selected");
         }
