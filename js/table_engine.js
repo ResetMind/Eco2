@@ -37,7 +37,6 @@ function onTdSelect(tds, ths, cnt_i) {
             drawCellRect(tds[i], tds[i], content[cnt_i]);
         }
         tds[i].onmousedown = function(e) {
-            
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
             scroll_interval = null;
@@ -313,11 +312,7 @@ function onTdSelect(tds, ths, cnt_i) {
     }
 
     function scrollOnDrag(top, left, behavior, selected_content, delay, step_col, step_row) {
-        //let isScrollEndVert = false;
         function scroll() {
-            /*if(isScrollEndVert) {
-                return;
-            }*/
             second_col_i += step_col;
             second_row_i += step_row;
             second_col_i = second_col_i < 0 ? 0 : second_col_i;
@@ -326,29 +321,26 @@ function onTdSelect(tds, ths, cnt_i) {
             second_row_i = second_row_i >= tds.length / ths.length ? tds.length / ths.length - 1 : second_row_i;
             [start_cell_i, end_cell_i] = getStartEndCells();
             drawCellRect(tds[start_cell_i], tds[end_cell_i], selected_content);
-            /*console.log(selected_content.scrollHeight - selected_content.scrollTop);
-            console.log(selected_content.clientHeight);*/
+            if ((selected_content.scrollHeight - selected_content.scrollTop === selected_content.clientHeight && top > 0) || (selected_content.scrollTop == 0 && top < 0)) {
+                top = 0;
+                console.log("top " + top);
+            }
+            if ((selected_content.offsetWidth + selected_content.scrollLeft >= selected_content.scrollWidth && left > 0) || (selected_content.scrollLeft == 0 && left < 0)) {
+                left = 0;
+                console.log("left " + left);
+            }
             selected_content.scrollBy({
                 top: top,
                 left: left,
                 behavior: behavior
-            })
-            /*if(selected_content.offsetHeight + selected_content.scrollTop >= selected_content.scrollHeight || selected_content.scrollTop == 0) {
-                console.log("top");
-            }*/
-            /*console.log(selected_content.scrollWidth - selected_content.clientWidth);
-            console.log(selected_content.scrollLeft + " left");*/
-            /*if(selected_content.offsetWidth + selected_content.scrollLeft >= selected_content.scrollWidth || selected_content.scrollLeft == 0) {
-                left = 0;
-                console.log("left");
-            }*/
+            });
         };
         return setInterval(scroll, delay);
     }
 
-    td_selection_frame.onresize = function(){
-        //console.log("size");
-        for(let k = 0; k < tds.length; k++) {
+    td_selection_frame.onresize = function() {
+        console.log("size");
+        for (let k = 0; k < tds.length; k++) {
             tds[k].classList.remove("selected");
         }
         for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
