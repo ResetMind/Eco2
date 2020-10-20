@@ -25,6 +25,9 @@ function setTableEngine(n) {
     content[n].onscroll = function() {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";
     }
+    /*table_body[n].onmousedown = function(e) {
+        e.preventDefault();
+    }*/
     onTdSelect(tds, ths, n);
 }
 
@@ -37,6 +40,9 @@ function onTdSelect(tds, ths, cnt_i) {
             drawCellRect(tds[i], tds[i], content[cnt_i]);
         }
         tds[i].onmousedown = function(e) {
+            if(e.which == 2) {
+                return false;
+            }
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
             scroll_interval = null;
@@ -329,11 +335,11 @@ function onTdSelect(tds, ths, cnt_i) {
                 left = 0;
                 console.log("left " + left);
             }
-            selected_content.scrollBy({
+            /*selected_content.scrollBy({
                 top: top,
                 left: left,
                 behavior: behavior
-            });
+            });*/
         };
         return setInterval(scroll, delay);
     }
