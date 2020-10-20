@@ -138,9 +138,8 @@ td {
 }
 
 
-td.selected {
+td.selected, th.selected {
     background: rgba(110, 173, 58, 0.1);
-    
 }
 
 .td_selection {

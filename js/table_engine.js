@@ -350,11 +350,17 @@ function onTdSelect(tds, ths, cnt_i) {
         for (let k = 0; k < tds.length; k++) {
             tds[k].classList.remove("selected");
         }
+        for (let k = 0; k < ths.length; k++) {
+            ths[k].classList.remove("selected");
+        }
         for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
             for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
                 let cur_cell_i = k * ths.length + j;
                 tds[cur_cell_i].classList.add("selected");
             }
+        }
+        for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
+            ths[j].classList.add("selected");
         }
     }
 
