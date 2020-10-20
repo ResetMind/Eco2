@@ -31,6 +31,8 @@ function setTableEngine(n) {
     onTdSelect(tds, ths, n);
 }
 
+//function 
+
 function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
@@ -287,7 +289,6 @@ function onTdSelect(tds, ths, cnt_i) {
                         drawCellRect(tds[start_cell_i], tds[end_cell_i], selected_content);
                     }
                 }
-
             }
             document.onmouseup = function() {
                 // сохранить выделенные ячейки/ячейку в двумерный массив
@@ -335,11 +336,11 @@ function onTdSelect(tds, ths, cnt_i) {
                 left = 0;
                 console.log("left " + left);
             }
-            /*selected_content.scrollBy({
+            selected_content.scrollBy({
                 top: top,
                 left: left,
                 behavior: behavior
-            });*/
+            });
         };
         return setInterval(scroll, delay);
     }
@@ -398,12 +399,14 @@ function onTdSelect(tds, ths, cnt_i) {
 
 /*рисование обводки ячейки*/
 function drawCellRect(td_start, td_end, content) {
+    td_selection.classList.remove("active"); // firefox
     let td_start_top = td_start.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_start_left = td_start.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
     td_selection.style.top = td_start_top + "px";
     td_selection.style.left = td_start_left + "px";
     let td_end_top = td_end.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_end_left = td_end.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
+    td_selection.classList.add("active"); // chrome
     td_selection.style.width = "0px";
     td_selection.style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
     td_selection.style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
