@@ -113,7 +113,6 @@ table {
 }
 
 .table_header,
-.table_header_inv,
 .table_body {
     width: 2000px;
 }
