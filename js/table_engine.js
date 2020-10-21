@@ -1,22 +1,33 @@
-let horiz_stub_up = document.querySelector(".horiz_stub_up");
-let horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
-let vert_stub_left = document.querySelector(".vert_stub_left");
-let vert_stub_right = document.querySelector(".vert_stub_right");
-let header = document.querySelector("header");
-let footer = document.querySelector(".footer");
-let table_header = document.querySelectorAll(".table_header");
-let table_body = document.querySelectorAll(".table_body");
-let content = document.querySelectorAll(".content");
-let td_selection = document.querySelector(".td_selection");
-let fast = document.querySelector(".fast");
-let slow = document.querySelector(".slow");
-let selected_td = null;
-let selected_tds = null;
-let selected_content = content[0];
-let selected_content_i = 0;
-
-onWindowResize();
-setTableEngine(0);
+let table_header;
+window.onload = function() {
+    horiz_stub_up = document.querySelector(".horiz_stub_up");
+    horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
+    vert_stub_left = document.querySelector(".vert_stub_left");
+    vert_stub_right = document.querySelector(".vert_stub_right");
+    header = document.querySelector("header");
+    table_header = document.querySelectorAll(".table_header");
+    table_header[0].style.visibility = "visible";
+    table_body = document.querySelectorAll(".table_body");
+    content = document.querySelectorAll(".content");
+    content[0].style.display = "block";
+    td_selection = document.querySelectorAll(".td_selection");
+    td_selection_frame = document.getElementsByName("td_selection_frame");
+    radios = document.querySelectorAll("input[type=\"radio\"]");
+    fast = document.querySelector(".fast");
+    slow = document.querySelector(".slow");
+    selected_td = null;
+    selected_tds = null;
+    selected_content = content[0];
+    selected_content_i = 0;
+    table_header[1].style.width = (content[0].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
+    table_header[2].style.width = table_header[1].style.width 
+    table_body[1].style.width = table_header[1].style.width 
+    table_body[2].style.width = table_header[1].style.width 
+    onWindowResize();
+    onRadioChange();
+    setTableEngine(0);
+    setMapButton();
+}
 
 function setTableEngine(n) {
     let tds = table_body[n].querySelectorAll("td");
@@ -56,18 +67,20 @@ function onThResize(tds, ths, n) {
                         tds[index - 1].style.width = new_col_width + "px";
                         table_body[n].style.width = (table_width + e.clientX - start_x) + "px";
                         if (selected_tds != null) {
-                            drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content);
+                            drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
                         }
                     }
                 }
                 document.documentElement.onmouseup = function() {
                     document.body.style.cursor = "default";
                     document.documentElement.onmousemove = null;
+                    table_header[n].onmousedown = null;
                     onThResize(tds, ths, n);
                 }
             }
         } else {
             table_header[n].style.cursor = "default";
+            table_header[n].onmousedown = null;
         }
     }
 
@@ -103,7 +116,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 return false;
             }
             getFirstCellParameters(i);
-            drawCellRect(tds[i], tds[i], content[cnt_i]);
+            drawCellRect(tds[i], tds[i], cnt_i);
             scroll_interval = null;
             let last_target = tds[i];
             let scroll_width = content[cnt_i].offsetWidth - content[cnt_i].clientWidth;
@@ -148,7 +161,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 if (arrayIndex(tds, target) != -1 && target != last_target) {
                     [second_col_i, second_row_i] = getColRow(arrayIndex(tds, target), ths.length);
                     [start_cell_i, end_cell_i] = getStartEndCells();
-                    drawCellRect(tds[start_cell_i], tds[end_cell_i], content[cnt_i]);
+                    drawCellRect(tds[start_cell_i], tds[end_cell_i], cnt_i);
                     last_target = target;
                 }
                 // right
@@ -188,67 +201,67 @@ function onTdSelect(tds, ths, cnt_i) {
                         console.log("change");
                         // right-up slow
                         if (directions.rs == true && directions.us == true) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, 1, -1);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, 1, -1);
                         }
                         // right-up fast
                         else if ((directions.rs == true && directions.uf == true) || (directions.rf == true && (directions.us == true || directions.uf == true))) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, 1, -2);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, 1, -2);
                         }
                         //right-down slow
                         else if (directions.rs == true && directions.bs == true) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, 1, 1);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, 1, 1);
                         }
                         //right-down fast
                         else if ((directions.rs == true && directions.bf == true) || (directions.rf == true && (directions.bs == true || directions.bf == true))) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, 1, 2);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, 1, 2);
                         }
                         //left-down slow
                         else if (directions.ls == true && directions.bs == true) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, -1, 1);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, -1, 1);
                         }
                         //left-down fast
                         else if ((directions.ls == true && directions.bf == true) || (directions.lf == true && (directions.bs == true || directions.bf == true))) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, -1, 2);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, -1, 2);
                         }
                         //left-up slow 
                         else if (directions.ls == true && directions.us == true) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, -1, -1);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, -tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, -1, -1);
                         }
                         //left-up fast
                         else if ((directions.ls == true && directions.uf == true) || (directions.lf == true && (directions.us == true || directions.uf == true))) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, -1, -2);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, -tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, -1, -2);
                         }
                         //right slow
                         else if (directions.rs == true) {
-                            scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, 1, 0);
+                            scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, 1, 0);
                         }
                         //right fast
                         else if (directions.rf == true) {
-                            scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, 1, 0);
+                            scroll_interval = scrollOnDrag(0, tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, 1, 0);
                         }
                         //down slow
                         else if (directions.bs == true) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, 0, "smooth", content[cnt_i], 250, 0, 1);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height, 0, "smooth", cnt_i, 250, 0, 1);
                         }
                         //down fast
                         else if (directions.bf == true) {
-                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, 0, "auto", content[cnt_i], 100, 0, 2);
+                            scroll_interval = scrollOnDrag(tds[i].getBoundingClientRect().height * 2, 0, "auto", cnt_i, 100, 0, 2);
                         }
                         //left slow
                         else if (directions.ls == true) {
-                            scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "smooth", content[cnt_i], 250, -1, 0);
+                            scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "smooth", cnt_i, 250, -1, 0);
                         }
                         //left fast
                         else if (directions.lf == true) {
-                            scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "auto", content[cnt_i], 100, -1, 0);
+                            scroll_interval = scrollOnDrag(0, -tds[i].getBoundingClientRect().width, "auto", cnt_i, 100, -1, 0);
                         }
                         //up slow
                         else if (directions.us == true) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, 0, "smooth", content[cnt_i], 250, 0, -1);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height, 0, "smooth", cnt_i, 250, 0, -1);
                         }
                         //up fast
                         else if (directions.uf == true) {
-                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, 0, "auto", content[cnt_i], 100, 0, -2);
+                            scroll_interval = scrollOnDrag(-tds[i].getBoundingClientRect().height * 2, 0, "auto", cnt_i, 100, 0, -2);
                         }
                     }
                     /* границы таблицы с запасом */
@@ -336,7 +349,7 @@ function onTdSelect(tds, ths, cnt_i) {
                     if (cell != null) {
                         [second_col_i, second_row_i] = getColRow(arrayIndex(tds, cell), ths.length);
                         [start_cell_i, end_cell_i] = getStartEndCells();
-                        drawCellRect(tds[start_cell_i], tds[end_cell_i], content[cnt_i]);
+                        drawCellRect(tds[start_cell_i], tds[end_cell_i], cnt_i);
                     }
                 }
             }
@@ -369,17 +382,17 @@ function onTdSelect(tds, ths, cnt_i) {
         };
     }
 
-    function scrollOnDrag(top, left, behavior, selected_content, delay, step_col, step_row) {
+    function scrollOnDrag(top, left, behavior, cnt_i, delay, step_col, step_row) {
         function scroll() {
-            if ((selected_content.scrollHeight - selected_content.scrollTop === selected_content.clientHeight && top > 0) || (selected_content.scrollTop == 0 && top < 0)) {
+            if ((content[cnt_i].scrollHeight - content[cnt_i].scrollTop === content[cnt_i].clientHeight && top > 0) || (content[cnt_i].scrollTop == 0 && top < 0)) {
                 top = 0;
                 console.log("top " + top);
             }
-            if ((selected_content.offsetWidth + selected_content.scrollLeft >= selected_content.scrollWidth && left > 0) || (selected_content.scrollLeft == 0 && left < 0)) {
+            if ((content[cnt_i].offsetWidth + content[cnt_i].scrollLeft >= content[cnt_i].scrollWidth && left > 0) || (content[cnt_i].scrollLeft == 0 && left < 0)) {
                 left = 0;
                 console.log("left " + left);
             }
-            /*if ((selected_content.scrollWidth - selected_content.scrollLeft === selected_content.clientWidth && left > 0) || (selected_content.scrollLeft == 0 && left < 0)) {
+            /*if ((content[cnt_i].scrollWidth - content[cnt_i].scrollLeft === content[cnt_i].clientWidth && left > 0) || (content[cnt_i].scrollLeft == 0 && left < 0)) {
                 left = 0;
                 console.log("left " + left);
             }*/
@@ -392,8 +405,8 @@ function onTdSelect(tds, ths, cnt_i) {
                 second_row_i = second_row_i >= tds.length / ths.length ? tds.length / ths.length - 1 : second_row_i;
                 [start_cell_i, end_cell_i] = getStartEndCells();
                 left = step_col * tds[end_cell_i].getBoundingClientRect().width; //если ширинв колонок разная
-                drawCellRect(tds[start_cell_i], tds[end_cell_i], selected_content);
-                selected_content.scrollBy({
+                drawCellRect(tds[start_cell_i], tds[end_cell_i], cnt_i);
+                content[cnt_i].scrollBy({
                     top: top,
                     left: left,
                     behavior: behavior
@@ -403,7 +416,7 @@ function onTdSelect(tds, ths, cnt_i) {
         return setInterval(scroll, delay);
     }
 
-    td_selection_frame.onresize = function() {
+    td_selection_frame[cnt_i].onresize = function() {
         console.log("size");
         for (let k = 0; k < tds.length; k++) {
             tds[k].classList.remove("selected");
@@ -462,23 +475,23 @@ function onTdSelect(tds, ths, cnt_i) {
 }
 
 /*рисование обводки ячейки*/
-function drawCellRect(td_start, td_end, content) {
+function drawCellRect(td_start, td_end, cnt_i) {
     console.log("draw");
-    let td_start_top = td_start.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
-    let td_start_left = td_start.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
-    td_selection.style.top = td_start_top + "px";
-    td_selection.style.left = td_start_left + "px";
-    let td_end_top = td_end.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
-    let td_end_left = td_end.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
-    if(td_start_top == td_end_top && td_start_left == td_end_left) {
-        td_selection_frame.dispatchEvent(new Event("resize"));
-    }
-    td_selection.style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
-    td_selection.style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
-    td_selection.classList.add("active");
+    let td_start_top = td_start.getBoundingClientRect().top + content[cnt_i].scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
+    let td_start_left = td_start.getBoundingClientRect().left + content[cnt_i].scrollLeft - vert_stub_left.getBoundingClientRect().width;
+    td_selection[cnt_i].style.top = td_start_top + "px";
+    td_selection[cnt_i].style.left = td_start_left + "px";
+    let td_end_top = td_end.getBoundingClientRect().top + content[cnt_i].scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
+    let td_end_left = td_end.getBoundingClientRect().left + content[cnt_i].scrollLeft - vert_stub_left.getBoundingClientRect().width;
+    //if (td_start_top == td_end_top && td_start_left == td_end_left) {
+    td_selection_frame[cnt_i].dispatchEvent(new Event("resize"));
+    //}
+    td_selection[cnt_i].style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
+    td_selection[cnt_i].style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
+    td_selection[cnt_i].classList.add("active");
 }
 
-//window.onresize = onWindowResize;
+window.onresize = onWindowResize;
 
 function onWindowResize() {
     /*для корректного отображения стыка заголовка и таблицы*/
@@ -487,7 +500,20 @@ function onWindowResize() {
     }
     /*для корректного отображения выделения ячейки*/
     if (selected_tds != null) {
-        drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content);
+        drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
+    }
+}
+
+function onRadioChange() {
+    for (let i = 0; i < radios.length; i++) {
+        console.log(i);
+        radios[i].addEventListener("change", function() {
+            setTableEngine(i);
+            content.forEach(elem => { elem.style.display = "none"; });
+            content[i].style.display = "block";
+            table_header.forEach(elem => { elem.style.visibility = "hidden"; });
+            table_header[i].style.visibility = "visible";
+        });
     }
 }
 
