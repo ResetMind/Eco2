@@ -47,19 +47,22 @@ function onThResize(tds, ths, n) {
                 let table_width = table_header[n].getBoundingClientRect().width;
                 let col_width = ths[index - 1].getBoundingClientRect().width - parseInt(getComputedStyle(ths[index - 1]).paddingLeft) * 2;
                 console.log(table_width + " " + col_width);
-                document.body.onmousemove = function(e) {
+                document.documentElement.onmousemove = function(e) {
                     document.body.style.cursor = "col-resize";
-                    let new_col_width = col_width + (e.clientX - start_x);
+                    let new_col_width = col_width + e.clientX - start_x;
                     if (new_col_width > 10) {
                         ths[index - 1].style.width = new_col_width + "px";
                         table_header[n].style.width = (table_width + e.clientX - start_x) + "px";
                         tds[index - 1].style.width = new_col_width + "px";
                         table_body[n].style.width = (table_width + e.clientX - start_x) + "px";
+                        if (selected_tds != null) {
+                            drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content);
+                        }
                     }
                 }
-                document.body.onmouseup = function() {
+                document.documentElement.onmouseup = function() {
                     document.body.style.cursor = "default";
-                    document.body.onmousemove = null;
+                    document.documentElement.onmousemove = null;
                     onThResize(tds, ths, n);
                 }
             }
@@ -73,6 +76,7 @@ function onThResize(tds, ths, n) {
         for (let k = 0; k < ths.length; k++) {
             c.push(ths[k].getBoundingClientRect().left + content[n].scrollLeft); //5, 100, 195 вне зависимости от горизонтального скрол
         }
+        c.push(ths[ths.length - 1].getBoundingClientRect().left + ths[ths.length - 1].getBoundingClientRect().width + content[n].scrollLeft);
         return c;
     }
 
@@ -90,10 +94,10 @@ function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
     for (let i = 0; i < tds.length; i++) {
-        tds[i].onclick = function() {
+        /*tds[i].onclick = function() {
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
-        }
+        }*/
         tds[i].onmousedown = function(e) {
             if (e.which == 2) {
                 return false;
@@ -101,7 +105,7 @@ function onTdSelect(tds, ths, cnt_i) {
             getFirstCellParameters(i);
             drawCellRect(tds[i], tds[i], content[cnt_i]);
             scroll_interval = null;
-            let last_target = null;
+            let last_target = tds[i];
             let scroll_width = content[cnt_i].offsetWidth - content[cnt_i].clientWidth;
             let scroll_height = content[cnt_i].offsetHeight - content[cnt_i].clientHeight;
             let addit_width = scroll_width > 0 ? scroll_width : 10;
@@ -140,7 +144,6 @@ function onTdSelect(tds, ths, cnt_i) {
                 directions = { rs: false, rf: false, bs: false, bf: false, ls: false, lf: false, us: false, uf: false, end: false };
                 directions_mini = { r: false, b: false, l: false, u: false };
                 e.preventDefault();
-
                 let target = e.target;
                 if (arrayIndex(tds, target) != -1 && target != last_target) {
                     [second_col_i, second_row_i] = getColRow(arrayIndex(tds, target), ths.length);
@@ -341,6 +344,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 // сохранить выделенные ячейки/ячейку в двумерный массив
                 selected_tds = new Array();
                 console.log("onup ");
+                console.log(" ");
                 for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
                     let row_array = new Array();
                     for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
@@ -387,6 +391,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 second_col_i = second_col_i >= ths.length ? ths.length - 1 : second_col_i;
                 second_row_i = second_row_i >= tds.length / ths.length ? tds.length / ths.length - 1 : second_row_i;
                 [start_cell_i, end_cell_i] = getStartEndCells();
+                left = step_col * tds[end_cell_i].getBoundingClientRect().width; //если ширинв колонок разная
                 drawCellRect(tds[start_cell_i], tds[end_cell_i], selected_content);
                 selected_content.scrollBy({
                     top: top,
@@ -458,15 +463,16 @@ function onTdSelect(tds, ths, cnt_i) {
 
 /*рисование обводки ячейки*/
 function drawCellRect(td_start, td_end, content) {
-    //td_selection.classList.remove("active"); // firefox // лагает
+    console.log("draw");
     let td_start_top = td_start.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_start_left = td_start.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
     td_selection.style.top = td_start_top + "px";
     td_selection.style.left = td_start_left + "px";
     let td_end_top = td_end.getBoundingClientRect().top + content.scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_end_left = td_end.getBoundingClientRect().left + content.scrollLeft - vert_stub_left.getBoundingClientRect().width;
-    //td_selection.classList.add("active"); // chrome
-    td_selection.style.width = "0px";
+    if(td_start_top == td_end_top && td_start_left == td_end_left) {
+        td_selection_frame.dispatchEvent(new Event("resize"));
+    }
     td_selection.style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
     td_selection.style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
     td_selection.classList.add("active");
