@@ -52,7 +52,7 @@ function onThResize(tds, ths, n) {
             //console.log(index);
             table_header[n].style.cursor = "col-resize";
             table_header[n].onmousedown = function(e) {
-                e.preventDefault();
+                //e.preventDefault();
                 table_header[n].onmousemove = null;
                 let start_x = e.clientX;
                 let table_width = table_header[n].getBoundingClientRect().width;

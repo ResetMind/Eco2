@@ -82,12 +82,6 @@ header a:hover {
     right: 0px;
 }
 
-
-/*.wrapper {
-    margin: 40px 5px;
-    position: absolute;
-}*/
-
 .content {
     position: absolute;
     top: 63px;
@@ -156,6 +150,16 @@ td.selected, th.selected {
 .td_selection.active {
     display: block;
     /*transition-duration: 0.1s;*/
+}
+
+.context_menu {
+    z-index: 999;
+    position: absolute;
+    display: none;
+}
+
+.context_menu.active {
+    display: block;
 }
 
 iframe {
