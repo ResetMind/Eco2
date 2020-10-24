@@ -5,5 +5,5 @@ window.onload = function() {
 
 
 function showContextMenu(x, y, name) {
-    context_menu.classList.add("acive");
+    context_menu.classList.add("active");
 }
