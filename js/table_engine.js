@@ -1,34 +1,30 @@
-let table_header, footer, header, horiz_stub_bottom, horiz_stub_up;
-window.onload = function () {
-    horiz_stub_up = document.querySelector(".horiz_stub_up");
-    horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
-    vert_stub_left = document.querySelector(".vert_stub_left");
-    vert_stub_right = document.querySelector(".vert_stub_right");
-    header = document.querySelector("header");
-    footer = document.querySelector("footer");
-    table_header = document.querySelectorAll(".table_header");
-    table_header[0].style.visibility = "visible";
-    table_body = document.querySelectorAll(".table_body");
-    content = document.querySelectorAll(".content");
-    content[0].style.display = "block";
-    td_selection = document.querySelectorAll(".td_selection");
-    td_selection_frame = document.getElementsByName("td_selection_frame");
-    radios = document.querySelectorAll("input[type=\"radio\"]");
-    fast = document.querySelector(".fast");
-    slow = document.querySelector(".slow");
-    selected_td = null;
-    selected_tds = null;
-    selected_content = content[0];
-    selected_content_i = 0;
-    table_header[1].style.width = (content[0].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
-    table_header[2].style.width = table_header[1].style.width
-    table_body[1].style.width = table_header[1].style.width
-    table_body[2].style.width = table_header[1].style.width
-    onWindowResize();
-    onRadioChange();
-    setTableEngine(0);
-    setMapButton();
-}
+let horiz_stub_up = document.querySelector(".horiz_stub_up");
+let horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
+let vert_stub_left = document.querySelector(".vert_stub_left");
+let vert_stub_right = document.querySelector(".vert_stub_right");
+let header = document.querySelector("header");
+let footer = document.querySelector("footer");
+let table_header = document.querySelectorAll(".table_header");
+table_header[0].style.visibility = "visible";
+let table_body = document.querySelectorAll(".table_body");
+let content = document.querySelectorAll(".content");
+content[0].style.display = "block";
+let td_selection = document.querySelectorAll(".td_selection");
+let td_selection_frame = document.getElementsByName("td_selection_frame");
+let radios = document.querySelectorAll("input[type=\"radio\"]");
+let fast = document.querySelector(".fast");
+let slow = document.querySelector(".slow");
+let selected_tds = null;
+let selected_content = content[0];
+let selected_content_i = 0;
+table_header[1].style.width = (content[0].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
+table_header[2].style.width = table_header[1].style.width
+table_body[1].style.width = table_header[1].style.width
+table_body[2].style.width = table_header[1].style.width
+onWindowResize();
+onRadioChange();
+setTableEngine(0);
+//setMapButton();
 
 function setTableEngine(n) {
     let tds = table_body[n].querySelectorAll("td");
@@ -107,13 +103,34 @@ function onThResize(tds, ths, n) {
 function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
-    /*tds[td_i].onclick = function() {
-        getFirstCellParameters(i);
-        drawCellRect(tds[td_i], tds[td_i], content[cnt_i]);
-    }*/
+    table_body[cnt_i].onkeydown = function(e) {
+        if (e.code == "Tab") {
+            if(e.target.nodeName == "TD") {
+                let td_i = arrayIndex(tds, e.target);
+                td_i = td_i == tds.length - 1 ? td_i: td_i + 1;
+                getFirstCellParameters(td_i);
+                drawCellRect(tds[td_i], tds[td_i], cnt_i);
+            }
+        }
+        if ((e.code == "Enter" || e.code == "Escape") && selected_tds != null) {
+            e.preventDefault();
+            selected_tds[0][0].blur();
+            selected_tds = null;
+            removeCellRect(cnt_i);
+            removeBackground();
+            closeAllContext();
+            return;
+        }
+    }
     table_body[cnt_i].onmousedown = function (e) {
-        if (e.which == 2 || e.which == 3 || e.target.nodeName != "TD") {
+        console.log("onmousedown");
+        if (e.which == 2 || e.target.nodeName != "TD") {
             return false;
+        }
+        if (selected_tds != null) {
+            if (e.which == 3 && (selected_tds.length > 1 || selected_tds[0].length > 1)) {
+                return false;
+            }
         }
         let td_i = arrayIndex(tds, e.target);
         getFirstCellParameters(td_i);
@@ -151,6 +168,10 @@ function onTdSelect(tds, ths, cnt_i) {
         };
         /*скролл таблицы, когда драгаешь ячейку*/
         document.onmousemove = function (e) {
+            if (e.which == 3) {
+                return;
+            }
+            closeAllContext();
             let directions_clone = {};
             for (let key in directions) {
                 directions_clone[key] = directions[key];
@@ -271,16 +292,6 @@ function onTdSelect(tds, ths, cnt_i) {
                 let top = up_pos_slow + 3;
                 let bottom = scroll_width == 0 ? bottom_pos_fast - 3 : bottom_pos_slow - 3;
                 let cell = null;
-                /*fast.style.left = left_pos_fast + "px";
-                fast.style.top = up_pos_fast + "px";
-                fast.style.width = (right_pos_fast - left_pos_fast) + "px";
-                fast.style.height = (bottom_pos_fast - up_pos_fast) + "px";
-                fast.classList.add("active");*/
-                /*slow.style.left = left + "px";
-                slow.style.top = top + "px";
-                slow.style.width = (right - left) + "px";
-                slow.style.height = (bottom - top) + "px";
-                slow.classList.add("active");*/
                 if (e.clientX >= right) {
                     directions_mini.r = true;
                 }
@@ -415,12 +426,7 @@ function onTdSelect(tds, ths, cnt_i) {
 
     td_selection_frame[cnt_i].onresize = function () {
         console.log("size");
-        for (let k = 0; k < tds.length; k++) {
-            tds[k].classList.remove("selected");
-        }
-        for (let k = 0; k < ths.length; k++) {
-            ths[k].classList.remove("selected");
-        }
+        removeBackground();
         for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
             for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
                 let cur_cell_i = k * ths.length + j;
@@ -429,6 +435,15 @@ function onTdSelect(tds, ths, cnt_i) {
         }
         for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
             ths[j].classList.add("selected");
+        }
+    }
+
+    function removeBackground() {
+        for (let k = 0; k < tds.length; k++) {
+            tds[k].classList.remove("selected");
+        }
+        for (let k = 0; k < ths.length; k++) {
+            ths[k].classList.remove("selected");
         }
     }
 
@@ -452,7 +467,7 @@ function onTdSelect(tds, ths, cnt_i) {
 
     function getFirstCellParameters(td_i) {
         selected_content = content[cnt_i];
-        selected_td = tds[td_i];
+        selected_tds = [[tds[td_i]]];
         selected_content_i = cnt_i;
         [first_col_i, first_row_i] = getColRow(td_i, ths.length); /*узнать в какой колонке/line ячейка*/
         second_col_i = first_col_i;
@@ -486,6 +501,10 @@ function drawCellRect(td_start, td_end, cnt_i) {
     td_selection[cnt_i].style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
     td_selection[cnt_i].style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
     td_selection[cnt_i].classList.add("active");
+}
+
+function removeCellRect(cnt_i) {
+    td_selection[cnt_i].classList.remove("active");
 }
 
 function onWindowResize() {
@@ -523,4 +542,12 @@ function arrayIndex(arr, el) {
 
 function getColRow(i, ths_lenght) {
     return [i % ths_lenght, Math.floor(i / ths_lenght)];
+}
+
+function isElemDisplay(elem) {
+    console.log(elem.clientWidth);
+    if (elem.clientWidth == 0) {
+        return false;
+    }
+    return true;
 }

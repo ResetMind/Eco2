@@ -128,6 +128,7 @@ td {
 }
 
 td {
+    white-space: nowrap;
     background: transparent;
     outline: none;
 }
@@ -152,10 +153,12 @@ td.selected, th.selected {
     /*transition-duration: 0.1s;*/
 }
 
-.right_context_menu {
+.right_context_menu, .left_context_menu {
     list-style: none;
     background: #4c4947;
     width: 150px;
+    max-height: 300px;
+    overflow: auto;
     font-size: 12px;
     padding: 0;
     margin: 0;
@@ -164,11 +167,11 @@ td.selected, th.selected {
     display: none;
 }
 
-.right_context_menu.active {
+.right_context_menu.active, .left_context_menu.active {
     display: block;
 }
 
-.right_context_menu li {
+.right_context_menu li, .left_context_menu li{
     width: 100%;
     padding: 0px 5px 0px 5px;
     line-height: 35px;
@@ -180,7 +183,7 @@ td.selected, th.selected {
     color: #ceccce;
 }
 
-.right_context_menu li:hover {
+.right_context_menu li:hover, .left_context_menu li:hover {
     color: #f4f8f9;
     background: #3a3a3a;
     transition-duration: 0.3s;
