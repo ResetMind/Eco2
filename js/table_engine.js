@@ -1,10 +1,11 @@
-let table_header;
+let table_header, footer, header, horiz_stub_bottom, horiz_stub_up;
 window.onload = function() {
     horiz_stub_up = document.querySelector(".horiz_stub_up");
     horiz_stub_bottom = document.querySelector(".horiz_stub_bottom");
     vert_stub_left = document.querySelector(".vert_stub_left");
     vert_stub_right = document.querySelector(".vert_stub_right");
     header = document.querySelector("header");
+    footer = document.querySelector("footer");
     table_header = document.querySelectorAll(".table_header");
     table_header[0].style.visibility = "visible";
     table_body = document.querySelectorAll(".table_body");
@@ -112,7 +113,7 @@ function onTdSelect(tds, ths, cnt_i) {
             drawCellRect(tds[i], tds[i], content[cnt_i]);
         }*/
         tds[i].onmousedown = function(e) {
-            if (e.which == 2) {
+            if (e.which == 2 || e.which == 3) {
                 return false;
             }
             getFirstCellParameters(i);

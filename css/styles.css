@@ -152,14 +152,38 @@ td.selected, th.selected {
     /*transition-duration: 0.1s;*/
 }
 
-.context_menu {
+.right_context_menu {
+    list-style: none;
+    background: #4c4947;
+    width: 150px;
+    font-size: 12px;
+    padding: 0;
+    margin: 0;
     z-index: 999;
-    position: absolute;
+    position: fixed;
     display: none;
 }
 
-.context_menu.active {
+.right_context_menu.active {
     display: block;
+}
+
+.right_context_menu li {
+    width: 100%;
+    padding: 0px 5px 0px 5px;
+    line-height: 35px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+    color: #ceccce;
+}
+
+.right_context_menu li:hover {
+    color: #f4f8f9;
+    background: #3a3a3a;
+    transition-duration: 0.3s;
 }
 
 iframe {
