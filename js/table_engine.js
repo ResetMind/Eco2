@@ -491,8 +491,6 @@ function drawCellRect(td_start, td_end, cnt_i) {
     td_selection[cnt_i].classList.add("active");
 }
 
-window.onresize = onWindowResize;
-
 function onWindowResize() {
     /*для корректного отображения стыка заголовка и таблицы*/
     for (let i = 0; i < content.length; i++) {
