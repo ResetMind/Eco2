@@ -1,13 +1,12 @@
 let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
-createRows();
+let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
 setRightContextMenu();
 setLeftContextMenu();
 
-function createNewRow() {
-    new_row = table_body[selected_content_i].querySelector("tr");
+function createNewRow(index) {
     new_tr = document.createElement("tr");
-    new_tr.innerHTML = new_row.innerHTML;
+    new_tr.innerHTML = new_rows_inner[index];
 }
 
 function setRightContextMenu() {
@@ -26,14 +25,16 @@ function setRightContextMenu() {
         }
     }
     right_context_menu.querySelector(".r_row_up").onclick = function () {
-        createNewRow();
+        createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref);
         setTableEngine(selected_content_i);
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", {bubbles: true}));
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", {bubbles: true}));
     }
     right_context_menu.querySelector(".r_row_down").onclick = function () {
-        createNewRow();
+        createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref.nextSibling);

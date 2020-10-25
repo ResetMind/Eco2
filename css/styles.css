@@ -97,6 +97,7 @@ table {
     font-size: 12px;
     border-collapse: collapse;
     table-layout: fixed;
+    empty-cells: show;
 }
 
 .table_header {
@@ -133,8 +134,8 @@ td {
     outline: none;
 }
 
-
-td.selected, th.selected {
+td.selected,
+th.selected {
     background: rgba(110, 173, 58, 0.1);
 }
 
@@ -153,7 +154,8 @@ td.selected, th.selected {
     /*transition-duration: 0.1s;*/
 }
 
-.right_context_menu, .left_context_menu {
+.right_context_menu,
+.left_context_menu {
     list-style: none;
     background: #4c4947;
     width: 150px;
@@ -167,11 +169,13 @@ td.selected, th.selected {
     display: none;
 }
 
-.right_context_menu.active, .left_context_menu.active {
+.right_context_menu.active,
+.left_context_menu.active {
     display: block;
 }
 
-.right_context_menu li, .left_context_menu li{
+.right_context_menu li,
+.left_context_menu li {
     width: 100%;
     padding: 0px 5px 0px 5px;
     line-height: 35px;
@@ -183,17 +187,18 @@ td.selected, th.selected {
     color: #ceccce;
 }
 
-.right_context_menu li:hover, .left_context_menu li:hover {
+.right_context_menu li:hover,
+.left_context_menu li:hover {
     color: #f4f8f9;
     background: #3a3a3a;
     transition-duration: 0.3s;
 }
 
 iframe {
-    width:50%;
-    height:50%;
-    position:absolute;
-    z-index:-1;
+    width: 50%;
+    height: 50%;
+    position: absolute;
+    z-index: -1;
     opacity: 0;
 }
 

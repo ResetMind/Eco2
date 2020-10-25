@@ -32,10 +32,10 @@ function setTableEngine(n) {
     tds = table_body[n].querySelectorAll("td");
     ths = table_header[n].querySelectorAll("th");
     /*перемещение фиксированной шапки вместе со скроллом таблицы*/
-    content[n].onscroll = function () {
+    content[n].onscroll = function() {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";
     }
-    content_frame.onresize = function () {
+    content_frame.onresize = function() {
         onWindowResize();
         onThResize(tds, ths, n);
     }
@@ -45,19 +45,19 @@ function setTableEngine(n) {
 
 function onThResize(tds, ths, n) {
     let c = getBordersCoord();
-    table_header[n].onmousemove = function (e) {
+    table_header[n].onmousemove = function(e) {
         let index = getBorder(c, e.clientX + content[n].scrollLeft);
         if (index != -1) {
             //console.log(index);
             table_header[n].style.cursor = "col-resize";
-            table_header[n].onmousedown = function (e) {
+            table_header[n].onmousedown = function(e) {
                 //e.preventDefault();
                 table_header[n].onmousemove = null;
                 let start_x = e.clientX;
                 let table_width = table_header[n].getBoundingClientRect().width;
                 let col_width = ths[index - 1].getBoundingClientRect().width - parseInt(getComputedStyle(ths[index - 1]).paddingLeft) * 2;
                 console.log(table_width + " " + col_width);
-                document.documentElement.onmousemove = function (e) {
+                document.documentElement.onmousemove = function(e) {
                     document.body.style.cursor = "col-resize";
                     let new_col_width = col_width + e.clientX - start_x;
                     if (new_col_width > 10) {
@@ -70,7 +70,7 @@ function onThResize(tds, ths, n) {
                         }
                     }
                 }
-                document.documentElement.onmouseup = function () {
+                document.documentElement.onmouseup = function() {
                     document.body.style.cursor = "default";
                     document.documentElement.onmousemove = null;
                     table_header[n].onmousedown = null;
@@ -105,7 +105,7 @@ function onThResize(tds, ths, n) {
 function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
-    table_body[cnt_i].onkeydown = function (e) {
+    table_body[cnt_i].onkeydown = function(e) {
         if (e.code == "Tab") {
             if (e.target.nodeName == "TD") {
                 let td_i = arrayIndex(tds, e.target);
@@ -126,19 +126,25 @@ function onTdSelect(tds, ths, cnt_i) {
             return;
         }
     }
-    table_body[cnt_i].onmousedown = function (e) {
-        console.log("onmousedown");
+    table_body[cnt_i].onmousedown = function(e) {
+        console.log("onmousedown ");
         if (e.which == 2 || e.target.nodeName != "TD") {
             return false;
         }
         if (selected_tds != null) {
-            if (e.which == 3 && (selected_tds.length > 1 || selected_tds[0].length > 1)) {
+            if (e.which == 3 && TwoDimArrayIndex(selected_tds, e.target) != -1) {
                 return false;
             }
         }
         let td_i = arrayIndex(tds, e.target);
         getFirstCellParameters(td_i);
         drawCellRect(tds[td_i], tds[td_i], cnt_i);
+        for(let k = 0; k < selected_tds.length; k++) {
+            for(let j = 0; j < selected_tds[k].length; j++) {
+                console.log(selected_tds[k][j]);
+            }
+            console.log("");
+        }
         scroll_interval = null;
         let last_target = tds[td_i];
         let scroll_width = content[cnt_i].offsetWidth - content[cnt_i].clientWidth;
@@ -171,7 +177,7 @@ function onTdSelect(tds, ths, cnt_i) {
             u: false
         };
         /*скролл таблицы, когда драгаешь ячейку*/
-        document.onmousemove = function (e) {
+        document.onmousemove = function(e) {
             if (e.which == 3) {
                 return;
             }
@@ -369,7 +375,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 }
             }
         }
-        document.onmouseup = function () {
+        document.onmouseup = function() {
             // сохранить выделенные ячейки/ячейку в двумерный массив
             selected_tds = new Array();
             console.log("onup ");
@@ -428,7 +434,7 @@ function onTdSelect(tds, ths, cnt_i) {
         return setInterval(scroll, delay);
     }
 
-    td_selection_frame[cnt_i].onresize = function () {
+    td_selection_frame[cnt_i].onresize = function() {
         console.log("size");
         removeBackground();
         for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
@@ -471,7 +477,9 @@ function onTdSelect(tds, ths, cnt_i) {
 
     function getFirstCellParameters(td_i) {
         selected_content = content[cnt_i];
-        selected_tds = [[tds[td_i]]];
+        selected_tds = [
+            [tds[td_i]]
+        ];
         selected_td_i = td_i;
         selected_content_i = cnt_i;
         [first_col_i, first_row_i] = getColRow(td_i, ths.length); /*узнать в какой колонке/line ячейка*/
@@ -526,7 +534,7 @@ function onWindowResize() {
 function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {
         console.log(i);
-        radios[i].addEventListener("change", function () {
+        radios[i].addEventListener("change", function() {
             setTableEngine(i);
             content.forEach(elem => { elem.style.display = "none"; });
             content[i].style.display = "block";
@@ -540,6 +548,17 @@ function arrayIndex(arr, el) {
     for (let i = 0; i < arr.length; i++) {
         if (arr[i] == el) {
             return i;
+        }
+    }
+    return -1;
+}
+
+function TwoDimArrayIndex(arr, el) {
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+            if (arr[i][j] == el) {
+                return [i, j];
+            }
         }
     }
     return -1;
