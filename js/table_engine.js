@@ -15,8 +15,10 @@ let radios = document.querySelectorAll("input[type=\"radio\"]");
 let fast = document.querySelector(".fast");
 let slow = document.querySelector(".slow");
 let selected_tds = null;
+let selected_td_i = null;
 let selected_content = content[0];
 let selected_content_i = 0;
+let tds, ths;
 table_header[1].style.width = (content[0].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
 table_header[2].style.width = table_header[1].style.width
 table_body[1].style.width = table_header[1].style.width
@@ -27,8 +29,8 @@ setTableEngine(0);
 //setMapButton();
 
 function setTableEngine(n) {
-    let tds = table_body[n].querySelectorAll("td");
-    let ths = table_header[n].querySelectorAll("th");
+    tds = table_body[n].querySelectorAll("td");
+    ths = table_header[n].querySelectorAll("th");
     /*перемещение фиксированной шапки вместе со скроллом таблицы*/
     content[n].onscroll = function () {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";
@@ -103,19 +105,21 @@ function onThResize(tds, ths, n) {
 function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
-    table_body[cnt_i].onkeydown = function(e) {
+    table_body[cnt_i].onkeydown = function (e) {
         if (e.code == "Tab") {
-            if(e.target.nodeName == "TD") {
+            if (e.target.nodeName == "TD") {
                 let td_i = arrayIndex(tds, e.target);
-                td_i = td_i == tds.length - 1 ? td_i: td_i + 1;
+                td_i = td_i == tds.length - 1 ? td_i : td_i + 1;
                 getFirstCellParameters(td_i);
                 drawCellRect(tds[td_i], tds[td_i], cnt_i);
             }
         }
-        if ((e.code == "Enter" || e.code == "Escape") && selected_tds != null) {
+        if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
-            selected_tds[0][0].blur();
-            selected_tds = null;
+            if (selected_tds != null) {
+                selected_tds[0][0].blur();
+                selected_tds = null;
+            }
             removeCellRect(cnt_i);
             removeBackground();
             closeAllContext();
@@ -468,6 +472,7 @@ function onTdSelect(tds, ths, cnt_i) {
     function getFirstCellParameters(td_i) {
         selected_content = content[cnt_i];
         selected_tds = [[tds[td_i]]];
+        selected_td_i = td_i;
         selected_content_i = cnt_i;
         [first_col_i, first_row_i] = getColRow(td_i, ths.length); /*узнать в какой колонке/line ячейка*/
         second_col_i = first_col_i;
