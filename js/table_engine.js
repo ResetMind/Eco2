@@ -19,11 +19,7 @@ let selected_td_i = null;
 let selected_content = content[0];
 let selected_content_i = 0;
 let tds, ths;
-table_header[1].style.width = (content[0].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
-table_header[2].style.width = table_header[1].style.width
-table_body[1].style.width = table_header[1].style.width
-table_body[2].style.width = table_header[1].style.width
-onWindowResize();
+onWindowResize(0);
 onRadioChange();
 setTableEngine(0);
 //setMapButton();
@@ -35,10 +31,12 @@ function setTableEngine(n) {
     content[n].onscroll = function() {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";
     }
-    content_frame.onresize = function() {
-        onWindowResize();
+    window.onresize = function() {
+        console.log("window.onresize");
+        onWindowResize(n);
         onThResize(tds, ths, n);
     }
+    onWindowResize(n);
     onTdSelect(tds, ths, n);
     onThResize(tds, ths, n);
 }
@@ -120,6 +118,7 @@ function onTdSelect(tds, ths, cnt_i) {
     }
     table_body[cnt_i].removeEventListener("focusin", onFocusIn);
     table_body[cnt_i].addEventListener("focusin", onFocusIn);
+
     function onFocusIn(e) {
         if (e.target.nodeName == "TD") {
             let td_i = arrayIndex(tds, e.target);
@@ -515,11 +514,13 @@ function removeCellRect(cnt_i) {
     td_selection[cnt_i].classList.remove("active");
 }
 
-function onWindowResize() {
-    /*для корректного отображения стыка заголовка и таблицы*/
-    for (let i = 0; i < content.length; i++) {
-        content[i].style.top = table_header[i].getBoundingClientRect().height + header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + "px";
+function onWindowResize(n) {
+    if (n > 0) {
+        table_header[n].style.width = (content[n].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
+        table_body[n].style.width = table_header[n].style.width;
     }
+    /*для корректного отображения стыка заголовка и таблицы*/
+    content[n].style.top = table_header[n].getBoundingClientRect().height + header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + "px";
     /*для корректного отображения выделения ячейки*/
     if (selected_tds != null) {
         drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
@@ -530,11 +531,11 @@ function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {
         console.log(i);
         radios[i].addEventListener("change", function() {
-            setTableEngine(i);
             content.forEach(elem => { elem.style.display = "none"; });
             content[i].style.display = "block";
             table_header.forEach(elem => { elem.style.visibility = "hidden"; });
             table_header[i].style.visibility = "visible";
+            setTableEngine(i);
         });
     }
 }
