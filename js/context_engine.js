@@ -25,8 +25,24 @@ function setRightContextMenu() {
                 right_context_menu.querySelector(".r_row_down").style.display = "block";
             }
             showContextMenu(e.clientX, e.clientY, right_context_menu);
+            if (selected_tds.length == 1 && selected_tds[0].length == 1) {
+                //if(e.code == "Tab")
+            }
         }
     }
+    table_body[selected_content_i].addEventListener("keyup", function(e) {
+        let ctrl = false;
+        if(e.code == "ControlLeft") {
+            ctrl = true;
+        } else {
+            ctrl = false;
+        }
+        console.log(ctrl);
+        console.log(e.code);
+        if(e.code == "KeyC" && ctrl) {
+            r_copy.dispatchEvent(new Event("mousedown"));
+        }
+    });
     r_copy.setAttribute("data-clipboard-action", "copy");
     r_copy.onmousedown = copy;
     r_cut.setAttribute("data-clipboard-action", "cut");
