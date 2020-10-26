@@ -1,3 +1,6 @@
+let r_copy = document.querySelector(".r_copy");
+let r_paste = document.querySelector(".r_paste");
+let r_cut = document.querySelector(".r_сut");
 let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
 let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
@@ -10,7 +13,7 @@ function createNewRow(index) {
 }
 
 function setRightContextMenu() {
-    document.body.oncontextmenu = function (e) {
+    document.body.oncontextmenu = function(e) {
         if (e.target.nodeName == "TD") {
             e.preventDefault();
             closeContextMenu(left_context_menu);
@@ -24,26 +27,46 @@ function setRightContextMenu() {
             showContextMenu(e.clientX, e.clientY, right_context_menu);
         }
     }
-    right_context_menu.querySelector(".r_row_up").onclick = function () {
+    r_copy.setAttribute("data-clipboard-action", "copy");
+    r_copy.onmousedown = copy;
+    r_cut.setAttribute("data-clipboard-action", "cut");
+    r_cut.onmousedown = cut;
+    right_context_menu.querySelector(".r_row_up").onclick = function() {
         createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref);
         setTableEngine(selected_content_i);
-        tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", {bubbles: true}));
-        tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", {bubbles: true}));
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", { bubbles: true }));
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
     }
-    right_context_menu.querySelector(".r_row_down").onclick = function () {
+    right_context_menu.querySelector(".r_row_down").onclick = function() {
         createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref.nextSibling);
         setTableEngine(selected_content_i);
     }
+    function copy() {
+        if (selected_tds.length == 1 && selected_tds[0].length == 1) {
+            console.log("singlecopy " + selected_tds[0][0].innerHTML);
+            setClipParam(r_copy, selected_tds[0][0]);
+        } else {
+            
+        }
+    }
+    function cut() {
+        if (selected_tds.length == 1 && selected_tds[0].length == 1) {
+            console.log("singlecut " + selected_tds[0][0].innerHTML);
+            setClipParam(r_cut, selected_tds[0][0]);
+        } else {
+            
+        }
+    }
 }
 
 function setLeftContextMenu() {
-    document.documentElement.onclick = function (e) {
+    document.documentElement.onclick = function(e) {
         closeContextMenu(right_context_menu);
         if (e.target.nodeName != "TD" || selected_content_i != 0) {
             closeContextMenu(left_context_menu);

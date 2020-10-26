@@ -19,10 +19,12 @@ let selected_td_i = null;
 let selected_content = content[0];
 let selected_content_i = 0;
 let tds, ths;
-onWindowResize(0);
-onRadioChange();
-setTableEngine(0);
-//setMapButton();
+
+window.onload = function() {
+    onRadioChange();
+    setTableEngine(0);
+    //setMapButton();
+}
 
 function setTableEngine(n) {
     tds = table_body[n].querySelectorAll("td");
@@ -32,7 +34,6 @@ function setTableEngine(n) {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";
     }
     window.onresize = function() {
-        console.log("window.onresize");
         onWindowResize(n);
         onThResize(tds, ths, n);
     }
@@ -104,6 +105,15 @@ function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
+        if(e.code == "Tab") {
+            if(document.activeElement.nextElementSibling.nodeName == "TD") {
+                let td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
+                getFirstCellParameters(td_i);
+                drawCellRect(tds[td_i], tds[td_i], cnt_i);
+            }
+            console.log("Tab");
+            console.log(document.activeElement);
+        }
         if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
             if (selected_tds != null) {
@@ -114,16 +124,6 @@ function onTdSelect(tds, ths, cnt_i) {
             removeBackground();
             closeAllContext();
             return;
-        }
-    }
-    table_body[cnt_i].removeEventListener("focusin", onFocusIn);
-    table_body[cnt_i].addEventListener("focusin", onFocusIn);
-
-    function onFocusIn(e) {
-        if (e.target.nodeName == "TD") {
-            let td_i = arrayIndex(tds, e.target);
-            getFirstCellParameters(td_i);
-            drawCellRect(tds[td_i], tds[td_i], cnt_i);
         }
     }
     table_body[cnt_i].onmousedown = function(e) {
