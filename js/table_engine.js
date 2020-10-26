@@ -106,14 +106,6 @@ function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
-        if (e.code == "Tab") {
-            if (e.target.nodeName == "TD") {
-                let td_i = arrayIndex(tds, e.target);
-                td_i = td_i == tds.length - 1 ? td_i : td_i + 1;
-                getFirstCellParameters(td_i);
-                drawCellRect(tds[td_i], tds[td_i], cnt_i);
-            }
-        }
         if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
             if (selected_tds != null) {
@@ -124,6 +116,15 @@ function onTdSelect(tds, ths, cnt_i) {
             removeBackground();
             closeAllContext();
             return;
+        }
+    }
+    table_body[cnt_i].removeEventListener("focusin", onFocusIn);
+    table_body[cnt_i].addEventListener("focusin", onFocusIn);
+    function onFocusIn(e) {
+        if (e.target.nodeName == "TD") {
+            let td_i = arrayIndex(tds, e.target);
+            getFirstCellParameters(td_i);
+            drawCellRect(tds[td_i], tds[td_i], cnt_i);
         }
     }
     table_body[cnt_i].onmousedown = function(e) {
@@ -139,12 +140,6 @@ function onTdSelect(tds, ths, cnt_i) {
         let td_i = arrayIndex(tds, e.target);
         getFirstCellParameters(td_i);
         drawCellRect(tds[td_i], tds[td_i], cnt_i);
-        for(let k = 0; k < selected_tds.length; k++) {
-            for(let j = 0; j < selected_tds[k].length; j++) {
-                console.log(selected_tds[k][j]);
-            }
-            console.log("");
-        }
         scroll_interval = null;
         let last_target = tds[td_i];
         let scroll_width = content[cnt_i].offsetWidth - content[cnt_i].clientWidth;
