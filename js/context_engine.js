@@ -49,7 +49,7 @@ function setRightContextMenu() {
             printTwoDimArray(copy_cut_array);
             paste();
         } else {
-
+            
         }
         onClipboardSuccess();
     }

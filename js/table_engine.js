@@ -105,14 +105,15 @@ function onTdSelect(tds, ths, cnt_i) {
     let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i, td_i;
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
-        if(e.code == "Tab") {
-            if(document.activeElement.nextElementSibling.nodeName == "TD") {
+        if (e.code == "Tab") {
+            if (document.activeElement.nextElementSibling.nodeName == "TD") {
                 td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
+                tds[td_i].onfocus = selectOnFocus;
                 getFirstCellParameters(td_i);
                 drawCellRect(tds[td_i], tds[td_i], cnt_i);
             }
-            console.log("Tab");
-            console.log(document.activeElement);
+            /*console.log("Tab");
+            console.log(document.activeElement);*/
         }
         if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
@@ -139,6 +140,7 @@ function onTdSelect(tds, ths, cnt_i) {
             }
         }
         td_i = arrayIndex(tds, e.target);
+        tds[td_i].onfocus = selectOnFocus;
         getFirstCellParameters(td_i);
         drawCellRect(tds[td_i], tds[td_i], cnt_i);
         scroll_interval = null;
@@ -177,6 +179,11 @@ function onTdSelect(tds, ths, cnt_i) {
             if (e.which == 3) {
                 return;
             }
+            if (tds[td_i].onselectstart == null) {
+                tds[td_i].onselectstart = function() {
+                    return false;
+                }
+            }
             closeAllContext();
             let directions_clone = {};
             for (let key in directions) {
@@ -191,9 +198,10 @@ function onTdSelect(tds, ths, cnt_i) {
                 [start_cell_i, end_cell_i] = getStartEndCells();
                 drawCellRect(tds[start_cell_i], tds[end_cell_i], cnt_i);
                 last_target = target;
-                if(tds[td_i].hasAttribute("contenteditable")) {
-                    console.log("removecontenteditable");
-                    tds[td_i].removeAttribute("contenteditable");
+                if (tds[td_i] === document.activeElement) { //чтоб при множественном выделении каретка не мигала ff g
+                    tds[td_i].blur();
+                    table_body[cnt_i].focus();
+                    document.getSelection().removeAllRanges(); //
                 }
             }
             // right
@@ -377,6 +385,7 @@ function onTdSelect(tds, ths, cnt_i) {
         }
         document.onmouseup = function() {
             // сохранить выделенные ячейки/ячейку в двумерный массив
+            tds[td_i].onselectstart = null;
             selected_tds = new Array();
             console.log("onup ");
             console.log(" ");
@@ -497,12 +506,21 @@ function onTdSelect(tds, ths, cnt_i) {
         end_cell_i = start_cell_i + ths.length * Math.abs(first_row_i - second_row_i) + Math.abs(first_col_i - second_col_i);
         return [start_cell_i, end_cell_i];
     }
+
+    function selectOnFocus() {
+        console.log("tds[td_i].onfocus " + tds[td_i].innerHTML);
+        let range = new Range();
+        range.selectNodeContents(tds[td_i]);
+        document.getSelection().removeAllRanges();
+        document.getSelection().addRange(range);
+        tds[td_i].onfocus = null;
+    }
 }
 
 /*рисование обводки ячейки*/
 function drawCellRect(td_start, td_end, cnt_i) {
     console.log("draw");
-    if(td_selection[cnt_i].classList.contains("transition")) {
+    if (td_selection[cnt_i].classList.contains("transition")) {
         td_selection[cnt_i].classList.remove("transition");
     }
     let td_start_top = td_start.getBoundingClientRect().top + content[cnt_i].scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
@@ -582,8 +600,8 @@ function isElemDisplay(elem) {
 }
 
 function printTwoDimArray(arr) {
-    for(let k = 0; k < arr.length; k++) {
-        for(let j = 0; j < arr[k].length; j++) {
+    for (let k = 0; k < arr.length; k++) {
+        for (let j = 0; j < arr[k].length; j++) {
             console.log(arr[k][j]);
         }
         console.log("");
