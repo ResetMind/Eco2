@@ -102,12 +102,12 @@ function onThResize(tds, ths, n) {
 }
 
 function onTdSelect(tds, ths, cnt_i) {
-    let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i;
+    let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i, td_i;
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
         if(e.code == "Tab") {
             if(document.activeElement.nextElementSibling.nodeName == "TD") {
-                let td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
+                td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
                 getFirstCellParameters(td_i);
                 drawCellRect(tds[td_i], tds[td_i], cnt_i);
             }
@@ -117,7 +117,9 @@ function onTdSelect(tds, ths, cnt_i) {
         if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
             if (selected_tds != null) {
-                selected_tds[0][0].blur();
+                /*selected_tds[0][0].blur(); // смотря в каком углу первая ячейка
+                selected_tds[selected_tds.length - 1][selected_tds[0].length - 1].blur();*/
+                tds[td_i].blur();
                 selected_tds = null;
             }
             removeCellRect(cnt_i);
@@ -136,7 +138,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 return false;
             }
         }
-        let td_i = arrayIndex(tds, e.target);
+        td_i = arrayIndex(tds, e.target);
         getFirstCellParameters(td_i);
         drawCellRect(tds[td_i], tds[td_i], cnt_i);
         scroll_interval = null;
@@ -189,6 +191,10 @@ function onTdSelect(tds, ths, cnt_i) {
                 [start_cell_i, end_cell_i] = getStartEndCells();
                 drawCellRect(tds[start_cell_i], tds[end_cell_i], cnt_i);
                 last_target = target;
+                if(tds[td_i].hasAttribute("contenteditable")) {
+                    console.log("removecontenteditable");
+                    tds[td_i].removeAttribute("contenteditable");
+                }
             }
             // right
             if (e.clientX >= right_pos_slow && e.clientX < right_pos_fast) {
@@ -496,6 +502,9 @@ function onTdSelect(tds, ths, cnt_i) {
 /*рисование обводки ячейки*/
 function drawCellRect(td_start, td_end, cnt_i) {
     console.log("draw");
+    if(td_selection[cnt_i].classList.contains("transition")) {
+        td_selection[cnt_i].classList.remove("transition");
+    }
     let td_start_top = td_start.getBoundingClientRect().top + content[cnt_i].scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_start_left = td_start.getBoundingClientRect().left + content[cnt_i].scrollLeft - vert_stub_left.getBoundingClientRect().width;
     td_selection[cnt_i].style.top = td_start_top + "px";
@@ -570,4 +579,13 @@ function isElemDisplay(elem) {
         return false;
     }
     return true;
+}
+
+function printTwoDimArray(arr) {
+    for(let k = 0; k < arr.length; k++) {
+        for(let j = 0; j < arr[k].length; j++) {
+            console.log(arr[k][j]);
+        }
+        console.log("");
+    }
 }

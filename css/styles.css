@@ -139,6 +139,10 @@ th.selected {
     background: rgba(110, 173, 58, 0.1);
 }
 
+td.error {
+    background: rgba(255, 0, 0, 0.1);
+}
+
 .td_selection {
     z-index: 999;
     position: absolute;
@@ -146,12 +150,23 @@ th.selected {
     border: 1px solid #6ead3a;
     box-sizing: border-box;
     pointer-events: none;
-    /*transition-duration: 0.1s;*/
+}
+
+.td_selection.transition {
+    transition-duration: 0.2s;
 }
 
 .td_selection.active {
     display: block;
     /*transition-duration: 0.1s;*/
+}
+
+.td_selection.success {
+    border: 1px solid #beff89;
+}
+
+.td_selection.error {
+    border: 1px solid #ff0000;
 }
 
 .right_context_menu,

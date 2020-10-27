@@ -1,9 +1,12 @@
 let r_copy = document.querySelector(".r_copy");
 let r_paste = document.querySelector(".r_paste");
 let r_cut = document.querySelector(".r_сut");
+let r_row_up = document.querySelector(".r_row_up");
+let r_row_down = document.querySelector(".r_row_down");
 let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
 let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
+let copy_cut_array = null;
 setRightContextMenu();
 setLeftContextMenu();
 
@@ -18,11 +21,11 @@ function setRightContextMenu() {
             e.preventDefault();
             closeContextMenu(left_context_menu);
             if (selected_tds.length > 1) {
-                right_context_menu.querySelector(".r_row_up").style.display = "none";
-                right_context_menu.querySelector(".r_row_down").style.display = "none";
+                r_row_up.style.display = "none";
+                r_row_down.style.display = "none";
             } else {
-                right_context_menu.querySelector(".r_row_up").style.display = "block";
-                right_context_menu.querySelector(".r_row_down").style.display = "block";
+                r_row_up.style.display = "block";
+                r_row_down.style.display = "block";
             }
             showContextMenu(e.clientX, e.clientY, right_context_menu);
             if (selected_tds.length == 1 && selected_tds[0].length == 1) {
@@ -30,24 +33,45 @@ function setRightContextMenu() {
             }
         }
     }
-    table_body[selected_content_i].addEventListener("keyup", function(e) {
-        let ctrl = false;
-        if(e.code == "ControlLeft") {
-            ctrl = true;
-        } else {
-            ctrl = false;
-        }
-        console.log(ctrl);
-        console.log(e.code);
-        if(e.code == "KeyC" && ctrl) {
-            r_copy.dispatchEvent(new Event("mousedown"));
-        }
-    });
     r_copy.setAttribute("data-clipboard-action", "copy");
     r_copy.onmousedown = copy;
+    r_copy.onclick = function() {
+        if(!isSingleSelect()) {
+            console.log("r_copy.onclick multi");
+            copy_cut_array = getSelectedInners();
+        }
+    }
     r_cut.setAttribute("data-clipboard-action", "cut");
     r_cut.onmousedown = cut;
-    right_context_menu.querySelector(".r_row_up").onclick = function() {
+    r_paste.onclick = function() {
+        if(copy_cut_array != null) {
+            console.log("r_paste.onclick");
+            printTwoDimArray(copy_cut_array);
+            paste();
+        } else {
+
+        }
+        onClipboardSuccess();
+    }
+    let ctrl = false;
+    table_body[selected_content_i].addEventListener("keyup", function(e) {
+        if(e.code == "KeyC" && ctrl) {
+            console.log("ctrl c");
+            r_copy.dispatchEvent(new Event("mousedown"));
+            r_copy.dispatchEvent(new Event("click"));
+        }
+        if(e.code == "KeyX" && ctrl) {
+            console.log("ctrl x");
+            r_cut.dispatchEvent(new Event("mousedown"));
+            r_cut.dispatchEvent(new Event("click"));
+        }
+        if(e.code == "KeyV" && ctrl) {
+            console.log("ctrl v");
+            r_paste.dispatchEvent(new Event("click"));
+        }
+        ctrl = e.code == "ControlLeft";
+    });
+    r_row_up.onclick = function() {
         createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
@@ -56,7 +80,7 @@ function setRightContextMenu() {
         tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", { bubbles: true }));
         tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
     }
-    right_context_menu.querySelector(".r_row_down").onclick = function() {
+    r_row_down.onclick = function() {
         createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
@@ -64,20 +88,52 @@ function setRightContextMenu() {
         setTableEngine(selected_content_i);
     }
     function copy() {
-        if (selected_tds.length == 1 && selected_tds[0].length == 1) {
+        if (isSingleSelect()) {
             console.log("singlecopy " + selected_tds[0][0].innerHTML);
             setClipParam(r_copy, selected_tds[0][0]);
+            copy_cut_array = null;
         } else {
-            
+            destroyClipboard();
         }
     }
     function cut() {
-        if (selected_tds.length == 1 && selected_tds[0].length == 1) {
+        if (isSingleSelect()) {
             console.log("singlecut " + selected_tds[0][0].innerHTML);
             setClipParam(r_cut, selected_tds[0][0]);
+            copy_cut_array = null;
         } else {
-            
+            destroyClipboard();
         }
+    }
+
+    function paste() {
+        for(let k = 0; k < selected_tds.length; k++) {
+            if(k > copy_cut_array.length - 1) {
+                break;
+            }
+            for(let j = 0; j < selected_tds[k].length; j++) {
+                if(j > copy_cut_array[k].length - 1) {
+                    break;
+                }
+                selected_tds[k][j].innerHTML = copy_cut_array[k][j];
+            }
+        }
+    }
+
+    function isSingleSelect() {
+        return selected_tds.length == 1 && selected_tds[0].length == 1;
+    }
+
+    function getSelectedInners() {
+        let array = [];
+        for(let k = 0; k < selected_tds.length; k++) {
+            let row = [];
+            for(let j = 0; j < selected_tds[k].length; j++) {
+                row.push(selected_tds[k][j].innerHTML);
+            }
+            array.push(row);
+        }
+        return array;
     }
 }
 
