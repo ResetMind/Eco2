@@ -7,6 +7,7 @@ let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
 let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
 let copy_cut_array = null;
+let ctrl = false;
 setRightContextMenu();
 setLeftContextMenu();
 
@@ -33,29 +34,59 @@ function setRightContextMenu() {
                 r_paste.style.display = "none";
             }
             showContextMenu(e.clientX, e.clientY, right_context_menu);
-            if (selected_tds.length == 1 && selected_tds[0].length == 1) {
-                //if(e.code == "Tab")
-            }
         }
     }
+    table_body[0].onkeyup = onKeyUp;
+    table_body[1].onkeyup = onKeyUp;
+    table_body[2].onkeyup = onKeyUp;
     r_copy.setAttribute("data-clipboard-action", "copy");
     r_copy.onmousedown = copy;
     r_copy.onclick = function() {
         if (!isSingleSelect()) {
             console.log("r_copy.onclick multi");
-            copy_cut_array = getSelectedInners();
+            copy_cut_array = getSelectedInners(false);
+            table_body[0].onkeydown = onKeyDown;
+            table_body[1].onkeydown = onKeyDown;
+            table_body[2].onkeydown = onKeyDown;
         }
+        onClipboardSuccess();
     }
     r_cut.setAttribute("data-clipboard-action", "cut");
     r_cut.onmousedown = cut;
+    r_cut.onclick = function() {
+        if (!isSingleSelect()) {
+            console.log("r_cut.onclick multi");
+            copy_cut_array = getSelectedInners(true);
+            table_body[0].onkeydown = onKeyDown;
+            table_body[1].onkeydown = onKeyDown;
+            table_body[2].onkeydown = onKeyDown;
+        }
+        onClipboardSuccess();
+    }
     r_paste.onclick = function() {
         console.log("r_paste.onclick");
         printTwoDimArray(copy_cut_array);
         paste();
         onClipboardSuccess();
     }
-    let ctrl = false;
-    table_body[selected_content_i].addEventListener("keyup", function(e) {
+    r_row_up.onclick = function() {
+        createNewRow(selected_content_i);
+        let row = getColRow(selected_td_i, ths.length)[1];
+        let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
+        ref.parentNode.insertBefore(new_tr, ref);
+        setTableEngine(selected_content_i);
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", { bubbles: true }));
+        tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
+    }
+    r_row_down.onclick = function() {
+        createNewRow(selected_content_i);
+        let row = getColRow(selected_td_i, ths.length)[1];
+        let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
+        ref.parentNode.insertBefore(new_tr, ref.nextSibling);
+        setTableEngine(selected_content_i);
+    }
+
+    function onKeyUp(e) {
         if (e.code == "KeyC" && ctrl) {
             console.log("ctrl c");
             r_copy.dispatchEvent(new Event("mousedown"));
@@ -73,22 +104,14 @@ function setRightContextMenu() {
             }
         }
         ctrl = e.code == "ControlLeft";
-    });
-    r_row_up.onclick = function() {
-        createNewRow(selected_content_i);
-        let row = getColRow(selected_td_i, ths.length)[1];
-        let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
-        ref.parentNode.insertBefore(new_tr, ref);
-        setTableEngine(selected_content_i);
-        tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", { bubbles: true }));
-        tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
     }
-    r_row_down.onclick = function() {
-        createNewRow(selected_content_i);
-        let row = getColRow(selected_td_i, ths.length)[1];
-        let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
-        ref.parentNode.insertBefore(new_tr, ref.nextSibling);
-        setTableEngine(selected_content_i);
+
+    function onKeyDown(e) {
+        if (e.code == "KeyV" && ctrl) {
+            e.preventDefault();
+            console.log("ctrl v onKeyDown");
+        }
+        ctrl = e.code == "ControlLeft";
     }
 
     function copy() {
@@ -129,12 +152,15 @@ function setRightContextMenu() {
         return selected_tds.length == 1 && selected_tds[0].length == 1;
     }
 
-    function getSelectedInners() {
+    function getSelectedInners(cut) {
         let array = [];
         for (let k = 0; k < selected_tds.length; k++) {
             let row = [];
             for (let j = 0; j < selected_tds[k].length; j++) {
                 row.push(selected_tds[k][j].innerHTML);
+                if(cut) {
+                    selected_tds[k][j].innerHTML = "";
+                }
             }
             array.push(row);
         }

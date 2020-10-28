@@ -11,6 +11,9 @@ function setClipParam(trigger, target) {
         console.info("Action:", e.action);
         console.info("Text:", e.text);
         console.info("Trigger:", e.trigger);
+        table_body[0].onkeydown = null;
+        table_body[1].onkeydown = null;
+        table_body[2].onkeydown = null;
         e.clearSelection();
         onClipboardSuccess();
     });
