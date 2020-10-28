@@ -158,7 +158,7 @@ function setRightContextMenu() {
             let row = [];
             for (let j = 0; j < selected_tds[k].length; j++) {
                 row.push(selected_tds[k][j].innerHTML);
-                if(cut) {
+                if (cut) {
                     selected_tds[k][j].innerHTML = "";
                 }
             }
@@ -190,14 +190,36 @@ function setLeftContextMenu() {
 }
 
 function createCulturesAndFieldsContext(table_num, step) {
+    let cultures = [];
     let tds = table_body[table_num].querySelectorAll("td");
     left_context_menu.innerHTML = "";
+    if (table_num == 2) {
+        existingCultures();
+    }
+    //console.log(cultures);
     for (let i = 1; i < tds.length; i += step) {
         let li = document.createElement("li");
         li.innerHTML = tds[i].innerHTML;
-        if (!left_context_menu.innerHTML.includes(li.innerHTML)) {
-            left_context_menu.append(li);
+        if (table_num == 2) { //c
+            if (!left_context_menu.innerHTML.includes(li.innerHTML) && arrayIndex(cultures, li.innerHTML) == -1) {
+                left_context_menu.append(li);
+                li.onclick = function() {
+                    selected_tds[0][0].innerHTML = selected_tds[0][0].innerHTML == "" ? li.innerHTML : selected_tds[0][0].innerHTML + ", " + li.innerHTML;
+                }
+            }
+        } else { //f
+            if (!left_context_menu.innerHTML.includes(li.innerHTML)) {
+                left_context_menu.append(li);
+                li.onclick = function() {
+                    selected_tds[0][0].innerHTML = li.innerHTML;
+                }
+            }
         }
+
+    }
+
+    function existingCultures() {
+        cultures = selected_tds[0][0].innerHTML.split(", ");
     }
 }
 
