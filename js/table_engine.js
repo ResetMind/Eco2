@@ -18,7 +18,7 @@ let selected_tds = null;
 let selected_td_i = null;
 let selected_content = content[0];
 let selected_content_i = 0;
-let tds, ths;
+let tds, ths, first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i, td_i;
 
 window.onload = function() {
     onRadioChange();
@@ -102,29 +102,30 @@ function onThResize(tds, ths, n) {
 }
 
 function onTdSelect(tds, ths, cnt_i) {
-    let first_col_i, first_row_i, second_col_i, second_row_i, min_col, min_row, start_cell_i, end_cell_i, td_i;
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
         if (e.code == "Tab") {
-            if (document.activeElement.nextElementSibling.nodeName == "TD") {
-                td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
-                tds[td_i].onfocus = selectOnFocus;
-                getFirstCellParameters(td_i);
-                drawCellRect(tds[td_i], tds[td_i], cnt_i);
+            if(document.activeElement.nextElementSibling != null) {
+                if (document.activeElement.nextElementSibling.nodeName == "TD") {
+                    td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
+                    tds[td_i].onfocus = selectOnFocus;
+                    getFirstCellParameters(td_i);
+                    drawCellRect(tds[td_i], tds[td_i], cnt_i);
+                }
+                /*console.log("Tab");
+                console.log(document.activeElement);*/
             }
-            /*console.log("Tab");
-            console.log(document.activeElement);*/
         }
         if (e.code == "Enter" || e.code == "Escape") {
             e.preventDefault();
             if (selected_tds != null) {
-                /*selected_tds[0][0].blur(); // смотря в каком углу первая ячейка
-                selected_tds[selected_tds.length - 1][selected_tds[0].length - 1].blur();*/
                 tds[td_i].blur();
                 selected_tds = null;
+                document.getSelection().removeAllRanges();
             }
+            console.log(e.code + " " + cnt_i);
             removeCellRect(cnt_i);
-            removeBackground();
+            first_col_i = null, first_row_i = null, second_col_i = null, second_row_i = null, min_col = null, min_row = null, start_cell_i = null, end_cell_i = null, td_i = null;
             closeAllContext();
             return;
         }
@@ -413,11 +414,11 @@ function onTdSelect(tds, ths, cnt_i) {
         function scroll() {
             if ((content[cnt_i].scrollHeight - content[cnt_i].scrollTop === content[cnt_i].clientHeight && top > 0) || (content[cnt_i].scrollTop == 0 && top < 0)) {
                 top = 0;
-                console.log("top " + top);
+                //console.log("top " + top);
             }
             if ((content[cnt_i].offsetWidth + content[cnt_i].scrollLeft >= content[cnt_i].scrollWidth && left > 0) || (content[cnt_i].scrollLeft == 0 && left < 0)) {
                 left = 0;
-                console.log("left " + left);
+                //console.log("left " + left);
             }
             /*if ((content[cnt_i].scrollWidth - content[cnt_i].scrollLeft === content[cnt_i].clientWidth && left > 0) || (content[cnt_i].scrollLeft == 0 && left < 0)) {
                 left = 0;
@@ -443,7 +444,7 @@ function onTdSelect(tds, ths, cnt_i) {
         return setInterval(scroll, delay);
     }
 
-    td_selection_frame[cnt_i].onresize = function() {
+    /*td_selection_frame[cnt_i].onresize = function() {
         console.log("size");
         removeBackground();
         for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
@@ -455,16 +456,7 @@ function onTdSelect(tds, ths, cnt_i) {
         for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
             ths[j].classList.add("selected");
         }
-    }
-
-    function removeBackground() {
-        for (let k = 0; k < tds.length; k++) {
-            tds[k].classList.remove("selected");
-        }
-        for (let k = 0; k < ths.length; k++) {
-            ths[k].classList.remove("selected");
-        }
-    }
+    }*/
 
     function compareDirections(dir, dir_clone) {
         for (let key in dir) {
@@ -517,6 +509,30 @@ function onTdSelect(tds, ths, cnt_i) {
     }
 }
 
+function addBackground() {
+    //console.log("addBackground");
+    removeBackground();
+    for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
+        for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
+            let cur_cell_i = k * ths.length + j;
+            tds[cur_cell_i].classList.add("selected");
+        }
+    }
+    for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
+        ths[j].classList.add("selected");
+    }
+}
+
+function removeBackground() {
+    //console.log("removeBackground");
+    for (let k = 0; k < tds.length; k++) {
+        tds[k].classList.remove("selected");
+    }
+    for (let k = 0; k < ths.length; k++) {
+        ths[k].classList.remove("selected");
+    }
+}
+
 /*рисование обводки ячейки*/
 function drawCellRect(td_start, td_end, cnt_i) {
     console.log("draw");
@@ -530,7 +546,8 @@ function drawCellRect(td_start, td_end, cnt_i) {
     let td_end_top = td_end.getBoundingClientRect().top + content[cnt_i].scrollTop - table_header[0].getBoundingClientRect().height - header.getBoundingClientRect().height - horiz_stub_up.getBoundingClientRect().height;
     let td_end_left = td_end.getBoundingClientRect().left + content[cnt_i].scrollLeft - vert_stub_left.getBoundingClientRect().width;
     //if (td_start_top == td_end_top && td_start_left == td_end_left) {
-    td_selection_frame[cnt_i].dispatchEvent(new Event("resize"));
+    //td_selection_frame[cnt_i].dispatchEvent(new Event("resize"));
+    addBackground();
     //}
     td_selection[cnt_i].style.width = td_end.getBoundingClientRect().width + Math.abs(td_start_left - td_end_left) + "px";
     td_selection[cnt_i].style.height = td_end.getBoundingClientRect().height + Math.abs(td_start_top - td_end_top) + "px";
@@ -538,6 +555,7 @@ function drawCellRect(td_start, td_end, cnt_i) {
 }
 
 function removeCellRect(cnt_i) {
+    removeBackground();
     td_selection[cnt_i].classList.remove("active");
 }
 
@@ -550,7 +568,10 @@ function onWindowResize(n) {
     content[n].style.top = table_header[n].getBoundingClientRect().height + header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + "px";
     /*для корректного отображения выделения ячейки*/
     if (selected_tds != null) {
-        drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
+        if (arrayIndex(tds, selected_tds[0][0]) != -1) {
+            console.log("selected_tds");
+            drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
+        }
     }
 }
 
@@ -562,6 +583,7 @@ function onRadioChange() {
             content[i].style.display = "block";
             table_header.forEach(elem => { elem.style.visibility = "hidden"; });
             table_header[i].style.visibility = "visible";
+            removeCellRect(selected_content_i);
             setTableEngine(i);
         });
     }

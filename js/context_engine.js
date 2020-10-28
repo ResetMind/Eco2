@@ -27,6 +27,11 @@ function setRightContextMenu() {
                 r_row_up.style.display = "block";
                 r_row_down.style.display = "block";
             }
+            if (copy_cut_array != null) {
+                r_paste.style.display = "block";
+            } else {
+                r_paste.style.display = "none";
+            }
             showContextMenu(e.clientX, e.clientY, right_context_menu);
             if (selected_tds.length == 1 && selected_tds[0].length == 1) {
                 //if(e.code == "Tab")
@@ -36,7 +41,7 @@ function setRightContextMenu() {
     r_copy.setAttribute("data-clipboard-action", "copy");
     r_copy.onmousedown = copy;
     r_copy.onclick = function() {
-        if(!isSingleSelect()) {
+        if (!isSingleSelect()) {
             console.log("r_copy.onclick multi");
             copy_cut_array = getSelectedInners();
         }
@@ -44,30 +49,28 @@ function setRightContextMenu() {
     r_cut.setAttribute("data-clipboard-action", "cut");
     r_cut.onmousedown = cut;
     r_paste.onclick = function() {
-        if(copy_cut_array != null) {
-            console.log("r_paste.onclick");
-            printTwoDimArray(copy_cut_array);
-            paste();
-        } else {
-            
-        }
+        console.log("r_paste.onclick");
+        printTwoDimArray(copy_cut_array);
+        paste();
         onClipboardSuccess();
     }
     let ctrl = false;
     table_body[selected_content_i].addEventListener("keyup", function(e) {
-        if(e.code == "KeyC" && ctrl) {
+        if (e.code == "KeyC" && ctrl) {
             console.log("ctrl c");
             r_copy.dispatchEvent(new Event("mousedown"));
             r_copy.dispatchEvent(new Event("click"));
         }
-        if(e.code == "KeyX" && ctrl) {
+        if (e.code == "KeyX" && ctrl) {
             console.log("ctrl x");
             r_cut.dispatchEvent(new Event("mousedown"));
             r_cut.dispatchEvent(new Event("click"));
         }
-        if(e.code == "KeyV" && ctrl) {
-            console.log("ctrl v");
-            r_paste.dispatchEvent(new Event("click"));
+        if (e.code == "KeyV" && ctrl) {
+            if (copy_cut_array != null) {
+                console.log("ctrl v");
+                r_paste.dispatchEvent(new Event("click"));
+            }
         }
         ctrl = e.code == "ControlLeft";
     });
@@ -87,6 +90,7 @@ function setRightContextMenu() {
         ref.parentNode.insertBefore(new_tr, ref.nextSibling);
         setTableEngine(selected_content_i);
     }
+
     function copy() {
         if (isSingleSelect()) {
             console.log("singlecopy " + selected_tds[0][0].innerHTML);
@@ -96,6 +100,7 @@ function setRightContextMenu() {
             destroyClipboard();
         }
     }
+
     function cut() {
         if (isSingleSelect()) {
             console.log("singlecut " + selected_tds[0][0].innerHTML);
@@ -107,12 +112,12 @@ function setRightContextMenu() {
     }
 
     function paste() {
-        for(let k = 0; k < selected_tds.length; k++) {
-            if(k > copy_cut_array.length - 1) {
+        for (let k = 0; k < selected_tds.length; k++) {
+            if (k > copy_cut_array.length - 1) {
                 break;
             }
-            for(let j = 0; j < selected_tds[k].length; j++) {
-                if(j > copy_cut_array[k].length - 1) {
+            for (let j = 0; j < selected_tds[k].length; j++) {
+                if (j > copy_cut_array[k].length - 1) {
                     break;
                 }
                 selected_tds[k][j].innerHTML = copy_cut_array[k][j];
@@ -126,9 +131,9 @@ function setRightContextMenu() {
 
     function getSelectedInners() {
         let array = [];
-        for(let k = 0; k < selected_tds.length; k++) {
+        for (let k = 0; k < selected_tds.length; k++) {
             let row = [];
-            for(let j = 0; j < selected_tds[k].length; j++) {
+            for (let j = 0; j < selected_tds[k].length; j++) {
                 row.push(selected_tds[k][j].innerHTML);
             }
             array.push(row);
