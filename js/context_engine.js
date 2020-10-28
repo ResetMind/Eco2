@@ -45,9 +45,9 @@ function setRightContextMenu() {
         if (!isSingleSelect()) {
             console.log("r_copy.onclick multi");
             copy_cut_array = getSelectedInners(false);
-            table_body[0].onkeydown = onKeyDown;
-            table_body[1].onkeydown = onKeyDown;
-            table_body[2].onkeydown = onKeyDown;
+            table_body[0].addEventListener("keydown", onKeyDown);
+            table_body[1].addEventListener("keydown", onKeyDown);
+            table_body[2].addEventListener("keydown", onKeyDown);
         }
         onClipboardSuccess();
     }
@@ -57,15 +57,15 @@ function setRightContextMenu() {
         if (!isSingleSelect()) {
             console.log("r_cut.onclick multi");
             copy_cut_array = getSelectedInners(true);
-            table_body[0].onkeydown = onKeyDown;
-            table_body[1].onkeydown = onKeyDown;
-            table_body[2].onkeydown = onKeyDown;
+            table_body[0].addEventListener("keydown", onKeyDown);
+            table_body[1].addEventListener("keydown", onKeyDown);
+            table_body[2].addEventListener("keydown", onKeyDown);
         }
         onClipboardSuccess();
     }
     r_paste.onclick = function() {
         console.log("r_paste.onclick");
-        printTwoDimArray(copy_cut_array);
+        //printTwoDimArray(copy_cut_array);
         paste();
         onClipboardSuccess();
     }
@@ -144,6 +144,7 @@ function setRightContextMenu() {
                     break;
                 }
                 selected_tds[k][j].innerHTML = copy_cut_array[k][j];
+                selected_tds[k][j].dispatchEvent(new Event("input", { bubbles: true }));
             }
         }
     }

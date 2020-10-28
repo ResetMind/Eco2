@@ -109,6 +109,11 @@ function onTdSelect(tds, ths, cnt_i) {
                 if (document.activeElement.nextElementSibling.nodeName == "TD") {
                     td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
                     tds[td_i].onfocus = selectOnFocus;
+                    removeCheckers(); // убираем со старых
+                    selected_tds = [
+                        [tds[td_i]]
+                    ];
+                    setCheckers(); // добавляем к новым
                     getFirstCellParameters(td_i);
                     drawCellRect(tds[td_i], tds[td_i], cnt_i);
                 }
@@ -117,9 +122,11 @@ function onTdSelect(tds, ths, cnt_i) {
             }
         }
         if (e.code == "Enter" || e.code == "Escape") {
+            console.log(e.code);
             e.preventDefault();
             if (selected_tds != null) {
                 tds[td_i].blur();
+                removeCheckers();
                 selected_tds = null;
                 document.getSelection().removeAllRanges();
             }
@@ -387,9 +394,10 @@ function onTdSelect(tds, ths, cnt_i) {
         document.onmouseup = function() {
             // сохранить выделенные ячейки/ячейку в двумерный массив
             tds[td_i].onselectstart = null;
+            removeCheckers();
             selected_tds = new Array();
-            console.log("onup ");
-            console.log(" ");
+            //console.log("onup ");
+            //console.log(" ");
             for (let k = min_row; k <= min_row + Math.abs(first_row_i - second_row_i); k++) {
                 let row_array = new Array();
                 for (let j = min_col; j <= min_col + Math.abs(first_col_i - second_col_i); j++) {
@@ -404,11 +412,14 @@ function onTdSelect(tds, ths, cnt_i) {
                 }
                 console.log("");
             }*/
+            setCheckers();
             clearInterval(scroll_interval);
             document.onmousemove = null;
             document.onmouseup = null;
         }
     }
+
+    table_body[cnt_i].oninput = checkValue;
 
     function scrollOnDrag(top, left, behavior, cnt_i, delay, step_col, step_row) {
         function scroll() {
@@ -478,9 +489,10 @@ function onTdSelect(tds, ths, cnt_i) {
 
     function getFirstCellParameters(td_i) {
         selected_content = content[cnt_i];
+        /*removeCheckers();
         selected_tds = [
             [tds[td_i]]
-        ];
+        ];*/
         selected_td_i = td_i;
         selected_content_i = cnt_i;
         [first_col_i, first_row_i] = getColRow(td_i, ths.length); /*узнать в какой колонке/line ячейка*/
@@ -506,6 +518,31 @@ function onTdSelect(tds, ths, cnt_i) {
         document.getSelection().removeAllRanges();
         document.getSelection().addRange(range);
         tds[td_i].onfocus = null;
+    }
+
+    function setCheckers() {
+        /*console.log("setCheckers()");
+        for(let k = 0; k < selected_tds.length; k++) {
+            for(let j = 0; j < selected_tds[k].length; j++) {
+                selected_tds[k][j].oninput = checkValue;
+                console.log(selected_tds[k][j]);
+            }
+            console.log("");
+        }*/
+    }
+
+    function removeCheckers() {
+        /*if(selected_tds == null) {
+            return;
+        }
+        console.log("removeCheckers()");
+        for(let k = 0; k < selected_tds.length; k++) {
+            for(let j = 0; j < selected_tds[k].length; j++) {
+                selected_tds[k][j].oninput = null;
+                console.log(selected_tds[k][j]);
+            }
+            console.log("");
+        }*/
     }
 }
 

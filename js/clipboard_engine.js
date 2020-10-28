@@ -8,12 +8,12 @@ function setClipParam(trigger, target) {
         }
     });
     clipboard.on("success", function(e) {
-        console.info("Action:", e.action);
+        /*console.info("Action:", e.action);
         console.info("Text:", e.text);
-        console.info("Trigger:", e.trigger);
-        table_body[0].onkeydown = null;
-        table_body[1].onkeydown = null;
-        table_body[2].onkeydown = null;
+        console.info("Trigger:", e.trigger);*/
+        table_body[0].removeEventListener("keydown", onKeyDown); //!!!!!!!!!!!!!!!
+        table_body[1].removeEventListener("keydown", onKeyDown);
+        table_body[2].removeEventListener("keydown", onKeyDown);
         e.clearSelection();
         onClipboardSuccess();
     });
