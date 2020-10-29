@@ -2,6 +2,7 @@ let clipboard = null;
 
 function setClipParam(trigger, target) {
     destroyClipboard();
+    removeOnKeyDownListeners();
     clipboard = new ClipboardJS(trigger, {
         target: function() {
             return target;
@@ -11,9 +12,6 @@ function setClipParam(trigger, target) {
         /*console.info("Action:", e.action);
         console.info("Text:", e.text);
         console.info("Trigger:", e.trigger);*/
-        table_body[0].removeEventListener("keydown", onKeyDown); //!!!!!!!!!!!!!!!
-        table_body[1].removeEventListener("keydown", onKeyDown);
-        table_body[2].removeEventListener("keydown", onKeyDown);
         e.clearSelection();
         onClipboardSuccess();
     });

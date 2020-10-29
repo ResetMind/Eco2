@@ -109,6 +109,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 if (document.activeElement.nextElementSibling.nodeName == "TD") {
                     td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
                     tds[td_i].onfocus = selectOnFocus;
+                    closeAllContext();
                     removeCheckers(); // убираем со старых
                     selected_tds = [
                         [tds[td_i]]
@@ -134,7 +135,6 @@ function onTdSelect(tds, ths, cnt_i) {
             removeCellRect(cnt_i);
             first_col_i = null, first_row_i = null, second_col_i = null, second_row_i = null, min_col = null, min_row = null, start_cell_i = null, end_cell_i = null, td_i = null;
             closeAllContext();
-            return;
         }
     }
     table_body[cnt_i].onmousedown = function(e) {
@@ -601,6 +601,7 @@ function onWindowResize(n) {
         table_header[n].style.width = (content[n].clientWidth - vert_stub_left.getBoundingClientRect().width) + "px";
         table_body[n].style.width = table_header[n].style.width;
     }
+    closeAllContext();
     /*для корректного отображения стыка заголовка и таблицы*/
     content[n].style.top = table_header[n].getBoundingClientRect().height + header.getBoundingClientRect().height + horiz_stub_up.getBoundingClientRect().height + "px";
     /*для корректного отображения выделения ячейки*/

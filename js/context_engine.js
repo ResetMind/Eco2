@@ -45,9 +45,7 @@ function setRightContextMenu() {
         if (!isSingleSelect()) {
             console.log("r_copy.onclick multi");
             copy_cut_array = getSelectedInners(false);
-            table_body[0].addEventListener("keydown", onKeyDown);
-            table_body[1].addEventListener("keydown", onKeyDown);
-            table_body[2].addEventListener("keydown", onKeyDown);
+            addOnKeyDownListeners(); // чтобы при множественном выделении не вставлялось первым делом значение из буфера
         }
         onClipboardSuccess();
     }
@@ -57,9 +55,7 @@ function setRightContextMenu() {
         if (!isSingleSelect()) {
             console.log("r_cut.onclick multi");
             copy_cut_array = getSelectedInners(true);
-            table_body[0].addEventListener("keydown", onKeyDown);
-            table_body[1].addEventListener("keydown", onKeyDown);
-            table_body[2].addEventListener("keydown", onKeyDown);
+            addOnKeyDownListeners();
         }
         onClipboardSuccess();
     }
@@ -102,14 +98,6 @@ function setRightContextMenu() {
                 console.log("ctrl v");
                 r_paste.dispatchEvent(new Event("click"));
             }
-        }
-        ctrl = e.code == "ControlLeft";
-    }
-
-    function onKeyDown(e) {
-        if (e.code == "KeyV" && ctrl) {
-            e.preventDefault();
-            console.log("ctrl v onKeyDown");
         }
         ctrl = e.code == "ControlLeft";
     }
@@ -169,6 +157,29 @@ function setRightContextMenu() {
     }
 }
 
+function onKeyDown(e) { // чтобы при множественном выделении не вставлялось первым делом значение из буфера
+    if (e.code == "KeyV" && ctrl) {
+        e.preventDefault();
+        console.log("ctrl v onKeyDown");
+    }
+    ctrl = e.code == "ControlLeft";
+}
+
+function addOnKeyDownListeners() {
+    //console.log("addOnKeyDownListeners()");
+    for (let k = 0; k < table_body.length; k++) {
+        table_body[k].removeEventListener("keydown", onKeyDown);
+        table_body[k].addEventListener("keydown", onKeyDown);
+    }
+}
+
+function removeOnKeyDownListeners() {
+    //console.log("removeOnKeyDownListeners()");
+    for (let k = 0; k < table_body.length; k++) {
+        table_body[k].removeEventListener("keydown", onKeyDown);
+    }
+}
+
 function setLeftContextMenu() {
     document.documentElement.onclick = function(e) {
         closeContextMenu(right_context_menu);
@@ -218,7 +229,6 @@ function createCulturesAndFieldsContext(table_num, step) {
         }
 
     }
-
     function existingCultures() {
         cultures = selected_tds[0][0].innerHTML.split(", ");
     }
@@ -237,7 +247,9 @@ function showContextMenu(x, y, menu) {
 }
 
 function closeContextMenu(menu) {
-    menu.classList.remove("active");
+    if(menu.classList.contains("active")) {
+        menu.classList.remove("active");
+    }
 }
 
 function closeAllContext() {

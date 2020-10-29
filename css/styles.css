@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&family=Open+Sans:wght@600&display=swap');
-html {
+html::selection {
     /*-ms-user-select: none;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
     user-select: none;*/
+
 }
 
 body {
@@ -144,6 +145,14 @@ td {
     outline: none;
 }
 
+td::selection {
+    background: transparent;
+}
+
+td::-moz-selection {
+    background: transparent;
+}
+
 td.selected,
 th.selected {
     background: rgba(110, 173, 58, 0.1);
@@ -184,12 +193,12 @@ td.error {
     list-style: none;
     background: #4c4947;
     width: 150px;
-    max-height: 300px;
+    max-height: 200px;
     overflow: auto;
     font-size: 12px;
     padding: 0;
     margin: 0;
-    z-index: 999;
+    z-index: 99999;
     position: fixed;
     display: none;
 }
