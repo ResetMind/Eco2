@@ -105,7 +105,7 @@ function onTdSelect(tds, ths, cnt_i) {
     let scroll_interval = null;
     table_body[cnt_i].onkeydown = function(e) {
         if (e.code == "Tab") {
-            if(document.activeElement.nextElementSibling != null) {
+            if (document.activeElement.nextElementSibling != null) {
                 if (document.activeElement.nextElementSibling.nodeName == "TD") {
                     td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
                     tds[td_i].onfocus = selectOnFocus;
@@ -423,7 +423,7 @@ function onTdSelect(tds, ths, cnt_i) {
 
     table_body[cnt_i].oninput = checkValue;
 
-    //table_body[cnt_i].onpaste = onPaste;
+    table_body[cnt_i].onpaste = validatePaste;
 
     function scrollOnDrag(top, left, behavior, cnt_i, delay, step_col, step_row) {
         function scroll() {
@@ -614,6 +614,8 @@ function onWindowResize(n) {
             console.log("selected_tds");
             drawCellRect(selected_tds[0][0], selected_tds[selected_tds.length - 1][selected_tds[selected_tds.length - 1].length - 1], selected_content_i);
         }
+    } else {
+        removeCellRect(n);
     }
 }
 

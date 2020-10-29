@@ -1,8 +1,10 @@
 let r_copy = document.querySelector(".r_copy");
 let r_paste = document.querySelector(".r_paste");
 let r_cut = document.querySelector(".r_сut");
+let r_clear = document.querySelector(".r_clear");
 let r_row_up = document.querySelector(".r_row_up");
 let r_row_down = document.querySelector(".r_row_down");
+let r_delete_row = document.querySelector(".r_delete_row");
 let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
 let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
@@ -10,11 +12,6 @@ let copy_cut_array = null;
 let ctrl = false;
 setRightContextMenu();
 setLeftContextMenu();
-
-function createNewRow(index) {
-    new_tr = document.createElement("tr");
-    new_tr.innerHTML = new_rows_inner[index];
-}
 
 function setRightContextMenu() {
     document.body.oncontextmenu = function(e) {
@@ -65,6 +62,14 @@ function setRightContextMenu() {
         paste();
         onClipboardSuccess();
     }
+    r_clear.onclick = function() {
+        clear();
+    }
+    r_delete_row.onclick = function() {
+        //remove()
+        removeRows();
+        setTableEngine(selected_content_i);
+    }
     r_row_up.onclick = function() {
         createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
@@ -98,6 +103,10 @@ function setRightContextMenu() {
                 console.log("ctrl v");
                 r_paste.dispatchEvent(new Event("click"));
             }
+        }
+        if (e.code == "Delete") {
+            console.log("delete");
+            r_clear.dispatchEvent(new Event("click"));
         }
         ctrl = e.code == "ControlLeft";
     }
@@ -137,8 +146,33 @@ function setRightContextMenu() {
         }
     }
 
-    function isSingleSelect() {
-        return selected_tds.length == 1 && selected_tds[0].length == 1;
+    function clear() {
+        for (let k = 0; k < selected_tds.length; k++) {
+            for (let j = 0; j < selected_tds[k].length; j++) {
+                selected_tds[k][j].innerHTML = "";
+            }
+        }
+    }
+
+    function removeRows() {
+        let trs = table_body[selected_content_i].querySelectorAll("tr");
+        for (let k = 0; k < selected_tds.length; k++) {
+            for (let j = 0; j <= 0; j++) {
+                let row = getColRow(arrayIndex(tds, selected_tds[k][j]), ths.length)[1];
+                trs[row].remove();
+            }
+        }
+        trs = table_body[selected_content_i].querySelectorAll("tr");
+        if(trs.length == 0) {
+            createNewRow(selected_content_i);
+            table_body[selected_content_i].append(new_tr);
+        }
+        selected_tds = null;
+    }
+
+    function createNewRow(index) {
+        new_tr = document.createElement("tr");
+        new_tr.innerHTML = new_rows_inner[index];
     }
 
     function getSelectedInners(cut) {
@@ -157,11 +191,9 @@ function setRightContextMenu() {
     }
 }
 
-/*function onPaste(e) {
-    e.preventDefault();
-    var text = e.clipboardData.getData("text/plain");
-    document.execCommand("insertHTML", false, text);
-}*/
+function isSingleSelect() {
+    return selected_tds.length == 1 && selected_tds[0].length == 1;
+}
 
 function onKeyDown(e) { // чтобы при множественном выделении не вставлялось первым делом значение из буфера
     if (e.code == "KeyV" && ctrl) {
