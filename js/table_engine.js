@@ -110,11 +110,12 @@ function onTdSelect(tds, ths, cnt_i) {
                     td_i = arrayIndex(tds, document.activeElement.nextElementSibling);
                     tds[td_i].onfocus = selectOnFocus;
                     closeAllContext();
-                    removeCheckers(); // убираем со старых
+                    //removeCheckers(); // убираем со старых
+                    removeErrorTDS(selected_tds);
                     selected_tds = [
                         [tds[td_i]]
                     ];
-                    setCheckers(); // добавляем к новым
+                    //setCheckers(); // добавляем к новым
                     getFirstCellParameters(td_i);
                     drawCellRect(tds[td_i], tds[td_i], cnt_i);
                 }
@@ -122,12 +123,12 @@ function onTdSelect(tds, ths, cnt_i) {
                 console.log(document.activeElement);*/
             }
         }
-        if (e.code == "Enter" || e.code == "Escape") {
-            console.log(e.code);
+        if (e.code == "Enter" || e.code == "Escape" || e.code == "NumpadEnter") {
             e.preventDefault();
             if (selected_tds != null) {
                 tds[td_i].blur();
-                removeCheckers();
+                //removeCheckers();
+                removeErrorTDS(selected_tds);
                 selected_tds = null;
                 document.getSelection().removeAllRanges();
             }
@@ -147,6 +148,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 return false;
             }
         }
+        removeErrorTDS(selected_tds);
         td_i = arrayIndex(tds, e.target);
         tds[td_i].onfocus = selectOnFocus;
         getFirstCellParameters(td_i);
@@ -394,7 +396,7 @@ function onTdSelect(tds, ths, cnt_i) {
         document.onmouseup = function() {
             // сохранить выделенные ячейки/ячейку в двумерный массив
             tds[td_i].onselectstart = null;
-            removeCheckers();
+            //removeCheckers();
             selected_tds = new Array();
             //console.log("onup ");
             //console.log(" ");
@@ -412,7 +414,7 @@ function onTdSelect(tds, ths, cnt_i) {
                 }
                 console.log("");
             }*/
-            setCheckers();
+            //setCheckers();
             clearInterval(scroll_interval);
             document.onmousemove = null;
             document.onmouseup = null;
@@ -420,6 +422,8 @@ function onTdSelect(tds, ths, cnt_i) {
     }
 
     table_body[cnt_i].oninput = checkValue;
+
+    //table_body[cnt_i].onpaste = onPaste;
 
     function scrollOnDrag(top, left, behavior, cnt_i, delay, step_col, step_row) {
         function scroll() {

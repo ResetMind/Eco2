@@ -132,7 +132,7 @@ function setRightContextMenu() {
                     break;
                 }
                 selected_tds[k][j].innerHTML = copy_cut_array[k][j];
-                selected_tds[k][j].dispatchEvent(new Event("input", { bubbles: true }));
+                selected_tds[k][j].dispatchEvent(new Event("input", { bubbles: true })); // чтобы срабатывало инпут при изменении содержимого
             }
         }
     }
@@ -156,6 +156,12 @@ function setRightContextMenu() {
         return array;
     }
 }
+
+/*function onPaste(e) {
+    e.preventDefault();
+    var text = e.clipboardData.getData("text/plain");
+    document.execCommand("insertHTML", false, text);
+}*/
 
 function onKeyDown(e) { // чтобы при множественном выделении не вставлялось первым делом значение из буфера
     if (e.code == "KeyV" && ctrl) {
@@ -229,6 +235,7 @@ function createCulturesAndFieldsContext(table_num, step) {
         }
 
     }
+
     function existingCultures() {
         cultures = selected_tds[0][0].innerHTML.split(", ");
     }
@@ -247,7 +254,7 @@ function showContextMenu(x, y, menu) {
 }
 
 function closeContextMenu(menu) {
-    if(menu.classList.contains("active")) {
+    if (menu.classList.contains("active")) {
         menu.classList.remove("active");
     }
 }
