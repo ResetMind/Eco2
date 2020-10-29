@@ -7,7 +7,7 @@ let r_row_down = document.querySelector(".r_row_down");
 let r_delete_row = document.querySelector(".r_delete_row");
 let right_context_menu = document.querySelector(".right_context_menu");
 let left_context_menu = document.querySelector(".left_context_menu");
-let new_rows_inner = ["<td contenteditable></td><td tabindex=\"0\"></td><td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\"></td><td contenteditable></td>"];
+let new_rows_inner = ["<td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\" width=\"25\"></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td tabindex=\"0\" width=\"25\"></td><td contenteditable></td>"];
 let copy_cut_array = null;
 let ctrl = false;
 setRightContextMenu();
@@ -140,6 +140,10 @@ function setRightContextMenu() {
                 if (j > copy_cut_array[k].length - 1) {
                     break;
                 }
+                if(preventInput(selected_tds[k][j])) {
+                    console.log("preventInput");
+                    continue;
+                }
                 selected_tds[k][j].innerHTML = copy_cut_array[k][j];
                 selected_tds[k][j].dispatchEvent(new Event("input", { bubbles: true })); // чтобы срабатывало инпут при изменении содержимого
             }
@@ -163,7 +167,7 @@ function setRightContextMenu() {
             }
         }
         trs = table_body[selected_content_i].querySelectorAll("tr");
-        if(trs.length == 0) {
+        if (trs.length == 0) {
             createNewRow(selected_content_i);
             table_body[selected_content_i].append(new_tr);
         }
@@ -182,12 +186,26 @@ function setRightContextMenu() {
             for (let j = 0; j < selected_tds[k].length; j++) {
                 row.push(selected_tds[k][j].innerHTML);
                 if (cut) {
+                    if(preventInput(selected_tds[k][j])) {
+                        console.log("preventInput");
+                        continue;
+                    }
                     selected_tds[k][j].innerHTML = "";
                 }
             }
             array.push(row);
         }
         return array;
+    }
+
+    function preventInput(td) {
+        if (selected_content_i > 0) { // 0 столбцы полей и культур не редактируемы
+            let col = getColRow(arrayIndex(tds, td), ths.length)[0];
+            if (col == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

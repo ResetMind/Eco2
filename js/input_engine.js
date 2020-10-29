@@ -51,6 +51,10 @@ function checkValue(e) {
         }
         removeErrorBorder();
         removeErrorTD(e.target);
+    } else {
+        if (col == 1) {
+            
+        }
     }
 }
 
