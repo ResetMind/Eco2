@@ -1,0 +1,74 @@
+.registration {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    text-align: center;
+}
+
+.registration_content {
+    width: 300px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
+    line-height: 35px;
+}
+
+#registration_form span {
+    font-size: 11px;
+    float: left;
+    display: none;
+    transition: 0.3s;
+}
+
+#registration_form span.active {
+    display: block;
+    transition: 0.3s;
+}
+
+.registration_content 
+input[type="email"],
+input[type="text"],
+input[type="number"],
+input[type="password"] {
+    width: 100%;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="number"],
+input[type="submit"],
+input[type="password"],
+button {
+    background: #222022;
+    border: 1px solid #8b8c8e;
+    color: #f4f8f9;
+    font-size: 12px;
+    padding: 5px;
+    outline: none;
+    font-family: 'Open Sans', sans-serif;
+    opacity: 100%;
+    transition: 0.3s;
+}
+
+input.error {
+    border: 1px solid #ff0000;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background: #f4f8f9;
+    color: #222022;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+input[type="submit"].disabled {
+    color: #757575;
+    transition: 0.3s;
+}
