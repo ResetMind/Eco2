@@ -12,7 +12,7 @@ const callback = function(mutationsList, observer) {
             console.log('The ' + mutation.attributeName + ' attribute was modified.');
         }
     }*/
-    console.log(mutationsList);
+    //console.log(mutationsList);
 };
 
 const observer = new MutationObserver(callback);
