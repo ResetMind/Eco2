@@ -1,26 +1,48 @@
-let reg_form = document.querySelector("#registration_form");
-let email = document.querySelector("#registration_form #email");
-let name = document.querySelector("#registration_form #name");
-let password1 = document.querySelector("#registration_form #password1");
-let password2 = document.querySelector("#registration_form #password2");
-let reg_button = document.querySelector("#registration_form #reg_button");
+let reg_form = document.querySelector(".registration_form");
+let email = document.querySelector(".registration_form .email");
+let name = document.querySelector(".registration_form .name");
+let password1 = document.querySelector(".registration_form .password1");
+let password2 = document.querySelector(".registration_form .password2");
+let reg_button = document.querySelector(".registration_form .reg_button");
+let email_e = document.querySelector(".registration_form .email_e");
+let name_e = document.querySelector(".registration_form .name_e");
+let password1_e = document.querySelector(".registration_form .password1_e");
+let password2_e = document.querySelector(".registration_form .password2_e");
 
-email.onkeyup = checkEmail;
+/*email.onkeyup = checkEmail;
 name.onkeyup = checkName;
 password1.onkeyup = checkPassword1;
-password2.onkeyup = checkPassword2;
+password2.onkeyup = checkPassword2;*/
 
 reg_form.onsubmit = function(e) {
     e.preventDefault();
-    let form_data = new FormData(reg_form);
-    request(reg_form.getAttribute("action"), form_data);
 }
 
+email.onkeyup = function(e) {
+    //e.preventDefault();
+    let form_data = new FormData(reg_form);
+    request(reg_form.getAttribute("action"), form_data);
+    xhr.onload = function() {
+        if (xhr.status != 200) {
+            console.log(xhr.status);
+        } else {
+            console.log(xhr.response.email_e);
+            checkEmail();
+        }
+    }
+}
+
+
+
 function checkEmail() {
-    if((email.value + "").indexOf("@") == -1) {
+    /*if((email.value + "").indexOf("@") == -1) {
         email.classList.add("error");
     } else {
         email.classList.remove("error");
+    }*/
+    if(xhr.response.email_e.length > 0) {
+        email_e.classList.add("active");
+        email_e.innerHTML = xhr.response.email_e[0];
     }
 }
 

@@ -14,19 +14,19 @@
     position: absolute; 
     top: 50%; 
     left: 50%;
-    line-height: 35px;
+    /*line-height: 35px;*/
 }
 
-#registration_form span {
+.registration_form span {
     font-size: 11px;
     float: left;
-    display: none;
-    transition: 0.3s;
+    height: 0;
+    opacity: 0;
+    /*display: none;*/
 }
 
-#registration_form span.active {
+.registration_form span.active {
     display: block;
-    transition: 0.3s;
 }
 
 .registration_content 
@@ -34,6 +34,7 @@ input[type="email"],
 input[type="text"],
 input[type="number"],
 input[type="password"] {
+    margin-top: 10px;
     width: 100%;
 }
 

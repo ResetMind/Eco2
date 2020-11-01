@@ -1,4 +1,5 @@
 <?php
+    header("Content-Type: application/json; charset=utf-8");
     $email = $_POST["email"];
     $name = $_POST["name"];
     $password1 = $_POST["password1"];
@@ -12,7 +13,7 @@
 
     $link = null;
 
-    if(!connect()) {
+    if (!connect()) {
         echoJSON();
         exit();
     }
@@ -39,11 +40,25 @@
     {
         global $email_e, $name_e, $password1_e, $password2_e;
         global $email, $name, $password1, $password2;
+        global $link, $bd_e;
         $res = true;
         if (strpos($email, "@") == false) {
             $email_e[] = "В email должен быть символ @";
             //echo "В email должен быть символ @<br>";
             $res = false;
+        } else {
+            $sqlreq = "SELECT email FROM users";
+            if (!$result = mysqli_query($link, $sqlreq)) {
+                $bd_e[] = "Ошибка выполнения запроса";
+                $res = false;
+            } else {
+                while($row = mysqli_fetch_assoc($result)) {
+                    if($row["email"] == $email) {
+                        $email_e[] = "Пользователь с таким email уже существует";
+                        $res = false;
+                    }
+                }
+            }
         }
         if (mb_strlen($name) < 1 || mb_strlen($name) > 50) {
             $name_e[] = "Недопустимая длина имени (1-50 символов)";
