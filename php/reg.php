@@ -10,7 +10,6 @@ $name_e = [];
 $password1_e = [];
 $password2_e = [];
 $bd_e = [];
-$info = [];
 
 $link = null;
 
@@ -21,11 +20,11 @@ if (!connect()) {
 if (!check_values()) {
     echoJSON();
     exit();
+} else {
+    addUser();
+    echoJSON();
+    exit();
 }
-
-addUser();
-echoJSON();
-exit();
 
 function connect()
 {
@@ -40,7 +39,8 @@ function connect()
 
 function addUser()
 {
-    global $link, $bd_e, $info, $email, $name, $password1;
+    global $link, $bd_e, $email, $name, $password1;
+    $password1 = password_hash($password1, PASSWORD_BCRYPT);
     $res = true;
     $email = "'" . $email . "'";
     $name = "'" . $name . "'";
@@ -66,7 +66,7 @@ function check_values()
     } else if (strpos($email, "@") == false) {
         $email_e[] = "В email должен быть символ @";
         $res = false;
-    } else if (strpos($email, "@") == mb_strlen($email) - 1) {
+    } else if (substr($email, -1) == "@") {
         $email_e[] = "В email должны быть символы после @";
         $res = false;
     } else if (substr_count($email, "@") > 1) {
@@ -75,7 +75,7 @@ function check_values()
     } else {
         $sqlreq = "SELECT email FROM users";
         if (!$result = mysqli_query($link, $sqlreq)) {
-            $bd_e[] = "Ошибка выполнения запроса";
+            $bd_e[] = "Ошибка выполнения запроса к БД";
             $res = false;
         } else {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -94,7 +94,7 @@ function check_values()
         $password1_e[] = "Недопустимая длина пароля (4-12 символов)";
         $res = false;
     }
-    if ($password1 !== $password2) {
+    if (strcmp($password1, $password2) !== 0) {
         $password2_e[] = "Пароли не совпадают";
         $res = false;
     }
@@ -103,10 +103,10 @@ function check_values()
 
 function echoJSON()
 {
-    global $email_e, $name_e, $password1_e, $password2_e, $bd_e, $info;
+    global $email_e, $name_e, $password1_e, $password2_e, $bd_e;
     $arr = array(
         "email_e" => $email_e, "name_e" => $name_e, "password1_e" => $password1_e,
-        "password2_e" => $password2_e, "bd_e" => $bd_e, "info" => $info
+        "password2_e" => $password2_e, "bd_e" => $bd_e
     );
     $output = json_encode($arr, JSON_UNESCAPED_UNICODE);
     echo $output;

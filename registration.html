@@ -15,23 +15,24 @@
 
 <body>
     <div class="registration">
-        <div class="registration_content">
+        <div class="registration_content">     
             <span class="auth_span">Регистрация</span>
-            <form name="registration_form" class="registration_form" action="php/reg.php" method="POST">
+            <form name="registration_form" class="registration_form" action="php/reg.php" method="POST" novalidate>
+                <span class="bd_e">Qwerty</span>
                 <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                <span class="email_e">Регистрация</span>
+                <span class="email_e">Qwerty</span>
                 <input type="text" name="name" class="name" placeholder="Имя Фамилия">
-                <span class="name_e">Регистрация</span>
+                <span class="name_e">Qwerty</span>
                 <input type="password" name="password1" class="password1" placeholder="Придумайте пароль">
-                <span class="password1_e">Регистрация</span>
+                <span class="password1_e">Qwerty</span>
                 <input type="password" name="password2" class="password2" placeholder="Повторите пароль">
-                <span class="password2_e">Регистрация</span>
+                <span class="password2_e">Qwerty</span>
                 <input type="submit" name="reg_button" class="reg_button" value="Зарегистрироваться">
             </form>
         </div>
     </div>
     <script src="js/ajax.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/reg.js"></script>
 </body>
 
 </html>

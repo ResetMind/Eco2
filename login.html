@@ -1,16 +1,35 @@
-<?
-top("Вход - Экопрогноз");
-?>
-<div class="guest_container">
-    <h3>Вход</h3>
-    <form name="signin">
-        <p><input type="email" name="email" placeholder="Электронная почта"></p>
-        <p><input type="password" name="password1" placeholder="Пароль"></p>
-        <p><input type="password" name="password2" placeholder="Повторите пароль"></p>
-        <p><button onclick="sign_in()">Войти</button></p>
-        <p>Забыли пароль? <a href="">Восстановите его</a></p>
-    </form>
-</div>
-<?
-bottom();
-?>
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Экопрогноз - Вход</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles_auth.css" />
+</head>
+
+<header>
+    <a href="#">Регистрация</a>
+    <span>Экопрогноз</span>
+</header>
+
+<body>
+    <div class="login">
+        <div class="login_content">     
+            <span class="auth_span">Вход</span>
+            <form name="login_form" class="login_form" action="php/login.php" method="POST" novalidate>
+                <span class="bd_e">Qwerty</span>
+                <input type="email" name="email" class="email" placeholder="Ваш e-mail">
+                <span class="email_e">Qwerty</span> 
+                <input type="password" name="password" class="password" placeholder="Ваш пароль">
+                <span class="password_e">Qwerty</span>
+                <input type="submit" name="log_button" class="log_button" value="Войти">
+            </form>
+            <a href="#" class="forgot">Забыли пароль?</a>
+        </div>
+    </div>
+    <script src="js/ajax.js"></script>
+    <script src="js/login.js"></script>
+</body>
+
+</html>

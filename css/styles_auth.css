@@ -1,4 +1,4 @@
-.registration {
+.registration, .login {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -7,7 +7,7 @@
     text-align: center;
 }
 
-.registration_content {
+.registration_content, .login_content {
     width: 300px;
     margin: 0;
     transform: translate(-50%, -50%);
@@ -16,13 +16,30 @@
     left: 50%;
 }
 
-.registration_form span {
+.registration_form span, .login_form span{
     font-size: 11px;
     float: left;
     width: 100%;
     text-align: left;
     height: 0;
     opacity: 0;
+}
+
+.bd_e {
+    color: red;
+    margin-top: 10px;
+}
+
+.login_content a {
+    font-size: 11px;
+    text-decoration: none;
+    color: #8b8c8e;
+    transition-duration: 0.3s;
+}
+
+.login_content a:hover {
+    color: #f4f8f9;
+    transition-duration: 0.3s;
 }
 
 @keyframes show {
@@ -47,22 +64,22 @@
     }
 }
 
-.registration_form span.show {
+span.show {
     animation: show ease-out 0.3s forwards;
 }
 
-.registration_form span.close {
+span.close {
     animation: close ease-out 0.3s forwards;
 }
 
-.registration_content input[type="email"],
+input[type="email"],
 input[type="text"],
 input[type="password"] {
     box-sizing: border-box;
     width: 100%;
 }
 
-.registration_content input {
+input {
     margin-top: 10px;
 }
 
@@ -93,10 +110,5 @@ button:hover {
     color: #222022;
     cursor: pointer;
     font-weight: bold;
-    transition: 0.3s;
-}
-
-input[type="submit"].disabled {
-    color: #757575;
     transition: 0.3s;
 }
