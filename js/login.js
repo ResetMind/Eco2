@@ -4,13 +4,16 @@ let email = document.querySelector(".login_form .email");
 let password = document.querySelector(".login_form .password");
 let email_e = document.querySelector(".login_form .email_e");
 let password_e = document.querySelector(".login_form .password_e");
+let bd_e = document.querySelector(".login_form .bd_e");
 
 login_form.onsubmit = function(e) {
     e.preventDefault();
 }
 
 log_button.onclick = function() {
-    if(!checkEmail() || !checkPassword()) {
+    let res1 = checkEmail();
+    let res2 = checkPassword();
+    if(!res1 || !res2) {
         return;
     }
     let xhr = request(login_form.getAttribute("action"), new FormData(login_form));
@@ -19,12 +22,28 @@ log_button.onclick = function() {
             console.log(xhr.status);
         } else {
             console.log(xhr.response);
+            res1 = checkEmailServer(xhr);
+            res2 = checkPasswordServer(xhr);
+            let res3 = checkBdServer(xhr);
+            if(res1 && res2 && res3) {
+                //window.location.href = "login.html";
+            }
         }
     }
 }
 
 email.oninput = checkEmail;
 password.oninput = checkPassword;
+
+function checkBdServer(xhr) {
+    if (xhr.response.bd_e.length > 0) {
+        showError(bd_e, null, xhr.response.bd_e[0]);
+        return false;
+    } else {
+        removeError(bd_e, null);
+        return true;
+    }
+}
 
 function checkEmail() {
     if (email.value[0] == "@") {
@@ -45,9 +64,29 @@ function checkEmail() {
     }
 }
 
+function checkEmailServer(xhr) {
+    if (xhr.response.email_e.length > 0) {
+        showError(email_e, email, xhr.response.email_e[0]);
+        return false;
+    } else {
+        removeError(email_e, email);
+        return true;
+    }
+}
+
 function checkPassword() {
     if (password.value.length < 1) {
         showError(password_e, password, "Недопустимая длина пароля");
+        return false;
+    } else {
+        removeError(password_e, password);
+        return true;
+    }
+}
+
+function checkPasswordServer(xhr) {
+    if (xhr.response.password_e.length > 0) {
+        showError(password_e, password, xhr.response.password_e[0]);
         return false;
     } else {
         removeError(password_e, password);

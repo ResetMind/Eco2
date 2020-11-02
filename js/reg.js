@@ -20,11 +20,14 @@ reg_button.onclick = function() {
         if(xhr.status != 200) {
             console.log(xhr.status);
         } else {
-            checkEmailServer(xhr);
-            checkNameServer(xhr);
-            checkPassword1Server(xhr);
-            checkPassword2Server(xhr);
-            checkBd(xhr);
+            let res1 = checkEmailServer(xhr);
+            let res2 = checkNameServer(xhr);
+            let res3 = checkPassword1Server(xhr);
+            let res4 = checkPassword2Server(xhr);
+            let res5 = checkBdServer(xhr);
+            if(res1 && res2 && res3 && res4 && res5) {
+                window.location.href = "login.html";
+            }
         }
     }
 }
@@ -53,12 +56,13 @@ function removeError(span, input) {
     }
 }
 
-function checkBd(xhr) {
+function checkBdServer(xhr) {
     if (xhr.response.bd_e.length > 0) {
         showError(bd_e, null, xhr.response.bd_e[0]);
+        return false;
     } else {
         removeError(bd_e, null);
-        window.location.href = "login.html";
+        return true;
     }
 }
 
@@ -79,8 +83,10 @@ function checkEmail() {
 function checkEmailServer(xhr) {
     if (xhr.response.email_e.length > 0) {
         showError(email_e, email, xhr.response.email_e[0]);
+        return false;
     } else {
         removeError(email_e, email);
+        return true;
     }
 }
 
@@ -95,8 +101,10 @@ function checkName() {
 function checkNameServer(xhr) {
     if (xhr.response.name_e.length > 0) {
         showError(name_e, name, xhr.response.name_e[0]);
+        return false;
     } else {
         removeError(name_e, name);
+        return true;
     }
 }
 
@@ -112,8 +120,10 @@ function checkPassword1() {
 function checkPassword1Server(xhr) {
     if (xhr.response.password1_e.length > 0) {
         showError(password1_e, password1, xhr.response.password1_e[0]);
+        return false;
     } else {
         removeError(password1_e, password1);
+        return true;
     }
 }
 
@@ -128,7 +138,9 @@ function checkPassword2() {
 function checkPassword2Server(xhr) {
     if (xhr.response.password2_e.length > 0) {
         showError(password2_e, password2, xhr.response.password2_e[0]);
+        return false;
     } else {
         removeError(password2_e, password2);
+        return true;
     }
 }

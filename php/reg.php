@@ -13,10 +13,8 @@ $bd_e = [];
 
 $link = null;
 
-if (!connect()) {
-    echoJSON();
-    exit();
-}
+include_once __DIR__ . "/connect.php";
+
 if (!check_values()) {
     echoJSON();
     exit();
@@ -24,17 +22,6 @@ if (!check_values()) {
     addUser();
     echoJSON();
     exit();
-}
-
-function connect()
-{
-    global $link, $bd_e;
-    $link = mysqli_connect("localhost", "root", "root", "reg_bd");
-    if (!$link) {
-        $bd_e[] = "Ошибка соединения с базой данных";
-        return false;
-    }
-    return true;
 }
 
 function addUser()
@@ -82,6 +69,7 @@ function check_values()
                 if ($row["email"] == $email) {
                     $email_e[] = "Пользователь с таким email уже существует";
                     $res = false;
+                    break;
                 }
             }
         }

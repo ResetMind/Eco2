@@ -9,20 +9,56 @@ $bd_e = [];
 
 $link = null;
 
-if (!connect()) {
-    echoJSON();
-    exit();
-}
+include_once __DIR__ . "/connect.php";
+findUser();
+echoJSON();
 
-function connect()
+function findUser()
 {
-    global $link, $bd_e;
-    $link = mysqli_connect("localhost", "root", "root", "reg_bd");
-    if (!$link) {
-        $bd_e[] = "Ошибка соединения с базой данных";
+    global $link, $email, $password, $email_e, $password_e, $bd_e;
+    $res = true;
+    $email_match = null;
+    $sqlreq = "SELECT email FROM users";
+    if (!$result = mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка выполнения запроса к БД";
+        return false;
+    } else {
+        while ($row = mysqli_fetch_assoc($result)) {
+            if ($row["email"] == $email) {
+                $email_match = $row["email"];
+                break;
+            }
+        }
+    }
+    if($email_match == null) {
+        $email_e[] = "Пользователя с таким email не существует";
         return false;
     }
-    return true;
+
+    $password = password_hash($password, PASSWORD_BCRYPT);
+    $sqlreq = "SELECT email FROM users";
+    if (!$result = mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка выполнения запроса к БД";
+        return false;
+    } else {
+        while ($row = mysqli_fetch_assoc($result)) {
+            if ($row["email"] == $email) {
+                $email_match = $row["email"];
+                break;
+            }
+        }
+    }
+
+
+    /*$email = "'" . $email . "'";
+    $password = "'" . $password . "'";
+    $status = '0';
+    $sqlreq = "INSERT INTO users (id, email, name, password, status) VALUES (null, " . $email . ", " . $name . ", " . $password1 . " , " . $status . ")";
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка регистрации";
+        $res = false;
+    }
+    return $res;*/
 }
 
 function echoJSON()
