@@ -1,4 +1,5 @@
 <?php
+session_start();
 header("Content-Type: application/json; charset=utf-8");
 $email = $_POST["email"];
 $password = $_POST["password"];
@@ -16,49 +17,34 @@ echoJSON();
 function findUser()
 {
     global $link, $email, $password, $email_e, $password_e, $bd_e;
-    $res = true;
-    $email_match = null;
-    $sqlreq = "SELECT email FROM users";
+    //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
+    $sqlreq = "SELECT email FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
     } else {
-        while ($row = mysqli_fetch_assoc($result)) {
-            if ($row["email"] == $email) {
-                $email_match = $row["email"];
-                break;
-            }
+        if (!mysqli_fetch_assoc($result)) {
+            $email_e[] = "Пользователя с таким email не существует";
+            return false;
         }
     }
-    if($email_match == null) {
-        $email_e[] = "Пользователя с таким email не существует";
-        return false;
-    }
 
-    $password = password_hash($password, PASSWORD_BCRYPT);
-    $sqlreq = "SELECT email FROM users";
+    $sqlreq = "SELECT password FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
     } else {
-        while ($row = mysqli_fetch_assoc($result)) {
-            if ($row["email"] == $email) {
-                $email_match = $row["email"];
-                break;
+        if ($row = mysqli_fetch_assoc($result)) {
+            if (!password_verify($password, $row["password"])) {
+                $password_e[] = "Неправильный пароль";
+                return false;
             }
+        } else {
+            $bd_e[] = "Ошибка выполнения запроса к БД";
+            return false;
         }
     }
-
-
-    /*$email = "'" . $email . "'";
-    $password = "'" . $password . "'";
-    $status = '0';
-    $sqlreq = "INSERT INTO users (id, email, name, password, status) VALUES (null, " . $email . ", " . $name . ", " . $password1 . " , " . $status . ")";
-    if (!mysqli_query($link, $sqlreq)) {
-        $bd_e[] = "Ошибка регистрации";
-        $res = false;
-    }
-    return $res;*/
+    $_SESSION["email"] = $email;
 }
 
 function echoJSON()

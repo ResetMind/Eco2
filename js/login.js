@@ -26,7 +26,7 @@ log_button.onclick = function() {
             res2 = checkPasswordServer(xhr);
             let res3 = checkBdServer(xhr);
             if(res1 && res2 && res3) {
-                //window.location.href = "login.html";
+                window.location.href = "home.html";
             }
         }
     }

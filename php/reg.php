@@ -60,17 +60,14 @@ function check_values()
         $email_e[] = "Часть email после @ не может содержать @";
         $res = false;
     } else {
-        $sqlreq = "SELECT email FROM users";
+        //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
+        $sqlreq = "SELECT email FROM users WHERE email='$email'";
         if (!$result = mysqli_query($link, $sqlreq)) {
             $bd_e[] = "Ошибка выполнения запроса к БД";
             $res = false;
         } else {
-            while ($row = mysqli_fetch_assoc($result)) {
-                if ($row["email"] == $email) {
-                    $email_e[] = "Пользователь с таким email уже существует";
-                    $res = false;
-                    break;
-                }
+            if (mysqli_fetch_assoc($result)) {
+                $email_e[] = "Пользователь с таким email уже существует";
             }
         }
     }
