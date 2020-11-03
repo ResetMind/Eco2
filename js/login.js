@@ -5,35 +5,45 @@ let password = document.querySelector(".login_form .password");
 let email_e = document.querySelector(".login_form .email_e");
 let password_e = document.querySelector(".login_form .password_e");
 let bd_e = document.querySelector(".login_form .bd_e");
+let ver_span = document.querySelector(".login_content .ver_span");
 
-login_form.onsubmit = function(e) {
-    e.preventDefault();
-}
-
-log_button.onclick = function() {
-    let res1 = checkEmail();
-    let res2 = checkPassword();
-    if(!res1 || !res2) {
-        return;
+document.addEventListener("DOMContentLoaded", () => {
+    /*if ($_GET("verification") == "true") {
+        ver_span.classList.add("active");
     }
-    let xhr = request(login_form.getAttribute("action"), new FormData(login_form));
-    xhr.onload = function() {
-        if(xhr.status != 200) {
-            console.log(xhr.status);
-        } else {
-            console.log(xhr.response);
-            res1 = checkEmailServer(xhr);
-            res2 = checkPasswordServer(xhr);
-            let res3 = checkBdServer(xhr);
-            if(res1 && res2 && res3) {
-                window.location.href = "home.html";
-            }
+    if ($_GET("email") != false) {
+        email.value = $_GET("email");
+    }*/
+    login_form.onsubmit = function(e) {
+        e.preventDefault();
+    }
+    log_button.onclick = function() {
+        ver_span.classList.add("active");
+        /*let res1 = checkEmail();
+        let res2 = checkPassword();
+        if (!res1 || !res2) {
+            return;
         }
+        let xhr = request(login_form.getAttribute("action"), new FormData(login_form));
+        xhr.onload = function() {
+            if (xhr.status != 200) {
+                console.log(xhr.status);
+            } else {
+                console.log(xhr.response);
+                if (xhr.response == null) return;
+                res1 = checkEmailServer(xhr);
+                res2 = checkPasswordServer(xhr);
+                let res3 = checkBdServer(xhr);
+                if (res1 && res2 && res3) {
+                    window.location.href = "home.html";
+                }
+            }
+        }*/
     }
-}
 
-email.oninput = checkEmail;
-password.oninput = checkPassword;
+    email.oninput = checkEmail;
+    password.oninput = checkPassword;
+});
 
 function checkBdServer(xhr) {
     if (xhr.response.bd_e.length > 0) {
@@ -111,4 +121,10 @@ function removeError(span, input) {
     if (input != null) {
         input.classList.remove("error");
     }
+}
+
+function $_GET(key) {
+    var p = window.location.search;
+    p = p.match(new RegExp(key + '=([^&=]+)'));
+    return p ? p[1] : false;
 }

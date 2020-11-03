@@ -10,7 +10,7 @@ $bd_e = [];
 
 $link = null;
 
-include_once __DIR__ . "/connect.php";
+require_once __DIR__ . "/connect.php";
 findUser();
 echoJSON();
 
@@ -29,7 +29,7 @@ function findUser()
         }
     }
 
-    $sqlreq = "SELECT password FROM users WHERE email='$email'";
+    $sqlreq = "SELECT password, status FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
@@ -38,6 +38,11 @@ function findUser()
             if (!password_verify($password, $row["password"])) {
                 $password_e[] = "Неправильный пароль";
                 return false;
+            } else {
+                if ($row["status"] != "1") {
+                    $email_e[] = "Ваш аккаунт не подтвержден";
+                    return false;
+                }
             }
         } else {
             $bd_e[] = "Ошибка выполнения запроса к БД";

@@ -10,35 +10,55 @@ $name_e = [];
 $password1_e = [];
 $password2_e = [];
 $bd_e = [];
+$send_email_e = [];
 
 $link = null;
 
-include_once __DIR__ . "/connect.php";
+$base_url = "http://s74588.hostru11.fornex.host/ecoprognoz.org/php";
+
+require_once __DIR__ . "/connect.php";
 
 if (!check_values()) {
     echoJSON();
     exit();
-} else {
-    addUser();
+}
+if (!addUser()) {
     echoJSON();
     exit();
 }
+require_once __DIR__ . "/send_email.php";
+$subject = "Регистрация на ecoprognoz.org";
+$activation = md5($email . time());
+$verify_link = "$base_url/verification.php?code=$activation";
+    $message = "Здравствуйте, $name!<br>Для подтверждения регистрации пройдите по <a href='$verify_link'>ссылке</a><br>Это письмо отправлено автоматически. Отвечать на него не нужно.";
+if (!sendEmail($email, $subject, $message)) {
+    //deleteUser();
+    echoJSON();
+    exit();
+}
+echoJSON();
+
+/*function deleteUser()
+{
+    global $link, $bd_e, $email;
+    $sqlreq = "DELETE FROM users WHERE email='$email'";
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка удаления пользователя";
+        return false;
+    }
+    return true;
+}*/
 
 function addUser()
 {
     global $link, $bd_e, $email, $name, $password1;
     $password1 = password_hash($password1, PASSWORD_BCRYPT);
-    $res = true;
-    $email = "'" . $email . "'";
-    $name = "'" . $name . "'";
-    $password1 = "'" . $password1 . "'";
-    $status = '0';
-    $sqlreq = "INSERT INTO users (id, email, name, password, status) VALUES (null, " . $email . ", " . $name . ", " . $password1 . " , " . $status . ")";
+    $sqlreq = "INSERT INTO users (id, email, name, password) VALUES (null, '$email', '$name', '$password1')";
     if (!mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка регистрации";
-        $res = false;
+        return false;
     }
-    return $res;
+    return true;
 }
 
 function check_values()
@@ -68,6 +88,7 @@ function check_values()
         } else {
             if (mysqli_fetch_assoc($result)) {
                 $email_e[] = "Пользователь с таким email уже существует";
+                $res = false;
             }
         }
     }
@@ -88,10 +109,10 @@ function check_values()
 
 function echoJSON()
 {
-    global $email_e, $name_e, $password1_e, $password2_e, $bd_e;
+    global $email_e, $name_e, $password1_e, $password2_e, $bd_e, $send_email_e;
     $arr = array(
         "email_e" => $email_e, "name_e" => $name_e, "password1_e" => $password1_e,
-        "password2_e" => $password2_e, "bd_e" => $bd_e
+        "password2_e" => $password2_e, "bd_e" => $bd_e, "send_email_e" => $send_email_e
     );
     $output = json_encode($arr, JSON_UNESCAPED_UNICODE);
     echo $output;

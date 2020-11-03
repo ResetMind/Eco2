@@ -25,6 +25,18 @@
     opacity: 0;
 }
 
+.ver_span {
+    font-size: 11px;
+    /*margin-bottom: 10px;*/
+    /*display: none;*/
+    max-height: 0;
+    opacity: 0;
+}
+
+.ver_span.active {
+    display: block;
+}
+
 .bd_e {
     color: red;
     margin-top: 10px;
