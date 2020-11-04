@@ -14,23 +14,37 @@
 </header>
 
 <body>
+    <div class="preloader"></div>
     <div class="login">
-        <div class="login_content">   
-            <span class="ver_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной ссылкой<br></span> 
+        <div class="login_content">
+            <span class="ver_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной
+                ссылкой<br></span>
             <span class="auth_span">Вход</span>
             <form name="login_form" class="login_form" action="php/login.php" method="POST" novalidate>
                 <span class="bd_e">Qwerty</span>
                 <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                <span class="email_e">Qwerty</span> 
+                <span class="email_e">Qwerty</span>
                 <input type="password" name="password" class="password" placeholder="Ваш пароль">
                 <span class="password_e">Qwerty</span>
+
+                <!--<label class="remember_me_label">
+                    <input type="checkbox">
+                    <span class="remember_me_span">Запомнить меня</span>
+                    <span class="checkmark"></span>
+                </label>-->
+                <div class="remember_me_div">
+                    <input type="checkbox" id="remember_me_checkbox" class="remember_me_checkbox"
+                        name="remember_me_checkbox">
+                    <label for="remember_me_checkbox">Happy</label>
+                </div>
                 <input type="submit" name="log_button" class="log_button" value="Войти">
             </form>
             <a href="#" class="forgot">Забыли пароль?</a>
         </div>
     </div>
-    <script src="js/ajax.js"></script>
-    <script src="js/login.js"></script>
+    <script src="js/ajax.js" defer></script>
+    <script src="js/animation.js" defer></script>
+    <script src="js/login.js" defer></script>
 </body>
 
 </html>

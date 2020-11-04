@@ -42,3 +42,7 @@
 [03-Nov-2020 23:26:04 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2006): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
 [03-Nov-2020 23:31:29 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 's74588_dbuser'@'localhost' (using password: YES) in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
 [04-Nov-2020 00:32:35 Europe/Moscow] PHP Fatal error:  Cannot redeclare sendEmail() (previously declared in /home/s74588/public_html/ecoprognoz.org/php/reg.php:43) in /home/s74588/public_html/ecoprognoz.org/php/send_email.php on line 2
+[04-Nov-2020 00:43:04 Europe/Moscow] PHP Fatal error:  Cannot redeclare sendEmail() (previously declared in /home/s74588/public_html/ecoprognoz.org/php/reg.php:41) in /home/s74588/public_html/ecoprognoz.org/php/send_email.php on line 2
+[04-Nov-2020 19:16:37 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
+[04-Nov-2020 19:16:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
+[04-Nov-2020 19:17:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53

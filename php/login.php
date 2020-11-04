@@ -11,6 +11,10 @@ $bd_e = [];
 $link = null;
 
 require_once __DIR__ . "/connect.php";
+if (!connect()) {
+    echoJSON();
+    exit();
+}
 findUser();
 echoJSON();
 

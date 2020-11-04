@@ -13,11 +13,16 @@ $bd_e = [];
 $send_email_e = [];
 
 $link = null;
+$activation_code = null;
 
 $base_url = "http://s74588.hostru11.fornex.host/ecoprognoz.org/php";
 
 require_once __DIR__ . "/connect.php";
 
+if (!connect()) {
+    echoJSON();
+    exit();
+}
 if (!check_values()) {
     echoJSON();
     exit();
@@ -28,9 +33,8 @@ if (!addUser()) {
 }
 require_once __DIR__ . "/send_email.php";
 $subject = "Регистрация на ecoprognoz.org";
-$activation = md5($email . time());
-$verify_link = "$base_url/verification.php?code=$activation";
-    $message = "Здравствуйте, $name!<br>Для подтверждения регистрации пройдите по <a href='$verify_link'>ссылке</a><br>Это письмо отправлено автоматически. Отвечать на него не нужно.";
+$verify_link = "$base_url/verification.php?code=$activation_code";
+$message = "Здравствуйте, $name!<br>Для подтверждения регистрации пройдите по <a href='$verify_link'>ссылке</a><br>Это письмо отправлено автоматически. Отвечать на него не нужно.";
 if (!sendEmail($email, $subject, $message)) {
     //deleteUser();
     echoJSON();
@@ -51,9 +55,10 @@ echoJSON();
 
 function addUser()
 {
-    global $link, $bd_e, $email, $name, $password1;
+    global $link, $bd_e, $email, $name, $password1, $activation_code;
+    $activation_code = md5($email . time());
     $password1 = password_hash($password1, PASSWORD_BCRYPT);
-    $sqlreq = "INSERT INTO users (id, email, name, password) VALUES (null, '$email', '$name', '$password1')";
+    $sqlreq = "INSERT INTO users (id, email, name, password, code) VALUES (null, '$email', '$name', '$password1', '$activation_code')";
     if (!mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка регистрации";
         return false;
@@ -80,7 +85,6 @@ function check_values()
         $email_e[] = "Часть email после @ не может содержать @";
         $res = false;
     } else {
-        //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
         $sqlreq = "SELECT email FROM users WHERE email='$email'";
         if (!$result = mysqli_query($link, $sqlreq)) {
             $bd_e[] = "Ошибка выполнения запроса к БД";

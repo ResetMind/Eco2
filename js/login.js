@@ -8,18 +8,17 @@ let bd_e = document.querySelector(".login_form .bd_e");
 let ver_span = document.querySelector(".login_content .ver_span");
 
 document.addEventListener("DOMContentLoaded", () => {
-    /*if ($_GET("verification") == "true") {
+    if ($_GET("verification") == "true") {
         ver_span.classList.add("active");
     }
     if ($_GET("email") != false) {
         email.value = $_GET("email");
-    }*/
+    }
     login_form.onsubmit = function(e) {
         e.preventDefault();
     }
     log_button.onclick = function() {
-        ver_span.classList.add("active");
-        /*let res1 = checkEmail();
+        let res1 = checkEmail();
         let res2 = checkPassword();
         if (!res1 || !res2) {
             return;
@@ -38,11 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     window.location.href = "home.html";
                 }
             }
-        }*/
+        }
     }
-
     email.oninput = checkEmail;
     password.oninput = checkPassword;
+    let preloader = document.querySelector(".preloader");
+    fadeOut(preloader);
 });
 
 function checkBdServer(xhr) {

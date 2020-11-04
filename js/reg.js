@@ -40,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
     name.oninput = checkName;
     password1.oninput = checkPassword1;
     password2.oninput = checkPassword2;
+    let preloader = document.querySelector(".preloader");
+    fadeOut(preloader);
 });
 
 function showError(span, input, text) {
