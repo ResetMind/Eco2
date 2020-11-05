@@ -26,6 +26,69 @@ body {
     z-index: 99999;
 }
 
+.bd_e_preloader {
+    font-size: 14px;
+    color: red;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 0;
+    opacity: 0;
+}
+
+@keyframes show {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: 15px;
+        opacity: 100%;
+    }
+}
+
+@keyframes close {
+    from {
+        height: 15px;
+        opacity: 100%;
+    }
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes show {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: 15px;
+        opacity: 100%;
+    }
+}
+
+@keyframes close {
+    from {
+        height: 15px;
+        opacity: 100%;
+    }
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+span.show {
+    animation: show ease-out 0.3s forwards;
+}
+
+span.close {
+    animation: close ease-out 0.3s forwards;
+}
+
 header,
 footer {
     -ms-user-select: none;

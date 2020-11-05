@@ -68,44 +68,18 @@ function addUser()
 
 function check_values()
 {
-    global $email_e, $name_e, $password1_e, $password2_e;
-    global $email, $name, $password1, $password2;
-    global $link, $bd_e;
+    require_once __DIR__ . "/form_checkers.php";
     $res = true;
-    if (substr($email, 0) == "@") {
-        $email_e[] = "Email не может начинаться с символа @";
+    if(!checkEmail()) {
         $res = false;
-    } else if (strpos($email, "@") == false) {
-        $email_e[] = "В email должен быть символ @";
-        $res = false;
-    } else if (substr($email, -1) == "@") {
-        $email_e[] = "В email должны быть символы после @";
-        $res = false;
-    } else if (substr_count($email, "@") > 1) {
-        $email_e[] = "Часть email после @ не может содержать @";
-        $res = false;
-    } else {
-        $sqlreq = "SELECT email FROM users WHERE email='$email'";
-        if (!$result = mysqli_query($link, $sqlreq)) {
-            $bd_e[] = "Ошибка выполнения запроса к БД";
-            $res = false;
-        } else {
-            if (mysqli_fetch_assoc($result)) {
-                $email_e[] = "Пользователь с таким email уже существует";
-                $res = false;
-            }
-        }
-    }
-    if (mb_strlen($name) < 2 || mb_strlen($name) > 50) {
-        $name_e[] = "Недопустимая длина имени (2-50 символов)";
+    } 
+    if(!checkName()) {
         $res = false;
     }
-    if (mb_strlen($password1) < 4 || mb_strlen($password1) > 12) {
-        $password1_e[] = "Недопустимая длина пароля (4-12 символов)";
+    if(!checkPassword1()) {
         $res = false;
     }
-    if (strcmp($password1, $password2) !== 0) {
-        $password2_e[] = "Пароли не совпадают";
+    if(!checkPassword2()) {
         $res = false;
     }
     return $res;

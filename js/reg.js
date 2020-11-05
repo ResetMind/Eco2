@@ -9,6 +9,7 @@ let name_e = document.querySelector(".registration_form .name_e");
 let password1_e = document.querySelector(".registration_form .password1_e");
 let password2_e = document.querySelector(".registration_form .password2_e");
 let bd_e = document.querySelector(".registration_content .bd_e");
+let send_email_e = document.querySelector(".registration_content .send_email_e");
 
 document.addEventListener("DOMContentLoaded", () => {
     reg_form.onsubmit = function(e) {
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let res3 = checkPassword1Server(xhr, password1, password1_e);
                 let res4 = checkPassword2Server(xhr, password2, password2_e);
                 let res5 = checkBdServer(xhr, bd_e);
-                let res6 = checkEmailSendServer(xhr);
+                let res6 = checkEmailSendServer(xhr, send_email_e);
                 if (res1 && res2 && res3 && res4 && res5 && res6) {
                     window.location.href = "login.html?verification=true&email=" + email.value;
                 }
@@ -40,13 +41,3 @@ document.addEventListener("DOMContentLoaded", () => {
     password2.oninput = checkPassword2.bind(null, password1, password2, password2_e);
     fadeOut(document.querySelector(".preloader"));
 });
-
-function checkEmailSendServer(xhr) {
-    if (xhr.response.send_email_e.length > 0) {
-        showError(bd_e, null, xhr.response.send_email_e[0]);
-        return false;
-    } else {
-        removeError(bd_e, null);
-        return true;
-    }
-}

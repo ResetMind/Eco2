@@ -37,6 +37,16 @@ function checkEmailServer(xhr, email_input, email_span) {
     }
 }
 
+function checkEmailSendServer(xhr, send_email_span) {
+    if (xhr.response.send_email_e.length > 0) {
+        showError(send_email_span, null, xhr.response.send_email_e[0]);
+        return false;
+    } else {
+        removeError(send_email_span, null);
+        return true;
+    }
+}
+
 function checkName(name_input, name_span) {
     if (name_input.value.length < 2 || name_input.value.length > 50) {
         showError(name_span, name_input, "Недопустимая длина имени (2-50 символов)");
@@ -110,6 +120,13 @@ function checkPassword2Server(xhr, password2_input, password2_span) {
         removeError(password2_span, password2_input);
         return true;
     }
+}
+
+function checkAccessServer(xhr) {
+    if (xhr.response.access_e.length > 0) {
+        return false;
+    }
+    return true;
 }
 
 function showError(span, input, text) {
