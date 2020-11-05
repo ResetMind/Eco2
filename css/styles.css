@@ -332,3 +332,28 @@ footer span {
     background: #3a3a3a;
     transition-duration: 0.3s;
 }
+
+input[type="email"],
+input[type="text"],
+input[type="submit"],
+input[type="password"],
+button {
+    background: #222022;
+    border: 1px solid #8b8c8e;
+    border-radius: 0px;
+    color: #f4f8f9;
+    font-size: 12px;
+    padding: 5px;
+    outline: none;
+    font-family: 'Open Sans', sans-serif;
+    opacity: 100%;
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background: #f4f8f9;
+    color: #222022;
+    cursor: pointer;
+    transition: 0.3s;
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки - Экопрогноз</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles_set.css" />
+</head>
+
+<header>
+    <a href="home.html">Назад</a>
+    <span>Экопрогноз</span>
+</header>
+
+<body>
+    <div class="settings">
+        <div class="settings_content">
+            <span class="account_settings_span header_span">Настройки аккаунта</span>
+            <span class="bd_e error">Qwerty</span>
+            <form name="name_form" class="name_form" action="php/login.php" method="POST" novalidate>
+                <span>Ваше имя:</span>
+                <input type="text" name="name" class="name" placeholder="Имя Фамилия">
+                <span class="name_e error" class="info">Qwerty</span>
+            </form>
+            <form name="email_form" class="email_form" action="php/login.php" method="POST" novalidate>
+                <span>Ваш email:</span>
+                <input type="email" name="email" class="email" placeholder="Ваш e-mail">
+                <span class="email_e error">Qwerty</span>
+            </form>
+            <form name="password_form" class="password_form" action="php/login.php" method="POST" novalidate>
+                <span>Ваш пароль:</span>
+                <input type="password" name="password0" class="password0" placeholder="Введите старый пароль">
+                <span class="password0_e error">Qwerty</span>
+                <input type="password" name="password1" class="password1" placeholder="Придумайте новый пароль">
+                <span class="password1_e error">Qwerty</span>
+                <input type="password" name="password2" class="password2" placeholder="Повторите новый пароль">
+                <span class="password2_e error">Qwerty</span>
+            </form>
+            <span class="app_settings_span header_span">Настройки приложения</span>
+            <div class="radio_div">
+                <span>Тема:</span>
+                <input type="radio" name="theme_rad" value="1" id="theme_1" checked>
+                <label for="theme_1">Светлая</label>
+                <input type="radio" name="theme_rad" value="2" id="theme_2">
+                <label for="theme_2">Темная</label>
+            </div>
+            <div class="radio_div">
+                <span>Автосохранение:</span>
+                <input type="radio" name="autosave_rad" value="1" id="autosave_1" checked>
+                <label for="autosave_1">Выкл.</label>
+                <input type="radio" name="autosave_rad" value="2" id="autosave_2">
+                <label for="autosave_2">1 м.</label>
+                <input type="radio" name="autosave_rad" value="3" id="autosave_3">
+                <label for="autosave_3">5 м.</label>
+                <input type="radio" name="autosave_rad" value="4" id="autosave_4">
+                <label for="autosave_4">10 м.</label>
+            </div>
+        </div>
+    </div>
+    <script src="js/ajax.js" defer></script>
+    <script src="js/animation.js" defer></script>
+</body>
+</html>

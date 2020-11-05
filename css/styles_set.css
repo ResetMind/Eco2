@@ -1,0 +1,119 @@
+.settings {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    text-align: center;
+}
+
+.settings_content {
+    width: 300px;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.settings_content form {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+}
+
+.settings_content span:not(.header_span) {
+    float: left;
+    width: 100%;
+    text-align: left;
+}
+
+.header_span:not(:first-child) {
+    margin-top: 20px;
+}
+
+span.error {
+    font-size: 11px;
+    height: 0;
+    opacity: 0;
+}
+
+@keyframes show {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: 15px;
+        opacity: 100%;
+    }
+}
+
+@keyframes close {
+    from {
+        height: 15px;
+        opacity: 100%;
+    }
+    to {
+        height: 0;
+        opacity: 0;
+    }
+}
+
+span.show {
+    animation: show ease-out 0.3s forwards;
+}
+
+span.close {
+    animation: close ease-out 0.3s forwards;
+}
+
+.bd_e {
+    color: red;
+    margin-top: 10px;
+}
+
+input[type="email"],
+input[type="text"],
+input[type="password"] {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.settings_content input, .settings_content div {
+    margin-top: 10px;
+}
+
+.radio_div {
+    height: 35px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.radio_div>input {
+    display: none;
+}
+
+.radio_div>label {
+    display: inline-block;
+    line-height: 35px;
+    padding-left: 5px;
+    padding-right: 5px;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+    color: #ceccce;
+    background: transparent;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+.radio_div>input:checked+label {
+    color: #f4f8f9;
+    background: #3a3a3a;
+    transition-duration: 0.3s;
+}
