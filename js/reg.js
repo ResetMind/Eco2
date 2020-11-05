@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
     reg_form.onsubmit = function(e) {
         e.preventDefault();
     }
-
     reg_button.onclick = function() {
         let xhr = request(reg_form.getAttribute("action"), new FormData(reg_form));
         xhr.onload = function() {
@@ -35,13 +34,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
-
     email.oninput = checkEmail;
     name.oninput = checkName;
     password1.oninput = checkPassword1;
     password2.oninput = checkPassword2;
-    let preloader = document.querySelector(".preloader");
-    fadeOut(preloader);
+    fadeOut(document.querySelector(".preloader"));
 });
 
 function showError(span, input, text) {

@@ -22,7 +22,18 @@
     flex-direction: column;
 }
 
-.login_form {
+.loader {
+    background: #222022;
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99999;
+}
+
+.registration_form, .login_form {
     display: flex;
     flex-direction: column;
     align-content: center;
@@ -30,22 +41,22 @@
 }
 
 .registration_form span,
-.login_form span:not(.remember_me_span) {
+.login_form span {
     font-size: 11px;
     float: left;
     width: 100%;
     text-align: left;
-    /*height: 0;
-    opacity: 0;*/
+    height: 0;
+    opacity: 0;
 }
 
-.ver_span {
+.ver_span, .access_span {
     font-size: 11px;
     margin-bottom: 10px;
     display: none;
 }
 
-.ver_span.active {
+.ver_span.active, .access_span.active {
     display: block;
 }
 
@@ -107,10 +118,6 @@ input[type="password"] {
     width: 100%;
 }
 
-input[type="submit"] {
-    min-width: 0;
-}
-
 input[type="email"],
 input[type="text"],
 input[type="submit"],
@@ -142,7 +149,17 @@ button:hover {
     transition: 0.3s;
 }
 
-.remember_me_div {}
+/*checkbox*/
+
+.remember_me_div {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.remember_me_div label {
+    font-size: 11px;
+    float: left;
+}
 
 input[type="checkbox"] {
     position: absolute;
@@ -154,10 +171,11 @@ input[type="checkbox"]+label {
     display: inline-flex;
     align-items: center;
     user-select: none;
+    line-height: 1em;
 }
 
 input[type="checkbox"]+label::before {
-    content: '';
+    content: "";
     display: inline-block;
     width: 1em;
     height: 1em;
@@ -168,22 +186,18 @@ input[type="checkbox"]+label::before {
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 50% 50%;
+    transition: 0.3s;
 }
 
 input[type="checkbox"]:checked+label::before {
-    border-color: #0b76ef;
-    background-color: #0b76ef;
+    border-color: #6ead3a;
+    background-color: #6ead3a;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+    transition: 0.3s;
 }
 
 
-/*.remember_me_label {
-    user-select: none;
-    margin-top: 10px;
-    width: 100%;
+input[type="checkbox"]:not(:disabled):not(:checked)+label:hover::before {
+    border-color: #6ead3a;
+    transition: 0.3s;
 }
-
-.remember_me_span {
-    font-size: 12px;
-    float: left;
-}*/

@@ -13,8 +13,7 @@ function doRequest() {
             if(!checkAccessServer(xhr)) {
                 window.location.href = "login.html?access=false";
             } else {
-                let preloader = document.querySelector(".preloader");
-                fadeOut(preloader);
+                fadeOut(document.querySelector(".preloader"));
             }
         }
     }

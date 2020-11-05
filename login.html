@@ -19,6 +19,7 @@
         <div class="login_content">
             <span class="ver_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной
                 ссылкой<br></span>
+            <span class="access_span">Войдите для доступа к запрашиваемой странице<br></span>
             <span class="auth_span">Вход</span>
             <form name="login_form" class="login_form" action="php/login.php" method="POST" novalidate>
                 <span class="bd_e">Qwerty</span>
@@ -26,20 +27,16 @@
                 <span class="email_e">Qwerty</span>
                 <input type="password" name="password" class="password" placeholder="Ваш пароль">
                 <span class="password_e">Qwerty</span>
-
-                <!--<label class="remember_me_label">
-                    <input type="checkbox">
-                    <span class="remember_me_span">Запомнить меня</span>
-                    <span class="checkmark"></span>
-                </label>-->
                 <div class="remember_me_div">
                     <input type="checkbox" id="remember_me_checkbox" class="remember_me_checkbox"
                         name="remember_me_checkbox">
-                    <label for="remember_me_checkbox">Happy</label>
+                    <label for="remember_me_checkbox">Запомнить меня</label>
                 </div>
                 <input type="submit" name="log_button" class="log_button" value="Войти">
             </form>
-            <a href="#" class="forgot">Забыли пароль?</a>
+            <div class="forgot_div">
+                <a href="#" class="forgot">Забыли пароль?</a>
+            </div>
         </div>
     </div>
     <script src="js/ajax.js" defer></script>

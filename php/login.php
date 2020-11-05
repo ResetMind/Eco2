@@ -7,6 +7,7 @@ $password = $_POST["password"];
 $email_e = [];
 $password_e = [];
 $bd_e = [];
+$info = [];
 
 $link = null;
 
@@ -20,7 +21,7 @@ echoJSON();
 
 function findUser()
 {
-    global $link, $email, $password, $email_e, $password_e, $bd_e;
+    global $link, $email, $password, $email_e, $password_e, $bd_e, $info;
     //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
     $sqlreq = "SELECT email FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
@@ -53,14 +54,32 @@ function findUser()
             return false;
         }
     }
+    if (isset($_POST["remember_me_checkbox"])) {
+        $token = password_hash($email . time(), PASSWORD_BCRYPT);
+        $sqlreq = "UPDATE users SET token='$token' WHERE email='$email'";
+        if (!mysqli_query($link, $sqlreq)) {
+            $bd_e[] = "Ошибка выполнения запроса к БД";
+            return false;
+        } else {
+            setcookie("token", $token, time() + (60/* * 60 * 24 * 7*/));
+        }
+    } else {
+        $sqlreq = "UPDATE users SET token=null WHERE email='$email'";
+        if (!mysqli_query($link, $sqlreq)) {
+            $bd_e[] = "Ошибка выполнения запроса к БД";
+            return false;
+        } else {
+            setcookie("token", "", time() - 3600);
+        }
+    }
     $_SESSION["email"] = $email;
 }
 
 function echoJSON()
 {
-    global $email_e, $password_e, $bd_e;
+    global $email_e, $password_e, $bd_e, $info;
     $arr = array(
-        "email_e" => $email_e, "password_e" => $password_e, "bd_e" => $bd_e
+        "email_e" => $email_e, "password_e" => $password_e, "bd_e" => $bd_e, "info" => $info
     );
     $output = json_encode($arr, JSON_UNESCAPED_UNICODE);
     echo $output;

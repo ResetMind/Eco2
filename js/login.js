@@ -6,6 +6,7 @@ let email_e = document.querySelector(".login_form .email_e");
 let password_e = document.querySelector(".login_form .password_e");
 let bd_e = document.querySelector(".login_form .bd_e");
 let ver_span = document.querySelector(".login_content .ver_span");
+let access_span = document.querySelector(".login_content .access_span");
 
 document.addEventListener("DOMContentLoaded", () => {
     if ($_GET("verification") == "true") {
@@ -13,6 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if ($_GET("email") != false) {
         email.value = $_GET("email");
+    }
+    if($_GET("access") == "false") {
+        access_span.classList.add("active");
     }
     login_form.onsubmit = function(e) {
         e.preventDefault();
@@ -41,8 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     email.oninput = checkEmail;
     password.oninput = checkPassword;
-    let preloader = document.querySelector(".preloader");
-    fadeOut(preloader);
+    fadeOut(document.querySelector(".preloader"));
 });
 
 function checkBdServer(xhr) {
