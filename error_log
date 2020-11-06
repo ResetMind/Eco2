@@ -46,3 +46,4 @@
 [04-Nov-2020 19:16:37 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
 [04-Nov-2020 19:16:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
 [04-Nov-2020 19:17:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
+[06-Nov-2020 13:06:41 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 5

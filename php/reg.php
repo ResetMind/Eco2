@@ -31,6 +31,10 @@ if (!addUser()) {
     echoJSON();
     exit();
 }
+if (!createTables()) {
+    echoJSON();
+    exit();
+}
 require_once __DIR__ . "/send_email.php";
 $subject = "Регистрация на ecoprognoz.org";
 $verify_link = "$base_url/verification.php?code=$activation_code";
@@ -53,6 +57,26 @@ echoJSON();
     return true;
 }*/
 
+function createTables()
+{
+    global $link, $bd_e, $email;
+    $sqlreq = "CREATE TABLE IF NOT EXISTS `factors_$email`(id int not null primary key AUTO_INCREMENT, 
+    year int, culture varchar(100), square varchar(100), sumO float, sumT int, 
+    sumT10 int, sumT15 int, sumT20 int, sumO2 float, sumB int, sumB40 int, 
+    sumB45 int, sumB50 int, chdO int, chdT10 int, chdT15 int, chdT20 int, 
+    chdO2 int, chdB40 int, chdB45 int, chdB50 int)";
+    /*;CREATE TABLE IF NOT EXISTS fields_" . $email . "(id int not null primary key AUTO_INCREMENT, 
+    cadastral varchar(50), coordinates varchar(100), owner varchar (100));CREATE TABLE IF NOT EXISTS cultures_" . $email . "(id int not null primary key AUTO_INCREMENT, 
+    name varchar(100)) */
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка создания таблиц";
+        $bd_e[] = mysqli_error_list($link);
+        return false;
+    }
+    $bd_e[] = "Создал";
+    return true;
+}
+
 function addUser()
 {
     global $link, $bd_e, $email, $name, $password1, $activation_code;
@@ -70,16 +94,16 @@ function check_values()
 {
     require_once __DIR__ . "/form_checkers.php";
     $res = true;
-    if(!checkEmail()) {
-        $res = false;
-    } 
-    if(!checkName()) {
+    if (!checkEmail()) {
         $res = false;
     }
-    if(!checkPassword1()) {
+    if (!checkName()) {
         $res = false;
     }
-    if(!checkPassword2()) {
+    if (!checkPassword1()) {
+        $res = false;
+    }
+    if (!checkPassword2()) {
         $res = false;
     }
     return $res;

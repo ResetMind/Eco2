@@ -8,5 +8,9 @@ function connect()
         $bd_e[] = "Ошибка соединения с базой данных";
         return false;
     }
+    if (!mysqli_set_charset($link, "utf8")) {
+        $bd_e[] = "Ошибка установки кодировки базы данных";
+        return false;
+    }
     return true;
 }
