@@ -71,7 +71,7 @@ function setRightContextMenu() {
         setTableEngine(selected_content_i);
     }
     r_row_up.onclick = function() {
-        createNewRow(selected_content_i);
+        let new_tr = createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref);
@@ -80,7 +80,7 @@ function setRightContextMenu() {
         tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
     }
     r_row_down.onclick = function() {
-        createNewRow(selected_content_i);
+        let new_tr = createNewRow(selected_content_i);
         let row = getColRow(selected_td_i, ths.length)[1];
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref.nextSibling);
@@ -168,15 +168,10 @@ function setRightContextMenu() {
         }
         trs = table_body[selected_content_i].querySelectorAll("tr");
         if (trs.length == 0) {
-            createNewRow(selected_content_i);
+            let new_tr = createNewRow(selected_content_i);
             table_body[selected_content_i].append(new_tr);
         }
         selected_tds = null;
-    }
-
-    function createNewRow(index) {
-        new_tr = document.createElement("tr");
-        new_tr.innerHTML = new_rows_inner[index];
     }
 
     function getSelectedInners(cut) {
@@ -207,6 +202,12 @@ function setRightContextMenu() {
         }
         return false;
     }
+}
+
+function createNewRow(index) {
+    let new_tr = document.createElement("tr");
+    new_tr.innerHTML = new_rows_inner[index];
+    return new_tr;
 }
 
 function isSingleSelect() {

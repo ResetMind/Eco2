@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 let res5 = checkBdServer(xhr, bd_e);
                 let res6 = checkEmailSendServer(xhr, send_email_e);
                 if (res1 && res2 && res3 && res4 && res5 && res6) {
-                    //window.location.href = "login.html?verification=true&email=" + email.value;
+                    window.location.href = "login.html?verification=true&email=" + email.value;
                 }
             }
         }

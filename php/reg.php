@@ -18,7 +18,6 @@ $activation_code = null;
 $base_url = "http://s74588.hostru11.fornex.host/ecoprognoz.org/php";
 
 require_once __DIR__ . "/connect.php";
-
 if (!connect()) {
     echoJSON();
     exit();
@@ -32,6 +31,7 @@ if (!addUser()) {
     exit();
 }
 if (!createTables()) {
+    deleteUser();
     echoJSON();
     exit();
 }
@@ -39,41 +39,51 @@ require_once __DIR__ . "/send_email.php";
 $subject = "Регистрация на ecoprognoz.org";
 $verify_link = "$base_url/verification.php?code=$activation_code";
 $message = "Здравствуйте, $name!<br>Для подтверждения регистрации пройдите по <a href='$verify_link'>ссылке</a><br>Это письмо отправлено автоматически. Отвечать на него не нужно.";
-if (!sendEmail($email, $subject, $message)) {
-    //deleteUser();
+/*if (!sendEmail($email, $subject, $message)) {
+    deleteUser();
     echoJSON();
     exit();
-}
+}*/
 echoJSON();
 
-/*function deleteUser()
+function deleteUser()
 {
     global $link, $bd_e, $email;
     $sqlreq = "DELETE FROM users WHERE email='$email'";
     if (!mysqli_query($link, $sqlreq)) {
-        $bd_e[] = "Ошибка удаления пользователя";
+        //$bd_e[] = "Ошибка удаления пользователя";
         return false;
     }
     return true;
-}*/
+}
 
 function createTables()
 {
     global $link, $bd_e, $email;
-    $sqlreq = "CREATE TABLE IF NOT EXISTS `factors_$email`(id int not null primary key AUTO_INCREMENT, 
+    $factors_name = $email . "_factors";
+    $sqlreq = "CREATE TABLE IF NOT EXISTS `$factors_name`(id int not null primary key AUTO_INCREMENT, 
     year int, culture varchar(100), square varchar(100), sumO float, sumT int, 
     sumT10 int, sumT15 int, sumT20 int, sumO2 float, sumB int, sumB40 int, 
     sumB45 int, sumB50 int, chdO int, chdT10 int, chdT15 int, chdT20 int, 
-    chdO2 int, chdB40 int, chdB45 int, chdB50 int)";
-    /*;CREATE TABLE IF NOT EXISTS fields_" . $email . "(id int not null primary key AUTO_INCREMENT, 
-    cadastral varchar(50), coordinates varchar(100), owner varchar (100));CREATE TABLE IF NOT EXISTS cultures_" . $email . "(id int not null primary key AUTO_INCREMENT, 
-    name varchar(100)) */
+    chdO2 int, chdB40 int, chdB45 int, chdB50 int);";
     if (!mysqli_query($link, $sqlreq)) {
-        $bd_e[] = "Ошибка создания таблиц";
-        $bd_e[] = mysqli_error_list($link);
+        $bd_e[] = "Ошибка регистрации";
         return false;
     }
-    $bd_e[] = "Создал";
+    $fields_name = $email . "_fields";
+    $sqlreq = "CREATE TABLE IF NOT EXISTS `$fields_name`(id int not null primary key AUTO_INCREMENT, 
+    cadastral varchar(50), coordinates varchar(100), owner varchar (100));";
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка регистрации";
+        return false;
+    }
+    $cultures_name = $email . "_cultures";
+    $sqlreq = "CREATE TABLE IF NOT EXISTS `$cultures_name`(id int not null primary key AUTO_INCREMENT, 
+    name varchar(100));";
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка регистрации";
+        return false;
+    }
     return true;
 }
 

@@ -8,6 +8,31 @@ function checkBdServer(xhr, bd_span) {
     }
 }
 
+function checkBdServerHome(xhr, bd_span) {
+    if (xhr.response.bd_e.length > 0) {
+        bd_span.innerHTML = xhr.response.bd_e[0];
+        bd_span.classList.add("error"); 
+        bd_span.classList.add("active"); 
+        return false;
+    } else {
+        bd_span.classList.remove("active"); 
+        bd_span.classList.remove("error"); 
+        return true;
+    }
+}
+
+function checkTablesServer(xhr, tables_span) {
+    if (xhr.response.tables_e.length > 0) {
+        //tables_span.classList.add("error"); 
+        tables_span.innerHTML = xhr.response.tables_e[0];
+        return false;
+    } else {
+        //tables_span.classList.remove("error");
+        tables_span.innerHTML = "";
+        return true;
+    }
+}
+
 function checkEmail(email_input, email_span) {
     if (email_input.value[0] == "@") {
         showError(email_span, email_input, "Email не может начинаться с символа @");
