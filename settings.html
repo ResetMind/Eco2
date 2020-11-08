@@ -22,26 +22,20 @@
         <div class="settings_content">
             <span class="account_settings_span header_span">Настройки аккаунта</span>
             <span class="bd_e error">Qwerty</span>
-            <form name="save_set_form" class="save_set_form" method="POST" novalidate>
-                <form name="name_form" class="name_form" method="POST" novalidate>
-                    <span>Ваше имя:</span>
-                    <input type="text" name="name" class="name" placeholder="Имя Фамилия">
-                    <span class="name_e error" class="info">Qwerty</span>
-                </form>
-                <form name="email_form" class="email_form" method="POST" novalidate>
-                    <span>Ваш email:</span>
-                    <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                    <span class="email_e error">Qwerty</span>
-                </form>
-                <form name="password_form" class="password_form" method="POST" novalidate>
-                    <span>Ваш пароль:</span>
-                    <input type="password" name="password0" class="password0" placeholder="Введите старый пароль">
-                    <span class="password0_e error">Qwerty</span>
-                    <input type="password" name="password1" class="password1" placeholder="Придумайте новый пароль">
-                    <span class="password1_e error">Qwerty</span>
-                    <input type="password" name="password2" class="password2" placeholder="Повторите новый пароль">
-                    <span class="password2_e error">Qwerty</span>
-                </form>
+            <form name="bd_form" class="bd_form" method="POST" novalidate>
+                <span class="subheader_span">Ваше имя:</span>
+                <input type="text" name="name" class="name" placeholder="Имя Фамилия">
+                <span class="name_e error" class="info">Qwerty</span>
+                <span class="subheader_span">Ваш email:</span>
+                <input type="email" name="email" class="email" placeholder="Ваш e-mail">
+                <span class="email_e error">Qwerty</span>
+                <span class="subheader_span">Ваш пароль:</span>
+                <input type="password" name="password0" class="password0" placeholder="Введите старый пароль">
+                <span class="password0_e error">Qwerty</span>
+                <input type="password" name="password1" class="password1" placeholder="Придумайте новый пароль">
+                <span class="password1_e error">Qwerty</span>
+                <input type="password" name="password2" class="password2" placeholder="Повторите новый пароль">
+                <span class="password2_e error">Qwerty</span>
                 <input type="submit" name="set_button" class="set_button" value="Сохранить изменения">
             </form>
             <span class="app_settings_span header_span">Настройки приложения</span>

@@ -3,6 +3,7 @@ session_start();
 header("Content-Type: application/json; charset=utf-8");
 $email = $_POST["email"];
 $password = $_POST["password"];
+$name = null;
 
 $email_e = [];
 $password_e = [];
@@ -21,7 +22,7 @@ echoJSON();
 
 function findUser()
 {
-    global $link, $email, $password, $email_e, $password_e, $bd_e, $info;
+    global $link, $email, $name, $password, $email_e, $password_e, $bd_e, $info;
     //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
     /*$sqlreq = "SELECT email FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
@@ -37,7 +38,7 @@ function findUser()
     if(!findEmail()) {
         return false;
     }
-    if(!findPassword()) {
+    if(!findPassword($email)) {
         return false;
     }
     if(!findStatus()) {
@@ -82,6 +83,7 @@ function findUser()
         }
     }
     $_SESSION["email"] = $email;
+    $_SESSION["name"] = $name;
 }
 
 function echoJSON()

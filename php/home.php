@@ -7,6 +7,7 @@ $info = [];
 $tables_e = [];
 
 $email = null;
+$name = null;
 $link = null;
 
 $factors_rows = [];

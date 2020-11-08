@@ -1,14 +1,17 @@
 <?php
+global $email;
 function checkAuth()
 {
-    global $access_e, $info, $email;
+    global $access_e, $info, $email, $name;
     if (!isset($_SESSION["email"]) && !checkCookie()) {
         $access_e[] = "Войдите для доступа к запрашиваемой странице";
         return false;
     }
     $info[] = $_SESSION["email"];
+    $info[] = $_SESSION["name"];
     $info[] = $_COOKIE["token"];
     $email = $_SESSION["email"];
+    $name = $_SESSION["name"];
     return true;
 }
 
@@ -33,23 +36,25 @@ function checkCookie()
 }
 
 function findEmail() {
-    global $email, $email_e, $link, $bd_e;
-    $sqlreq = "SELECT email FROM users WHERE email='$email'";
+    global $email, $name, $email_e, $link, $bd_e;
+    $sqlreq = "SELECT * FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
     } else {
-        if (!mysqli_fetch_assoc($result)) {
+        if (!$row = mysqli_fetch_assoc($result)) {
             $email_e[] = "Пользователя с таким email не существует";
             return false;
+        } else {
+            $name = $row["name"];
         }
     }
     return true;
 }
 
-function findPassword() {
-    global $email, $password, $link, $bd_e, $password_e;
-    $sqlreq = "SELECT password, status FROM users WHERE email='$email'";
+function findPassword($email) {
+    global $password, $link, $bd_e, $password_e;
+    $sqlreq = "SELECT password FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;

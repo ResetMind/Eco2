@@ -36,8 +36,13 @@
     margin-top: 20px;
 }
 
+.subheader_span:not(:first-child) {
+    margin-top: 10px;
+}
+
 span.error {
     font-size: 11px;
+    color: red;
     height: 0;
     opacity: 0;
 }
