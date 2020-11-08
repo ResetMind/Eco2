@@ -50,13 +50,13 @@
     opacity: 0;
 }
 
-.ver_span, .access_span {
+.ver_span, .access_span, .forgot_span {
     font-size: 11px;
     margin-bottom: 10px;
     display: none;
 }
 
-.ver_span.active, .access_span.active {
+.ver_span.active, .access_span.active, .forgot_span.active {
     display: block;
 }
 

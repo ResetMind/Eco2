@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Подтверждение</title>
+    <title>Сброс пароля</title>
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/styles_auth.css" />
 </head>
@@ -24,19 +24,24 @@
             } else {
                 if (!empty($_GET['code']) && isset($_GET['code'])) {
                     $code = $_GET['code'];
-                    $sqlreq = "SELECT id FROM users WHERE code='$code' and status='0'";
+                    $sqlreq = "SELECT * FROM users WHERE code='$code'";
                     if (!$result = mysqli_query($link, $sqlreq)) {
                         echo ("<span class='ver_e'>Ошибка выполнения запроса к БД</span>");
                     } else {
-                        if (mysqli_num_rows($result) == 1) {
-                            $sqlreq = "UPDATE users SET status='1', code=null WHERE code='$code'";
-                            if (!mysqli_query($link, $sqlreq)) {
-                                echo ("<span class='ver_e'>Ошибка выполнения запроса к БД</span>");
+                        if ($row = mysqli_fetch_assoc($result)) {
+                            $new_password = $row["new_password"];
+                            if ($new_password != null) {
+                                $sqlreq = "UPDATE users SET password='$new_password', code=null, new_password=null WHERE code='$code'";
+                                if (!mysqli_query($link, $sqlreq)) {
+                                    echo ("<span class='ver_e'>Ошибка выполнения запроса к БД</span>");
+                                } else {
+                                    echo ("<span>Активация нового пароля успешна</span>");
+                                }
                             } else {
-                                echo ("<span>Активация успешна</span>");
+                                echo ("<span>Новый пароль уже активирован</span>");
                             }
                         } else {
-                            echo ("<span>Ваш аккаунт уже активирован</span>");
+                            echo ("<span>Новый пароль уже активирован</span>");
                         }
                     }
                 } else {

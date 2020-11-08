@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function doRequest() {
     let xhr = request("php/home.php", null);
-    xhr.onload = function () {
+    xhr.onload = function() {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
@@ -24,9 +24,9 @@ function doRequest() {
             } else {
                 fadeOut(document.querySelector(".preloader"));
             }
-            fillTable(selected_content_i, xhr.response.factors_rows);
-            fillTable(selected_content_i, xhr.response.fields_rows);
-            fillTable(selected_content_i, xhr.response.cultures_rows);
+            fillTable(0, xhr.response.factors_rows);
+            fillTable(1, xhr.response.fields_rows);
+            fillTable(2, xhr.response.cultures_rows);
             //checkTablesServer(xhr, span_footer);
         }
     }
@@ -52,37 +52,47 @@ function fillTable(index, data) {
 }
 
 function saveTables() {
-    saveTable(table_body[selected_content_i], "factors");
-    
+    saveTable(table_body[0], "factors", 0);
+    saveTable(table_body[1], "fields", 1);
+    saveTable(table_body[2], "cultures", 1);
 }
 
-function saveTable(body, name) {
-    let json = getJSONTable(body, name);
+function getTime() {
+    let date = new Date();
+    let h = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    let m = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    return h + ":" + m;
+}
+
+function saveTable(body, name, start_col) {
+    let json = getJSONTable();
     let xhr = JSONRequest("php/save_table.php", json);
-    xhr.onload = function () {
+    xhr.onload = function() {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
             console.log(xhr.response);
             if (xhr.response == null) return;
-            if (!checkBdServerHome(xhr, span_footer)) {
-                return;
+            if (!checkBdServerHome(xhr)) {
+                showText(span_footer, xhr.response.bd_e[0], true);    
+            } else {
+                showText(span_footer, "Сохранено " + getTime(), false);
             }
         }
     }
-}
 
-function getJSONTable(body, name) {
-    let array = {name: name};
-    let rows = body.querySelectorAll("tr");
-    for(let k = 0; k < rows.length; k++) {
-        let tds = rows[k].querySelectorAll("td");
-        let row_length = tds.length;
-        let row = {};
-        for(let j = 0; j < row_length; j++) {
-            row["col" + j] = tds[j].innerHTML;
+    function getJSONTable() {
+        let array = { name: name };
+        let rows = body.querySelectorAll("tr");
+        for (let k = 0; k < rows.length; k++) {
+            let tds = rows[k].querySelectorAll("td");
+            let row_length = tds.length;
+            let row = {};
+            for (let j = start_col; j < row_length; j++) {
+                row["col" + j] = tds[j].innerHTML;
+            }
+            array["row" + k] = row;
         }
-        array["row" + k] = row;
+        return JSON.stringify(array);
     }
-    return JSON.stringify(array);
 }

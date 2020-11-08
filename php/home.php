@@ -31,8 +31,8 @@ if (!$factors_rows = loadTable($factors_name)) {
 } else {
     $factors_rows_temp = [];
     foreach ($factors_rows as $row){
-        $info[] = $row[id];
-        unset($row[id]);
+        $info[] = $row["id"];
+        unset($row["id"]);
         $factors_rows_temp[] = $row;
     }
     $factors_rows = $factors_rows_temp;

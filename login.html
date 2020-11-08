@@ -18,12 +18,14 @@
     <div class="preloader"></div>
     <div class="login">
         <div class="login_content">
+            <span class="forgot_span">Подтвердите смену пароля: на ваш e-mail отправлено письмо с инструкцией<br></span>
             <span class="ver_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной
                 ссылкой<br></span>
             <span class="access_span">Войдите для доступа к запрашиваемой странице<br></span>
             <span class="auth_span">Вход</span>
             <form name="login_form" class="login_form" action="php/login.php" method="POST" novalidate>
                 <span class="bd_e">Qwerty</span>
+                <span class="send_email_e">Qwerty</span>
                 <input type="email" name="email" class="email" placeholder="Ваш e-mail">
                 <span class="email_e">Qwerty</span>
                 <input type="password" name="password" class="password" placeholder="Ваш пароль">
@@ -36,7 +38,7 @@
                 <input type="submit" name="log_button" class="log_button" value="Войти">
             </form>
             <div class="forgot_div">
-                <a href="#" class="forgot">Забыли пароль?</a>
+                <a class="forgot">Забыли пароль?</a>
             </div>
         </div>
     </div>

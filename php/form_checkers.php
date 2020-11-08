@@ -32,6 +32,61 @@ function checkCookie()
     }
 }
 
+function findEmail() {
+    global $email, $email_e, $link, $bd_e;
+    $sqlreq = "SELECT email FROM users WHERE email='$email'";
+    if (!$result = mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка выполнения запроса к БД";
+        return false;
+    } else {
+        if (!mysqli_fetch_assoc($result)) {
+            $email_e[] = "Пользователя с таким email не существует";
+            return false;
+        }
+    }
+    return true;
+}
+
+function findPassword() {
+    global $email, $password, $link, $bd_e, $password_e;
+    $sqlreq = "SELECT password, status FROM users WHERE email='$email'";
+    if (!$result = mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка выполнения запроса к БД";
+        return false;
+    } else {
+        if ($row = mysqli_fetch_assoc($result)) {
+            if (!password_verify($password, $row["password"])) {
+                $password_e[] = "Неправильный пароль";
+                return false;
+            }
+        } else {
+            $bd_e[] = "Ошибка выполнения запроса к БД";
+            return false;
+        }
+    }
+    return true;
+}
+
+function findStatus() {
+    global $email, $email_e, $link, $bd_e;
+    $sqlreq = "SELECT status FROM users WHERE email='$email'";
+    if (!$result = mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка выполнения запроса к БД";
+        return false;
+    } else {
+        if ($row = mysqli_fetch_assoc($result)) {
+            if ($row["status"] != "1") {
+                $email_e[] = "Ваш аккаунт не подтвержден";
+                return false;
+            }
+        } else {
+            $bd_e[] = "Ошибка выполнения запроса к БД";
+            return false;
+        }
+    }
+    return true;
+}
+
 function checkEmail()
 {
     global $email, $email_e, $link, $bd_e;

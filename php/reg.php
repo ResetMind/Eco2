@@ -37,13 +37,13 @@ if (!createTables()) {
 }
 require_once __DIR__ . "/send_email.php";
 $subject = "Регистрация на ecoprognoz.org";
-$verify_link = "$base_url/verification.php?code=$activation_code";
+$verify_link = "$base_url/email_confirm.php?code=$activation_code";
 $message = "Здравствуйте, $name!<br>Для подтверждения регистрации пройдите по <a href='$verify_link'>ссылке</a><br>Это письмо отправлено автоматически. Отвечать на него не нужно.";
-/*if (!sendEmail($email, $subject, $message)) {
+if (!sendEmail($email, $subject, $message)) {
     deleteUser();
     echoJSON();
     exit();
-}*/
+}
 echoJSON();
 
 function deleteUser()

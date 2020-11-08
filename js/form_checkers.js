@@ -8,17 +8,28 @@ function checkBdServer(xhr, bd_span) {
     }
 }
 
-function checkBdServerHome(xhr, bd_span) {
+function checkBdServerHome(xhr) {
+    return !(xhr.response.bd_e.length > 0);
     if (xhr.response.bd_e.length > 0) {
-        bd_span.innerHTML = xhr.response.bd_e[0];
+        /*bd_span.innerHTML = xhr.response.bd_e[0];
         bd_span.classList.add("error"); 
-        bd_span.classList.add("active"); 
+        bd_span.classList.add("active"); */
         return false;
     } else {
-        bd_span.classList.remove("active"); 
-        bd_span.classList.remove("error"); 
+        /*bd_span.classList.remove("active"); 
+        bd_span.classList.remove("error"); */
         return true;
     }
+}
+
+function showText(span, text, error) {
+    span.innerHTML = text;
+    if(error) {
+        span.classList.add("error");
+    } else {
+        span.classList.remove("error");
+    }
+    span.classList.add("active"); 
 }
 
 function checkTablesServer(xhr, tables_span) {

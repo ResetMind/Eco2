@@ -23,7 +23,7 @@ function findUser()
 {
     global $link, $email, $password, $email_e, $password_e, $bd_e, $info;
     //$sqlreq = "SELECT email FROM users WHERE email=" . "'" . $email . "'" . "";
-    $sqlreq = "SELECT email FROM users WHERE email='$email'";
+    /*$sqlreq = "SELECT email FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
@@ -32,9 +32,18 @@ function findUser()
             $email_e[] = "Пользователя с таким email не существует";
             return false;
         }
+    }*/
+    require_once __DIR__ . "/form_checkers.php";
+    if(!findEmail()) {
+        return false;
     }
-
-    $sqlreq = "SELECT password, status FROM users WHERE email='$email'";
+    if(!findPassword()) {
+        return false;
+    }
+    if(!findStatus()) {
+        return false;
+    }
+    /*$sqlreq = "SELECT password, status FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
@@ -53,7 +62,7 @@ function findUser()
             $bd_e[] = "Ошибка выполнения запроса к БД";
             return false;
         }
-    }
+    }*/
     if (isset($_POST["remember_me_checkbox"])) {
         $token = password_hash($email . time(), PASSWORD_BCRYPT);
         $sqlreq = "UPDATE users SET token='$token' WHERE email='$email'";
