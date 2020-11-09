@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расчет - Экопрогноз</title>
+    <link rel="stylesheet" href="css/styles_calc.css" />
+</head>
+
+<body>
+    <div class="preloader">
+        <span class="bd_e_preloader">Qwerty</span>
+    </div>
+    <header>
+        <a href="#">Главная</a>
+        <a href="settings.html">Настройки</a>
+        <span>Экопрогноз</span>
+    </header>
+    <div class="all_content">
+        <div class="search_div">
+            <form name="search">
+                <input type="number" name="year1" placeholder="Начальный год" onmouseup="find()" onkeyup="find()">
+                <input type="number" name="year2" placeholder="Конечный год" onmouseup="find()" onkeyup="find()">
+                <input type="text" name="culture" placeholder="Культура" onkeyup="find()">
+                <input type="text" name="field" placeholder="Поле" onkeyup="find()">
+                <input type="submit" name="calculate" value="Расчет" onclick="calc()">
+                <input type="submit" name="new_chart" value="Новый график" onclick="openChartWindow()">
+            </form>
+        </div>
+        <div class="table_div">
+            888888
+            <!--<div class="horiz_stub_up"></div>
+            <div class="horiz_stub_bottom"></div>
+            <div class="vert_stub_left"></div>
+            <div class="vert_stub_right"></div>
+            <div class="table_header_div">
+                <table class="table_header">
+                    <tr>
+                        <th>Год</th>
+                        <th>Культура</th>
+                        <th>Поле</th>
+                        <th>∑О,мм</th>
+                        <th>∑t,°C</th>
+                        <th>∑t≥10°C</th>
+                        <th>∑t≥15°C</th>
+                        <th>∑t≥20°C</th>
+                        <th>∑О≥2мм</th>
+                        <th>∑В,%</th>
+                        <th>∑В≥40%</th>
+                        <th>∑В≥45%</th>
+                        <th>∑В≥50%</th>
+                        <th>ЧД(О)</th>
+                        <th>ЧД(t≥10°C)</th>
+                        <th>ЧД(t≥15°C)</th>
+                        <th>ЧД(t≥20°C)</th>
+                        <th>ЧД(О≥2мм)</th>
+                        <th>ЧД(В≥40%)</th>
+                        <th>ЧД(В≥45%)</th>
+                        <th>ЧД(В≥50%)</th>
+                    </tr>
+                </table>
+            </div>
+            <div class="table_content">
+                89898
+            </div>-->
+        </div>
+    </div>
+    <footer>
+        <div class="tabs">
+            <input type="radio" name="rad" value="1" id="tab_1" checked>
+            <label for="tab_1">Расчет Х</label>
+            <input type="radio" name="rad" value="2" id="tab_2">
+            <label for="tab_2">Графики</label>
+            <span class="span_footer">888</span>
+        </div>
+    </footer>
+</body>
+
+<script src="js/ajax.js" defer></script>
+<script src="js/animation.js" defer></script>
+<script src="js/form_checkers.js" defer></script>
+<script src="js/calculate.js" defer></script>
+<script src="js/table_calc_engine.js"></script>
+
+</html>
