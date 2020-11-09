@@ -1,3 +1,17 @@
+function checkResultsServer(xhr, info_span) {
+    if (xhr.response.results.length > 0) {
+        let text = "";
+        for(let k = 0; k < xhr.response.results.length; k++) {
+            text += xhr.response.results[k] + "<br>";
+        }
+        showError(info_span, null, text);
+        return false;
+    } else {
+        removeError(info_span, null);
+        return true;
+    }
+}
+
 function checkBdServer(xhr, bd_span) {
     if (xhr.response.bd_e.length > 0) {
         showError(bd_span, null, xhr.response.bd_e[0]);

@@ -1,49 +1,13 @@
-[03-Nov-2020 01:47:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:47:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:47:17 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:47:18 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:47:18 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:47:19 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:16 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:22 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:22 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:23 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:23 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:23 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:23 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 01:49:23 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:00 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:00 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:00 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:00 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:01 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:01 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:02 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:02 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: NO) in /home/s74588/public_html/ecoprognoz.org/php/reg.php on line 32
-[03-Nov-2020 23:01:53 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2002): Connection refused in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:04:57 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2002): Connection refused in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:10:43 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2002): Connection refused in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:14:31 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2002): Connection refused in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:18:26 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2002): Connection refused in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 12
-[03-Nov-2020 23:23:02 Europe/Moscow] PHP Warning:  Packets out of order. Expected 0 received 45. Packet size=4739923 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:23:02 Europe/Moscow] PHP Warning:  mysqli_connect(): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:23:02 Europe/Moscow] PHP Warning:  mysqli_connect(): Error while reading greeting packet. PID=2456266 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:23:02 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2006): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:25:58 Europe/Moscow] PHP Warning:  Packets out of order. Expected 0 received 80. Packet size=5526600 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:25:58 Europe/Moscow] PHP Warning:  mysqli_connect(): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:25:58 Europe/Moscow] PHP Warning:  mysqli_connect(): Error while reading greeting packet. PID=2457001 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:25:58 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2006): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:26:04 Europe/Moscow] PHP Warning:  Packets out of order. Expected 0 received 80. Packet size=5526600 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:26:04 Europe/Moscow] PHP Warning:  mysqli_connect(): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:26:04 Europe/Moscow] PHP Warning:  mysqli_connect(): Error while reading greeting packet. PID=2457017 in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:26:04 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/2006): MySQL server has gone away in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[03-Nov-2020 23:31:29 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 's74588_dbuser'@'localhost' (using password: YES) in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 11
-[04-Nov-2020 00:32:35 Europe/Moscow] PHP Fatal error:  Cannot redeclare sendEmail() (previously declared in /home/s74588/public_html/ecoprognoz.org/php/reg.php:43) in /home/s74588/public_html/ecoprognoz.org/php/send_email.php on line 2
-[04-Nov-2020 00:43:04 Europe/Moscow] PHP Fatal error:  Cannot redeclare sendEmail() (previously declared in /home/s74588/public_html/ecoprognoz.org/php/reg.php:41) in /home/s74588/public_html/ecoprognoz.org/php/send_email.php on line 2
-[04-Nov-2020 19:16:37 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
-[04-Nov-2020 19:16:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
-[04-Nov-2020 19:17:46 Europe/Moscow] PHP Parse error:  syntax error, unexpected end of file in /home/s74588/public_html/ecoprognoz.org/php/verification.php on line 53
-[06-Nov-2020 13:06:41 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 5
+[08-Nov-2020 22:18:03 Europe/Moscow] PHP Warning:  mysqli_connect(): (HY000/1045): Access denied for user 'root'@'localhost' (using password: YES) in /home/s74588/public_html/ecoprognoz.org/php/connect.php on line 5
+[09-Nov-2020 18:13:51 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:16:27 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:16:29 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:16:32 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:17:45 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:17:48 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:17:54 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:20:08 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:25:40 Europe/Moscow] PHP Warning:  session_start(): Cannot start session when headers already sent in /home/s74588/public_html/ecoprognoz.org/php/email_change.php on line 21
+[09-Nov-2020 18:37:00 Europe/Moscow] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/s74588/public_html/ecoprognoz.org/php/change_user_data.php:135) in /home/s74588/public_html/ecoprognoz.org/php/logout.php on line 4
+[09-Nov-2020 18:37:00 Europe/Moscow] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/s74588/public_html/ecoprognoz.org/php/change_user_data.php:135) in /home/s74588/public_html/ecoprognoz.org/php/logout.php on line 5
+[09-Nov-2020 18:37:00 Europe/Moscow] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/s74588/public_html/ecoprognoz.org/php/change_user_data.php:135) in /home/s74588/public_html/ecoprognoz.org/php/logout.php on line 6

@@ -22,13 +22,14 @@ function checkCookie()
     }
     global $link, $bd_e;
     $token = $_COOKIE["token"];
-    $sqlreq = "SELECT email FROM users WHERE token='$token'";
+    $sqlreq = "SELECT * FROM users WHERE token='$token'";
     if (!$result = mysqli_query($link, $sqlreq)) {
         $bd_e[] = "Ошибка выполнения запроса к БД";
         return false;
     } else {
         if ($row = mysqli_fetch_assoc($result)) {
             $_SESSION["email"] = $row["email"];
+            $_SESSION["name"] = $row["name"];
             return true;
         }
         return false;

@@ -1,5 +1,6 @@
 let bd_e_preloader = document.querySelector(".bd_e_preloader");
 let bd_e = document.querySelector(".settings_content .bd_e");
+let info_span = document.querySelector(".info_span");
 let set_button = document.querySelector(".set_button");
 let bd_form = document.querySelector(".bd_form");
 let name = document.querySelector(".name");
@@ -66,9 +67,10 @@ function saveChanges() {
             let res4 = checkPassword1Server(xhr, password1, password1_e);
             let res5 = checkPassword2Server(xhr, password2, password2_e);
             let res6 = checkBdServer(xhr, bd_e);
-            if (res1 && res2 && res3 && res4 && res5 && res6) {
-                
-            }
+            checkResultsServer(xhr, info_span);
+            /*if (res1 && res2 && res3 && res4 && res5 && res6) {
+                checkResultsServer(xhr, info_span);
+            }*/
         }
     }
 }

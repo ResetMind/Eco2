@@ -40,6 +40,12 @@
     margin-top: 10px;
 }
 
+.info_span {
+    font-size: 11px;
+    height: 0;
+    opacity: 0;
+}
+
 span.error {
     font-size: 11px;
     color: red;
