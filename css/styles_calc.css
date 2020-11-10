@@ -77,27 +77,34 @@ header a:hover {
 
 /*body*/
 
-.all_content {
+.content {
     height: 92vh;
-    overflow: auto;
-    display: flex;
+    overflow: hidden;
+    display: none; /*flex*/
     flex-direction: column;
     /*scroll-behavior: smooth;*/
 }
 
 .search_div {
-    height: auto;
-    margin: 1vh;
+    overflow: auto;
+    max-height: 49vh;
+    margin: 1vh 1vh 0vh 1vh;
     display: flex;
     flex-flow: row wrap;
-    align-content: stretch;
-    background: #078dc2;
 }
 
 .table_div {
+    height: 50vh;
+    display: flex;
+    flex-direction: row;
     flex: auto;
-    margin: 0vh 1vh 1vh 1vh;
-    background: #029609;
+}
+
+.table_content {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    overflow: hidden;
 }
 
 .table_header {
@@ -106,49 +113,40 @@ header a:hover {
     -khtml-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    margin-top: 5px;
-    margin-right: 5px;
-    margin-left: 5px;
+    left: 1vh;
     z-index: 99;
     position: fixed;
 }
 
-.table_content {
-    /*padding-top: 50px;*/
-    background: #029609;
+.body_content {
+    flex: auto;
+    margin-top: 22px;
+    overflow: auto;
+}
+
+.table_header,
+.table_body {
+    width: 10000px;
 }
 
 .horiz_stub_up,
 .horiz_stub_bottom,
 .vert_stub_left,
 .vert_stub_right {
-    background: #960296;
-    position: fixed;
     z-index: 999;
+    flex-shrink: 0;
 }
 
 .horiz_stub_up,
 .horiz_stub_bottom {
     width: 100%;
-    height: 5px;
-}
-
-.horiz_stub_up {
-    /*margin-top: 35px;*/
-}
-
-.horiz_stub_bottom {
-    bottom: 35px;
+    height: 1vh;
 }
 
 .vert_stub_left,
 .vert_stub_right {
-    width: 5px;
+    width: 1vh;
     height: 100%;
-}
-
-.vert_stub_right {
-    right: 0px;
 }
 
 table {
