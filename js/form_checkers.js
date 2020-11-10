@@ -36,6 +36,10 @@ function checkBdServerHome(xhr) {
     }
 }
 
+function checkInfoServerHome(xhr) {
+    return !(xhr.response.info.length > 0);
+}
+
 function showText(span, text, error) {
     span.innerHTML = text;
     if(error) {
