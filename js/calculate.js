@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     search.field.onkeydown = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
     content[0].style.display = "flex";
-    setTableEngine(content[0].querySelector(".body_content"), 0, table_body_main, table_header_main);
+    setTableEngine(content[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
     onRadioChange();
     doRequest();
 });

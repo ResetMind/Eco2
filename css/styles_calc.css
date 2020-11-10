@@ -48,6 +48,7 @@ footer {
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
+    /*position: absolute;*/
     user-select: none;
     z-index: 9999;
     height: 4vh;
@@ -56,16 +57,20 @@ footer {
     background: #4c4947;
 }
 
+footer {
+    /*bottom: 0;*/
+}
+
 header span {
     line-height: 4vh;
     float: right;
-    margin-right: 1vw;
+    margin-right: 0.5vh;
 }
 
 header a {
     line-height: 4vh;
     transition-duration: 0.3s;
-    margin-left: 1vw;
+    margin-left: 0.5vh;
     text-decoration: none;
     color: #efedef;
 }
@@ -78,33 +83,59 @@ header a:hover {
 /*body*/
 
 .content {
+    /*position: absolute;
+    right: 0;
+    left: 0;
+    top: 4vh;
+    bottom: 4vh;*/
+    position: relative;
     height: 92vh;
     overflow: hidden;
-    display: none; /*flex*/
+    display: none;
     flex-direction: column;
     /*scroll-behavior: smooth;*/
 }
 
 .search_div {
     overflow: auto;
-    max-height: 49vh;
-    margin: 1vh 1vh 0vh 1vh;
-    display: flex;
-    flex-flow: row wrap;
+    max-height: 15vh;
+    /*padding: 0 1vh 1vh 1vh;*/
+}
+
+.search_div div {
+    font-size: 0;
+    display: inline-block;
+    margin: 0.5vh 0.5vh 0 0;
+}
+
+.search_form {
+    padding: 0 0.5vh 0.5vh 0.5vh;
+}
+
+.container {
+    position: relative;
+    flex: auto;
 }
 
 .table_div {
-    height: 50vh;
-    display: flex;
-    flex-direction: row;
-    flex: auto;
-}
-
-.table_content {
+    position: absolute;
     display: flex;
     flex-direction: column;
-    flex: auto;
+    top: 0;
+    right: 0.5vh;
+    bottom: 0.5vh;
+    left: 0.5vh;
     overflow: hidden;
+}
+
+.table_body_div {
+    position: relative;
+    flex: auto;
+    overflow: auto;
+}
+
+.table_body {
+    position: absolute;
 }
 
 .table_header {
@@ -113,15 +144,9 @@ header a:hover {
     -khtml-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-    left: 1vh;
     z-index: 99;
-    position: fixed;
-}
-
-.body_content {
-    flex: auto;
-    margin-top: 22px;
-    overflow: auto;
+    top: 0;
+    position: absolute;
 }
 
 .table_header,
@@ -133,6 +158,7 @@ header a:hover {
 .horiz_stub_bottom,
 .vert_stub_left,
 .vert_stub_right {
+    position: absolute;
     z-index: 999;
     flex-shrink: 0;
 }
@@ -140,13 +166,31 @@ header a:hover {
 .horiz_stub_up,
 .horiz_stub_bottom {
     width: 100%;
-    height: 1vh;
+    height: 0.5vh;
 }
 
 .vert_stub_left,
 .vert_stub_right {
-    width: 1vh;
+    width: 0.5vh;
     height: 100%;
+}
+
+.horiz_stub_up {
+    top: 0;
+}
+
+.horiz_stub_bottom {
+    bottom: 0;
+}
+
+.vert_stub_left {
+    top: 0;
+    left: 0;
+}
+
+.vert_stub_right {
+    top: 0;
+    right: 0;
 }
 
 table {
@@ -154,6 +198,10 @@ table {
     border-collapse: collapse;
     table-layout: fixed;
     empty-cells: show;
+}
+
+.table_empty {
+    visibility: hidden;
 }
 
 table:focus {
@@ -198,7 +246,7 @@ td.error {
 }
 
 .td_selection {
-    z-index: 999;
+    /*z-index: 999;*/
     position: absolute;
     display: none;
     border: 1px solid #6ead3a;
@@ -236,7 +284,7 @@ iframe {
 footer span {
     float: right;
     line-height: 4vh;
-    margin-right: 1vh;
+    margin-right: 0.5vh;
     /*opacity: 0;*/
 }
 
@@ -261,8 +309,8 @@ footer span {
 .tabs>label {
     display: inline-block;
     line-height: 4vh;
-    padding-left: 1vh;
-    padding-right: 1vh;
+    padding-left: 0.5vh;
+    padding-right: 0.5vh;
     text-align: center;
     vertical-align: middle;
     color: #ceccce;
@@ -280,10 +328,12 @@ footer span {
 input {
     background: #222022;
     border: 1px solid #8b8c8e;
+    box-sizing: border-box;
     border-radius: 0px;
     color: #f4f8f9;
     font-size: 0.8rem;
-    padding: 5px;
+    padding: 0.5vh;
+    margin-right: 0;
     outline: none;
     font-family: 'Open Sans', sans-serif;
     opacity: 100%;
