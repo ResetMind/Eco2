@@ -1,26 +1,66 @@
 let bd_e_preloader = document.querySelector(".bd_e_preloader");
-let content = document.querySelectorAll(".content");
+let contents = document.querySelectorAll(".content");
 let radios = document.querySelectorAll("input[type=\"radio\"]");
 let span_footer = document.querySelector(".span_footer");
-let table_body_main = content[0].querySelector(".table_body");
-let table_header_main = content[0].querySelector(".table_header");
+let table_body_main = contents[0].querySelector(".table_body");
+let table_header_main = contents[0].querySelector(".table_header");
+let chart_div = document.querySelector(".chart_div");
+let new_chart_form_div = document.querySelectorAll(".new_chart_form_div");
+let add_2d_button = document.querySelector(".add_2d_button");
+let add_3d_button = document.querySelector(".add_3d_button");
+let add_drm_button = document.querySelector(".add_drm_button");
+let select_culture = document.querySelector(".select_culture");
+let select_field = document.querySelector(".select_field");
+let select_param = document.querySelector(".select_param");
 
 document.addEventListener("DOMContentLoaded", () => {
     search.onsubmit = function(e) {
         e.preventDefault();
     }
-    search.year1.onkeydown = find;
+    search.year1.onkeyup = find;
     search.year1.onclick = find;
-    search.year2.onkeydown = find;
+    search.year2.onkeyup = find;
     search.year2.onclick = find;
-    search.culture.onkeydown = find;
-    search.field.onkeydown = find;
+    search.culture.onkeyup = find;
+    search.field.onkeyup = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    content[0].style.display = "flex";
-    setTableEngine(content[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
+    contents[1].style.display = "flex";
+    setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
+    add_2d_button.onclick = add2DChartDiv.bind(null, contents[1]);
+    /*add_3d_button.onclick = addChartDiv(content[2]);
+    add_drm_button.onclick = addChartDiv(content[3]);*/
     onRadioChange();
     doRequest();
 });
+
+function add2DChartDiv(content) {
+    let div = document.createElement("div");
+    div.className = "chart_div";
+    div.innerHTML = chart_div.innerHTML;
+    new_chart_form_div[0].before(div);
+    let param_form = div.querySelector(".param_form");
+    addSpan(param_form, "Ось Х:");
+    let x_select_param = addSelect(param_form, select_param);
+    let x_select_culture = addSelect(param_form, select_culture);
+    let x_select_field = addSelect(param_form, select_field);
+    addSpan(param_form, "Ось Y:");
+    let y_select_param = addSelect(param_form, select_param);
+    let y_select_culture = addSelect(param_form, select_culture);
+    let y_select_field = addSelect(param_form, select_field);
+}
+
+function addSelect(form, select) {
+    let sel = document.createElement("select");
+    sel.innerHTML = select.innerHTML;
+    form.append(sel);
+    return sel;
+}
+
+function addSpan(form, text) {
+    let span = document.createElement("span");
+    span.innerHTML = text;
+    form.append(span);
+}
 
 function doRequest() {
     let xhr = request("php/calculate.php", null);
@@ -41,6 +81,21 @@ function doRequest() {
             }
 
         }
+    }
+}
+
+function onRadioChange() {
+    console.log(contents);
+    for (let i = 0; i < radios.length; i++) {
+        console.log(i);
+        radios[i].addEventListener("change", function() {
+            for (let k = 0; k < contents.length; k++) {
+                contents[k].style.display = "none";
+            }
+            contents[i].style.display = "flex";
+            //removeCellRect(selected_content_i);
+            //setTableEngine(i);
+        });
     }
 }
 
@@ -77,18 +132,6 @@ function fillTable(body, data) {
 
 function clearTable(body) {
     body.innerHTML = "";
-}
-
-function onRadioChange() {
-    for (let i = 0; i < radios.length; i++) {
-        console.log(i);
-        radios[i].addEventListener("change", function() {
-            content.forEach(elem => { elem.style.display = "none"; });
-            content[i].style.display = "flex";
-            //removeCellRect(selected_content_i);
-            //setTableEngine(i);
-        });
-    }
 }
 
 function calc(body, header) {

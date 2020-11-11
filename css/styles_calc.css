@@ -83,17 +83,45 @@ header a:hover {
 /*body*/
 
 .content {
-    /*position: absolute;
-    right: 0;
-    left: 0;
-    top: 4vh;
-    bottom: 4vh;*/
     position: relative;
     height: 92vh;
     overflow: hidden;
     display: none;
     flex-direction: column;
     /*scroll-behavior: smooth;*/
+}
+
+.chart_container {
+    height: auto;
+    overflow: auto;
+}
+
+.new_chart_form_div {
+    margin: 0.5vh;
+    background: #ff52ff
+}
+
+.common {
+    display: none;
+}
+
+.chart_div {
+    margin: 0.5vh 0.5vh 0 0.5vh;
+    overflow: auto;
+    background: #b80bb8;
+    /*display: none;*/
+}
+
+.chart_div span {
+    font-size: 0.8rem;
+}
+
+.chart_div span:not(:nth-of-type(1)) {
+    margin-left: 2vh;
+}
+
+.chart_div select {
+    margin-left: 0.5vh;
 }
 
 .search_div {
@@ -325,7 +353,11 @@ footer span {
     transition-duration: 0.3s;
 }
 
-input {
+.chart_div label {
+    font-size: 0.8rem;
+}
+
+input, select {
     background: #222022;
     border: 1px solid #8b8c8e;
     box-sizing: border-box;
@@ -341,7 +373,7 @@ input {
 }
 
 input[type="submit"]:hover,
-button:hover {
+input[type="button"]:hover {
     background: #f4f8f9;
     color: #222022;
     cursor: pointer;

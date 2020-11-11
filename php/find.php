@@ -60,8 +60,10 @@ function find() {
 	if ($row = mysqli_fetch_assoc($rows)) {
 		$result = "";
 		do {
-			$result .= "<tr>";
+            $result .= "<tr>";
             $result .= "<td tabindex=\"0\">". $row["year"]."</td>";
+            $result .= "<td tabindex=\"0\">". $row["culture"]."</td>";
+            $result .= "<td tabindex=\"0\">". $row["square"]."</td>";
             $result .= "<td tabindex=\"0\">". $row["sumO"]."</td>";
             $result .= "<td tabindex=\"0\">". $row["sumT"]."</td>";
             $result .= "<td tabindex=\"0\"></td>";
