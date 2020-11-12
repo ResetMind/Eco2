@@ -12,11 +12,14 @@ let add_drm_button = document.querySelector(".add_drm_button");
 let select_culture = document.querySelector(".select_culture");
 let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
+let cultures_list = [];
+let fields_list = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     search.onsubmit = function(e) {
         e.preventDefault();
     }
+    find();
     search.year1.onkeyup = find;
     search.year1.onclick = find;
     search.year2.onkeyup = find;
@@ -24,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     search.culture.onkeyup = find;
     search.field.onkeyup = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    contents[1].style.display = "flex";
+    contents[0].style.display = "flex";
     setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
     add_2d_button.onclick = add2DChartDiv.bind(null, contents[1]);
     /*add_3d_button.onclick = addChartDiv(content[2]);
@@ -39,27 +42,60 @@ function add2DChartDiv(content) {
     div.innerHTML = chart_div.innerHTML;
     new_chart_form_div[0].before(div);
     let param_form = div.querySelector(".param_form");
+
     addSpan(param_form, "Ось Х:");
-    let x_select_param = addSelect(param_form, select_param);
-    let x_select_culture = addSelect(param_form, select_culture);
-    let x_select_field = addSelect(param_form, select_field);
+    let x_select_param = addSelect(param_form, select_param, "x_select_param");
+    let x_select_culture = addSelect(param_form, select_culture, "x_select_culture");
+    addOptions(x_select_culture, cultures_list, "name"); 
+    let x_select_field = addSelect(param_form, select_field, "x_select_field");
+    addOptions(x_select_field, fields_list, "cadastral");
+
     addSpan(param_form, "Ось Y:");
-    let y_select_param = addSelect(param_form, select_param);
-    let y_select_culture = addSelect(param_form, select_culture);
-    let y_select_field = addSelect(param_form, select_field);
+    let y_select_param = addSelect(param_form, select_param, "y_select_param");
+    let y_select_culture = addSelect(param_form, select_culture, "y_select_culture");
+    y_select_culture.innerHTML = x_select_culture.innerHTML;
+    let y_select_field = addSelect(param_form, select_field, "y_select_field");
+    y_select_field.innerHTML = x_select_field.innerHTML;
+
+    let span_chart_info = div.querySelector(".span_chart_info");
+    let data = [];
+    let add_chart_button = div.querySelector(".add_chart_button");
+    let plotly_div = div.querySelector(".plotly_div");
+    
+    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info);
 }
 
-function addSelect(form, select) {
+function addSelect(form, select, name) {
     let sel = document.createElement("select");
+    sel.className = name;
+    sel.name = name;
     sel.innerHTML = select.innerHTML;
-    form.append(sel);
+    form.insertBefore(sel, form.querySelector(".add_chart_button"));
     return sel;
+}
+
+function addOptions(select, data, key) {
+    for (let k = 0; k < data.length; k++) {
+        let option = document.createElement("option");
+        option.value = k;
+        option.innerHTML = data[k][key];
+        select.append(option);
+    }
 }
 
 function addSpan(form, text) {
     let span = document.createElement("span");
     span.innerHTML = text;
-    form.append(span);
+    form.insertBefore(span, form.querySelector(".add_chart_button"));
+}
+
+function getFieldsCulturesList(xhr) {
+    if(xhr.response.fields_rows.length > 0) {
+        fields_list = xhr.response.fields_rows;
+    }
+    if(xhr.response.cultures_rows.length > 0) {
+        cultures_list = xhr.response.cultures_rows;
+    }
 }
 
 function doRequest() {
@@ -79,7 +115,7 @@ function doRequest() {
             } else {
                 fadeOut(document.querySelector(".preloader"));
             }
-
+            getFieldsCulturesList(xhr);
         }
     }
 }
@@ -139,7 +175,7 @@ function calc(body, header) {
     let ths = header.querySelectorAll("th");
     for (let i = 0; i < cells.length; i++) {
         let col = i % ths.length;
-        if (col % 3 == 0 && col != 0) {
+        if (col > 4) {
             if (cells[i - 2].innerHTML == "" || cells[i - 1].innerHTML == "") {
                 continue;
             }
@@ -148,83 +184,83 @@ function calc(body, header) {
             if (isNaN(a) || isNaN(b)) {
                 continue;
             }
-            if (col == 3) {
+            if (col == 5) {
                 cells[i].innerHTML = x1(a, b).toFixed(3);
-            } else if (col == 6) {
+            } else if (col == 8) {
                 cells[i].innerHTML = x2(a, b).toFixed(3);
-            } else if (col == 9) {
+            } else if (col == 11) {
                 cells[i].innerHTML = x3(a, b).toFixed(3);
-            } else if (col == 12) {
+            } else if (col == 14) {
                 cells[i].innerHTML = x4(a, b).toFixed(3);
-            } else if (col == 15) {
+            } else if (col == 17) {
                 cells[i].innerHTML = x5(a, b).toFixed(3);
-            } else if (col == 18) {
+            } else if (col == 20) {
                 cells[i].innerHTML = x6(a, b).toFixed(3);
-            } else if (col == 21) {
+            } else if (col == 23) {
                 cells[i].innerHTML = x7(a, b).toFixed(3);
-            } else if (col == 24) {
+            } else if (col == 26) {
                 cells[i].innerHTML = x8(a, b).toFixed(3);
-            } else if (col == 27) {
+            } else if (col == 29) {
                 cells[i].innerHTML = x9(a, b).toFixed(3);
-            } else if (col == 30) {
+            } else if (col == 32) {
                 cells[i].innerHTML = x10(a, b).toFixed(3);
-            } else if (col == 33) {
+            } else if (col == 35) {
                 cells[i].innerHTML = x11(a, b).toFixed(3);
-            } else if (col == 36) {
+            } else if (col == 38) {
                 cells[i].innerHTML = x12(a, b).toFixed(3);
-            } else if (col == 39) {
+            } else if (col == 41) {
                 cells[i].innerHTML = x13(a, b).toFixed(3);
-            } else if (col == 42) {
+            } else if (col == 44) {
                 cells[i].innerHTML = x14(a, b).toFixed(3);
-            } else if (col == 45) {
+            } else if (col == 47) {
                 cells[i].innerHTML = x15(a, b).toFixed(3);
-            } else if (col == 48) {
+            } else if (col == 50) {
                 cells[i].innerHTML = x16(a, b).toFixed(3);
-            } else if (col == 51) {
+            } else if (col == 53) {
                 cells[i].innerHTML = x17(a, b).toFixed(3);
-            } else if (col == 54) {
+            } else if (col == 56) {
                 cells[i].innerHTML = x18(a, b).toFixed(3);
-            } else if (col == 57) {
+            } else if (col == 59) {
                 cells[i].innerHTML = x19(a, b).toFixed(3);
-            } else if (col == 60) {
+            } else if (col == 62) {
                 cells[i].innerHTML = x20(a, b).toFixed(3);
-            } else if (col == 63) {
+            } else if (col == 65) {
                 cells[i].innerHTML = x21(a, b).toFixed(3);
-            } else if (col == 66) {
+            } else if (col == 68) {
                 cells[i].innerHTML = x22(a, b).toFixed(3);
-            } else if (col == 69) {
+            } else if (col == 71) {
                 cells[i].innerHTML = x23(a, b).toFixed(3);
-            } else if (col == 72) {
+            } else if (col == 74) {
                 cells[i].innerHTML = x24(a, b).toFixed(3);
-            } else if (col == 75) {
+            } else if (col == 77) {
                 cells[i].innerHTML = x25(a, b).toFixed(3);
-            } else if (col == 78) {
+            } else if (col == 80) {
                 cells[i].innerHTML = x26(a, b).toFixed(3);
-            } else if (col == 81) {
+            } else if (col == 83) {
                 cells[i].innerHTML = x27(a, b).toFixed(3);
-            } else if (col == 84) {
+            } else if (col == 86) {
                 cells[i].innerHTML = x28(a, b).toFixed(3);
-            } else if (col == 87) {
+            } else if (col == 89) {
                 cells[i].innerHTML = x29(a, b).toFixed(3);
-            } else if (col == 90) {
+            } else if (col == 92) {
                 cells[i].innerHTML = x30(a, b).toFixed(3);
-            } else if (col == 93) {
+            } else if (col == 95) {
                 cells[i].innerHTML = x31(a, b).toFixed(3);
-            } else if (col == 96) {
+            } else if (col == 98) {
                 cells[i].innerHTML = x32(a, b).toFixed(3);
-            } else if (col == 99) {
+            } else if (col == 101) {
                 cells[i].innerHTML = x33(a, b).toFixed(3);
-            } else if (col == 102) {
+            } else if (col == 104) {
                 cells[i].innerHTML = x34(a, b).toFixed(3);
-            } else if (col == 105) {
+            } else if (col == 107) {
                 cells[i].innerHTML = x35(a, b).toFixed(3);
-            } else if (col == 108) {
+            } else if (col == 110) {
                 cells[i].innerHTML = x36(a, b).toFixed(3);
-            } else if (col == 111) {
+            } else if (col == 113) {
                 cells[i].innerHTML = x37(a, b).toFixed(3);
-            } else if (col == 114) {
+            } else if (col == 116) {
                 cells[i].innerHTML = x38(a, b).toFixed(3);
-            } else if (col == 117) {
+            } else if (col == 119) {
                 cells[i].innerHTML = x39(a, b).toFixed(3);
             }
         }

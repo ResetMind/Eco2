@@ -24,6 +24,17 @@ if (!checkAuth()) {
     echoJSON();
     exit();
 }
+require_once __DIR__ . "/load_table.php";
+$cultures_name = $email . "_cultures";
+$fields_name = $email . "_fields";
+if (!$fields_rows = loadTable($fields_name)) {
+    echoJSON();
+    exit();
+}
+if (!$cultures_rows = loadTable($cultures_name)) {
+    echoJSON();
+    exit();
+}
 
 echoJSON();
 

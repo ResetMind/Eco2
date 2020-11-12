@@ -59,8 +59,8 @@
                     <table class="table_header">
                         <tr>
                             <th>Год</th>
-                            <th>Культура</th>
-                            <th>Поле</th>
+                            <th width="200px">Культура</th>
+                            <th width="200px">Поле</th>
                             
                             <th>∑О,мм</th>
                             <th>∑t,°C</th>
@@ -253,76 +253,80 @@
     </div>
     <div class="common">
         <div class="chart_div">
-            <form name="param_form" class="param_form"></form>
+            <div class="plotly_div"><iframe name="content_frame"></iframe></div>
+            <form name="param_form" class="param_form">
+                <span class="add_chart_button">+</span>
+            </form>
+            <span class="span_chart_info"></span>
         </div>
-        <select class="select_culture">
+        <select class="select_culture" name="select_culture">
             <option value="" disabled selected>Культура</option>
             <option value="any">Любая</option>
         </select>
-        <select class="select_field">
+        <select class="select_field" name="select_field">
             <option value="" disabled selected>Поле</option>
             <option value="any">Любое</option>
         </select>
-        <select class="select_param">
+        <select class="select_param" name="select_param">
             <option value="" disabled selected>Параметр</option>
             <option value="0">Год</option>
-            <option value="1">∑О,мм</option>
-            <option value="2">∑t,°C</option>
-            <option value="5">∑t≥10°C</option>
-            <option value="8">∑t≥15°C</option>
-            <option value="11">∑t≥20°C</option>
-            <option value="13">∑О≥2мм</option>
-            <option value="25">∑В,%</option>
-            <option value="37">∑В≥40%</option>
-            <option value="40">∑В≥45%</option>
-            <option value="43">∑В≥50%</option>
-            <option value="73">ЧД(О)</option>
-            <option value="74">ЧД(t≥10°C)</option>
-            <option value="77">ЧД(t≥15°C)</option>
-            <option value="80">ЧД(t≥20°C)</option>
-            <option value="82">ЧД(О≥2мм)</option>
-            <option value="91">ЧД(В≥40%)</option>
-            <option value="100">ЧД(В≥45%)</option>
-            <option value="109">ЧД(В≥50%)</option>
-            <option value="3">X1</option>
-            <option value="6">X2</option>
-            <option value="9">X3</option>
-            <option value="12">X4</option>
-            <option value="15">X5</option>
-            <option value="18">X6</option>
-            <option value="21">X7</option>
-            <option value="24">X8</option>
-            <option value="27">X9</option>
-            <option value="30">X10</option>
-            <option value="33">X11</option>
-            <option value="36">X12</option>
-            <option value="39">X13</option>
-            <option value="42">X14</option>
-            <option value="45">X15</option>
-            <option value="48">X16</option>
-            <option value="51">X17</option>
-            <option value="54">X18</option>
-            <option value="57">X19</option>
-            <option value="60">X20</option>
-            <option value="63">X21</option>
-            <option value="66">X22</option>
-            <option value="69">X23</option>
-            <option value="72">X24</option>
-            <option value="75">X25</option>
-            <option value="78">X26</option>
-            <option value="81">X27</option>
-            <option value="84">X28</option>
-            <option value="87">X29</option>
-            <option value="90">X30</option>
-            <option value="93">X31</option>
-            <option value="96">X32</option>
-            <option value="99">X33</option>
-            <option value="102">X34</option>
-            <option value="105">X35</option>
-            <option value="108">X36</option>
-            <option value="111">X37</option>
-            <option value="114">X38</option>
-            <option value="117">X39</option>
+            <option value="3">∑О,мм</option>
+            <option value="4">∑t,°C</option>
+            <option value="7">∑t≥10°C</option>
+            <option value="10">∑t≥15°C</option>
+            <option value="13">∑t≥20°C</option>
+            <option value="15">∑О≥2мм</option>
+            <option value="27">∑В,%</option>
+            <option value="39">∑В≥40%</option>
+            <option value="42">∑В≥45%</option>
+            <option value="45">∑В≥50%</option>
+            <option value="75">ЧД(О)</option>
+            <option value="76">ЧД(t≥10°C)</option>
+            <option value="79">ЧД(t≥15°C)</option>
+            <option value="82">ЧД(t≥20°C)</option>
+            <option value="84">ЧД(О≥2мм)</option>
+            <option value="93">ЧД(В≥40%)</option>
+            <option value="102">ЧД(В≥45%)</option>
+            <option value="111">ЧД(В≥50%)</option>
+            <option value="5">X1</option>
+            <option value="8">X2</option>
+            <option value="11">X3</option>
+            <option value="14">X4</option>
+            <option value="17">X5</option>
+            <option value="20">X6</option>
+            <option value="23">X7</option>
+            <option value="26">X8</option>
+            <option value="29">X9</option>
+            <option value="32">X10</option>
+            <option value="35">X11</option>
+            <option value="38">X12</option>
+            <option value="41">X13</option>
+            <option value="44">X14</option>
+            <option value="47">X15</option>
+            <option value="50">X16</option>
+            <option value="53">X17</option>
+            <option value="56">X18</option>
+            <option value="59">X19</option>
+            <option value="62">X20</option>
+            <option value="65">X21</option>
+            <option value="68">X22</option>
+            <option value="71">X23</option>
+            <option value="74">X24</option>
+            <option value="77">X25</option>
+            <option value="80">X26</option>
+            <option value="83">X27</option>
+            <option value="86">X28</option>
+            <option value="89">X29</option>
+            <option value="92">X30</option>
+            <option value="95">X31</option>
+            <option value="98">X32</option>
+            <option value="101">X33</option>
+            <option value="104">X34</option>
+            <option value="107">X35</option>
+            <option value="110">X36</option>
+            <option value="113">X37</option>
+            <option value="116">X38</option>
+            <option value="119">X39</option>
         </select>
     </div>
     <footer>

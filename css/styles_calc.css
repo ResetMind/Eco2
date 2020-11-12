@@ -96,6 +96,18 @@ header a:hover {
     overflow: auto;
 }
 
+.add_chart_button {
+    font-size: 1rem;
+    color: #ceccce;
+    transition-duration: 0.3s;
+}
+
+.add_chart_button:hover {
+    color: #f4f8f9;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
 .new_chart_form_div {
     margin: 0.5vh;
     background: #ff52ff
@@ -109,10 +121,17 @@ header a:hover {
     margin: 0.5vh 0.5vh 0 0.5vh;
     overflow: auto;
     background: #b80bb8;
+    display: flex;
+    flex-direction: column;
     /*display: none;*/
 }
 
-.chart_div span {
+.plotly_div {
+    margin: 0 0 0.5vh 0;
+    height: 40vh;
+}
+
+.chart_div span:not(.add_chart_button) {
     font-size: 0.8rem;
 }
 
