@@ -61,7 +61,7 @@
                             <th>Год</th>
                             <th width="200px">Культура</th>
                             <th width="200px">Поле</th>
-                            
+
                             <th>∑О,мм</th>
                             <th>∑t,°C</th>
                             <th>X1</th>
@@ -252,6 +252,10 @@
         </div>
     </div>
     <div class="common">
+        <div class="checkbox_td">
+            <input type="checkbox" id="chart_checkbox" class="chart_checkbox">
+            <label for="chart_checkbox"></label>
+        </div>
         <div class="chart_div">
             <div class="plotly_div"><iframe name="content_frame"></iframe></div>
             <form name="param_form" class="param_form">
@@ -260,14 +264,7 @@
             <span class="span_chart_info"></span>
             <div class="chart_restangles"></div>
             <div class="chart_settings">
-                <div class="chart_data">
-                    <span>1234</span>
-                    <span>1234</span>
-                    <span>1234</span>
-                    <span>1234</span>
-                    <span>1234</span>
-                    <span>1234</span>
-                </div>
+                <div class="chart_data"></div>
                 <div class="chart_stuff">1212</div>
             </div>
         </div>
@@ -362,6 +359,6 @@
 <script src="js/form_checkers.js" defer></script>
 <script src="js/chart_engine.js" defer></script>
 <script src="js/calculate.js" defer></script>
-<script src="js/common_table_engine.js"></script>
+<script src="js/common_table_engine.js" defer></script>
 
 </html>

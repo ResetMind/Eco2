@@ -1,4 +1,4 @@
-function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles) {
+function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -81,15 +81,79 @@ function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles) {
             name += " (" + fy_text + ") ";
         }
         console.log(name);
-        if (isChartExist(data, name)) {
+        if (dataIndex(data, name) != -1) {
             span_chart_info.innerHTML = "График уже построен";
             return;
         }
-        addTo2DData(data, x_arr, y_arr, year_arr, name);
+        addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text);
         Plotly.newPlot(plotly_div, data, set2DLayout(plotly_div), { scrollZoom: true, responsive: true });
         span_chart_info.innerHTML = "";
-        addChartRestangle(chart_restangles, name);
+        addChartRestangle(chart_restangles, name).onclick = onChartRestangleClick.bind(null, data, name, chart_settings);
     }
+}
+
+function onChartRestangleClick(data, name, chart_settings) {
+    let restangle = window.event.target;
+    let chart_data = chart_settings.querySelector(".chart_data");
+    let chart_stuff = chart_settings.querySelector(".chart_stuff");
+    /*chart_data.innerHTML = "1";
+    chart_stuff.innerHTML = "2";*/
+    chart_data.innerHTML = "";
+    chart_data.append(createTable(data, name));
+}
+
+function createTable(data, name) {
+    let data_index = dataIndex(data, name);
+    if (data_index == -1) {
+        return;
+    }
+    let table = document.createElement("table");
+    let tr = newTr();
+    let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
+    //add th
+    addTh(tr, newCheckboxCell("_all"));
+    addTh(tr, data[data_index]["year_name"]);
+    if (!is_year_chart) {
+        addTh(tr, data[data_index]["x_name"]);
+    }
+    addTh(tr, data[data_index]["y_name"]);
+    table.append(tr);
+    //add td
+    for (let k = 0; k < data[data_index]["x"].length; k++) {
+        tr = newTr();
+        addTd(tr, newCheckboxCell(k));
+        if (!is_year_chart) {
+            addTd(tr, data[data_index]["years"][k]);
+        }
+        addTd(tr, data[data_index]["x"][k]);
+        addTd(tr, data[data_index]["y"][k]);
+        table.append(tr);
+    }
+    return table;
+    function addTd(tr, inner) {
+        let td = newTd();
+        td.innerHTML = inner;
+        tr.append(td);
+    }
+    function addTh(tr, inner) {
+        let th = newTh();
+        th.innerHTML = inner;
+        tr.append(th);
+    }
+    function newCheckboxCell(num) {
+        let td = document.createElement("td");
+        let input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = "chart_checkbox" + num;
+        input.className = "chart_checkbox" + num;
+        let label = document.createElement("label");
+        label.htmlFor = "chart_checkbox" + num;
+        td.append(input, label);
+        return td.innerHTML;
+    }
+    function newTr() { return document.createElement("tr"); }
+    function newTd() { return document.createElement("td"); }
+    function newTh() { return document.createElement("th"); }
 }
 
 function addChartRestangle(chart_restangles, name) {
@@ -97,6 +161,7 @@ function addChartRestangle(chart_restangles, name) {
     chart_restangle.className = "chart_restangle";
     chart_restangle.innerHTML = name;
     chart_restangles.append(chart_restangle);
+    return chart_restangle;
 }
 
 function isAllNull(arr) {
@@ -109,22 +174,20 @@ function isAllNull(arr) {
     return count < 2;
 }
 
-function isChartExist(data, name) {
-    console.log(data);
+function dataIndex(data, name) {
     for (let k = 0; k < data.length; k++) {
-        console.log(data[k]["name"]);
         if (data[k]["name"] == name) {
-            return true;
+            return k;
         }
     }
-    return false;
+    return -1;
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name) {
     //сортировка по возрастанию х
     let x_arr_sorted = x_arr.slice();
     let y_arr_sorted = [], year_arr_sorted = [];
-    x_arr_sorted.sort(function(a, b) { return a - b });
+    x_arr_sorted.sort(function (a, b) { return a - b });
     for (let k = 0; k < x_arr.length; k++) {
         let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
         y_arr_sorted.push(y_arr[old_index]);
@@ -132,8 +195,20 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name) {
         x_arr[old_index] = null;
     }
     let trace;
-    trace = { years: year_arr_sorted, x: x_arr_sorted, y: y_arr_sorted, type: "scatter", mode: "lines+markers", name: name, connectgaps: true };
+    trace = {
+        years: year_arr_sorted,
+        x: x_arr_sorted,
+        y: y_arr_sorted,
+        type: "scatter",
+        mode: "lines+markers",
+        name: name,
+        year_name: "Год",
+        x_name: x_name,
+        y_name: y_name,
+        connectgaps: true
+    };
     data.push(trace);
+    console.log(data);
 }
 
 function set2DLayout(plotly_div) {

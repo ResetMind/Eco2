@@ -5,6 +5,7 @@ let span_footer = document.querySelector(".span_footer");
 let table_body_main = contents[0].querySelector(".table_body");
 let table_header_main = contents[0].querySelector(".table_header");
 let chart_div = document.querySelector(".chart_div");
+let checkbox_td = document.querySelector(".checkbox_td");
 let new_chart_form_div = document.querySelectorAll(".new_chart_form_div");
 let add_2d_button = document.querySelector(".add_2d_button");
 let add_3d_button = document.querySelector(".add_3d_button");
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     search.culture.onkeyup = find;
     search.field.onkeyup = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    contents[0].style.display = "flex";
+    contents[1].style.display = "flex";
     setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
     add_2d_button.onclick = add2DChartDiv.bind(null, contents[1]);
     /*add_3d_button.onclick = addChartDiv(content[2]);
@@ -62,7 +63,8 @@ function add2DChartDiv(content) {
     let add_chart_button = div.querySelector(".add_chart_button");
     let plotly_div = div.querySelector(".plotly_div");
     let chart_restangles = div.querySelector(".chart_restangles");
-    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles);
+    let chart_settings = document.querySelector(".chart_settings");
+    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings);
 }
 
 function addSelect(form, select, name) {
