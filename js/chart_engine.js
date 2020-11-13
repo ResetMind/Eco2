@@ -1,4 +1,4 @@
-function add2DChart(plotly_div, data, form, span_chart_info) {
+function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles) {
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -85,10 +85,18 @@ function add2DChart(plotly_div, data, form, span_chart_info) {
             span_chart_info.innerHTML = "График уже построен";
             return;
         }
-        addTo2DData(data, x_arr, y_arr, name);
+        addTo2DData(data, x_arr, y_arr, year_arr, name);
         Plotly.newPlot(plotly_div, data, set2DLayout(plotly_div), { scrollZoom: true, responsive: true });
         span_chart_info.innerHTML = "";
+        addChartRestangle(chart_restangles, name);
     }
+}
+
+function addChartRestangle(chart_restangles, name) {
+    let chart_restangle = document.createElement("div");
+    chart_restangle.className = "chart_restangle";
+    chart_restangle.innerHTML = name;
+    chart_restangles.append(chart_restangle);
 }
 
 function isAllNull(arr) {
@@ -112,9 +120,19 @@ function isChartExist(data, name) {
     return false;
 }
 
-function addTo2DData(data, x, y, name) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name) {
+    //сортировка по возрастанию х
+    let x_arr_sorted = x_arr.slice();
+    let y_arr_sorted = [], year_arr_sorted = [];
+    x_arr_sorted.sort(function(a, b) { return a - b });
+    for (let k = 0; k < x_arr.length; k++) {
+        let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
+        y_arr_sorted.push(y_arr[old_index]);
+        year_arr_sorted.push(year_arr[old_index]);
+        x_arr[old_index] = null;
+    }
     let trace;
-    trace = { x: x, y: y, type: "scatter", mode: "lines+markers", name: name, connectgaps: true };
+    trace = { years: year_arr_sorted, x: x_arr_sorted, y: y_arr_sorted, type: "scatter", mode: "lines+markers", name: name, connectgaps: true };
     data.push(trace);
 }
 
@@ -133,4 +151,13 @@ function updateLayout(plotly_div) {
         width: plotly_div.clientWidth
     };
     Plotly.relayout(plotly_div, update);
+}
+
+function arrayIndex(arr, el) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == el) {
+            return i;
+        }
+    }
+    return -1;
 }

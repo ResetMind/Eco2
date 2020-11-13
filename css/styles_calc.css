@@ -139,8 +139,63 @@ header a:hover {
     margin-left: 2vh;
 }
 
+.span_chart_info {
+    /*padding: 0.5vh 0;*/
+}
+
 .chart_div select {
     margin-left: 0.5vh;
+    margin-bottom: 0.5vh;
+}
+
+.chart_restangles {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chart_restangle {
+    border: 1px solid #8b8c8e;
+    background: #222022;
+    border-radius: 0px;
+    color: #f4f8f9;
+    font-size: 0.8rem;
+    padding: 0.5vh;
+    margin-right: 0.5vh;
+    margin-top: 0.5vh;
+    transition: 0.3s;
+}
+
+.chart_settings {
+    margin-top: 0.5vh;
+    height: auto;
+    overflow: hidden;
+    background: #222022;
+    border: 1px solid #6ead3a;
+    display: flex;
+}
+
+.chart_settings.active {
+    display: flex;
+}
+
+.chart_data {
+    display: flex;
+    flex-direction: column;
+    background: #005eac;
+    width: auto;
+    max-height: 40vh;
+    overflow: auto;
+    margin: 0.5vh 0 0.5vh 0.5vh;
+}
+
+.chart_stuff {
+    display: flex;
+    flex-direction: column;
+    background: #00ac87;
+    flex: auto;
+    max-height: 40vh;
+    overflow: auto;
+    margin: 0.5vh;
 }
 
 .search_div {
@@ -392,7 +447,8 @@ input, select {
 }
 
 input[type="submit"]:hover,
-input[type="button"]:hover {
+input[type="button"]:hover, 
+.chart_restangle:hover {
     background: #f4f8f9;
     color: #222022;
     cursor: pointer;
