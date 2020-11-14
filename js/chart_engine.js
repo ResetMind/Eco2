@@ -1,4 +1,18 @@
-function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {
+let old_restangle = null;
+let colors = [
+    "rgba(31, 119, 180, 1)",
+    "rgba(255, 127, 14, 1)",
+    "rgba(44, 160, 44, 1)",
+    "rgba(214, 39, 40, 1)",
+    "rgba(148, 103, 189, 1)",
+    "rgba(140, 86, 75, 1)",
+    "rgba(227, 119, 194, 1)",
+    "rgba(127, 127, 127, 1)",
+    "rgba(188, 189, 34, 1)",
+    "rgba(23, 190, 207, 1)"
+];
+
+function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {    
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -51,10 +65,6 @@ function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, c
         }
         //console.log("year: " + tds[0].innerHTML + " row: " + i + " y: " + x + " c: " + cy_text + " f: " + fy_text);
     }
-    console.log(x_arr);
-    console.log(y_arr);
-    console.log(cx_text + " " + fx_text);
-    console.log(cy_text + " " + fy_text);
     if (x_arr.length < 2 || isAllNull(y_arr)) {
         span_chart_info.innerHTML = "Недостаточно данных для построения";
     } else {
@@ -85,21 +95,56 @@ function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, c
             span_chart_info.innerHTML = "График уже построен";
             return;
         }
-        addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text);
-        Plotly.newPlot(plotly_div, data, set2DLayout(plotly_div), { scrollZoom: true, responsive: true });
+        let color_index = data.length + 1;
+        if(color_index >= colors.length) {
+            color_index -= colors.length;
+        }
+        addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid");
+        new2DPlot(plotly_div, data);
         span_chart_info.innerHTML = "";
-        addChartRestangle(chart_restangles, name).onclick = onChartRestangleClick.bind(null, data, name, chart_settings);
+        addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, "2d").onclick = onChartRestangleClick.bind(null, plotly_div, data, name, chart_settings, "2d");
     }
 }
 
-function onChartRestangleClick(data, name, chart_settings) {
-    let restangle = window.event.target;
+function new2DPlot(plotly_div, data) {
+    Plotly.newPlot(plotly_div, getValidatedData(data), set2DLayout(plotly_div), { scrollZoom: true, responsive: true });
+}
+
+function getValidatedData(data) {
+    let data_v = JSON.parse(JSON.stringify(data));
+    for (let i = 0; i < data_v.length; i++) {
+        for (let k = 0; k < data_v[i]["x"].length; k++) {
+            if ((data_v[i]["x"][k] + "").indexOf("<label>") != -1) {
+                data_v[i]["x"][k] = null;
+            }
+        }
+    }
+    return data_v;
+}
+
+function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
     let chart_data = chart_settings.querySelector(".chart_data");
     let chart_stuff = chart_settings.querySelector(".chart_stuff");
-    /*chart_data.innerHTML = "1";
-    chart_stuff.innerHTML = "2";*/
-    chart_data.innerHTML = "";
-    chart_data.append(createTable(data, name));
+    let restangle = window.event.target;
+    if (restangle === old_restangle) {
+        chart_settings.classList.toggle("active");
+        old_restangle.classList.toggle("active");
+        old_restangle = chart_settings.classList.contains("active") ? window.event.target : null;
+    } else if (old_restangle == null) {
+        chart_data.innerHTML = "";
+        chart_data.append(createTable(data, name));
+        chart_settings.classList.toggle("active");
+        old_restangle = window.event.target;
+        old_restangle.classList.add("active");
+        addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+    } else {
+        chart_data.innerHTML = "";
+        chart_data.append(createTable(data, name));
+        old_restangle.classList.remove("active");
+        old_restangle = window.event.target;
+        old_restangle.classList.add("active");
+        addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+    }
 }
 
 function createTable(data, name) {
@@ -121,7 +166,7 @@ function createTable(data, name) {
     //add td
     for (let k = 0; k < data[data_index]["x"].length; k++) {
         tr = newTr();
-        addTd(tr, newCheckboxCell(k));
+        addTd(tr, newCheckboxCell("_" + k));
         if (!is_year_chart) {
             addTd(tr, data[data_index]["years"][k]);
         }
@@ -130,6 +175,7 @@ function createTable(data, name) {
         table.append(tr);
     }
     return table;
+
     function addTd(tr, inner) {
         let td = newTd();
         td.innerHTML = inner;
@@ -156,12 +202,92 @@ function createTable(data, name) {
     function newTh() { return document.createElement("th"); }
 }
 
-function addChartRestangle(chart_restangles, name) {
+function setChecked(checkboxes, data, name) {
+    /*let data_index = dataIndex(data, name);
+    for (let k = 0; k < data[data_index]["x"].length; k++) {
+        if(data[data_index]["x"][k].indexOf(""))
+    }*/
+}
+
+function addOnCheckboxChangeListeners(plotly_div, checkboxes, data, name, type) {
+    let data_index = dataIndex(data, name);
+    let checked_count = 1;
+    for (let k = 0; k < data[data_index]["x"].length; k++) {
+        if ((data[data_index]["x"][k] + "").indexOf("<label>") == -1) {
+            checkboxes[k + 1].checked = true;
+            checked_count++;
+        }
+    }
+    if (checked_count == checkboxes.length) checkboxes[0].checked = true;
+    for (let k = 0; k < checkboxes.length; k++) {
+        checkboxes[k].onchange = onCheckboxChange.bind(null, k, data);
+    }
+    function onCheckboxChange(index, data) {
+        if (index == 0) {
+            let all_checked = checkboxes[index].checked == true;
+            for (let k = 1; k < checkboxes.length; k++) {
+                checkboxes[k].checked = all_checked;
+                if (all_checked) {
+                    data[data_index]["x"][k - 1] = removePre(data[data_index]["x"][k - 1] + "");
+                } else {
+                    data[data_index]["x"][k - 1] = addPre(data[data_index]["x"][k - 1] + "");
+                }
+            }
+        } else {
+            if (checkboxes[index].checked) {
+                data[data_index]["x"][index - 1] = removePre(data[data_index]["x"][index - 1] + "");
+            } else {
+                data[data_index]["x"][index - 1] = addPre(data[data_index]["x"][index - 1] + "");
+            }
+        }
+        let checked_count = 1;
+        for (let k = 1; k < checkboxes.length; k++) {
+            checked_count = checkboxes[k].checked == true ? checked_count + 1 : checked_count;
+        }
+        if (checked_count == checkboxes.length) {
+            checkboxes[0].checked = true;
+        } else {
+            checkboxes[0].checked = false;
+        }
+        if (type == "2d") new2DPlot(plotly_div, data);
+        function addPre(x) {
+            if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
+                return "<label>" + x + "</label>";
+            }
+            return x;
+        }
+        function removePre(x) {
+            x = x.replace("<label>", "");
+            x = x.replace("</label>", "");
+            return x;
+        }
+    }
+}
+
+function addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, type) {
     let chart_restangle = document.createElement("div");
     chart_restangle.className = "chart_restangle";
     chart_restangle.innerHTML = name;
+    let delete_button = document.createElement("a");
+    delete_button.innerHTML = "&#215;"
+    chart_restangle.append(delete_button);
     chart_restangles.append(chart_restangle);
+    delete_button.onclick = deleteChartRestangle.bind(null, plotly_div, chart_settings, chart_restangle, data, name, type);
     return chart_restangle;
+}
+
+function deleteChartRestangle(plotly_div, chart_settings, chart_restangle, data, name, type) {
+    window.event.stopPropagation();
+    if(chart_restangle.classList.contains("active")) {
+        chart_settings.classList.remove("active");
+        old_restangle = null;
+    }
+    chart_restangle.remove();
+    while (dataIndex(data, name) != -1) {
+        data.splice(dataIndex(data, name), 1);
+    }
+    if(type == "2d") new2DPlot(plotly_div, data);
+    console.log(data);
 }
 
 function isAllNull(arr) {
@@ -183,7 +309,7 @@ function dataIndex(data, name) {
     return -1;
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, dash) {
     //сортировка по возрастанию х
     let x_arr_sorted = x_arr.slice();
     let y_arr_sorted = [], year_arr_sorted = [];
@@ -200,12 +326,15 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name) {
         x: x_arr_sorted,
         y: y_arr_sorted,
         type: "scatter",
-        mode: "lines+markers",
         name: name,
         year_name: "Год",
         x_name: x_name,
         y_name: y_name,
-        connectgaps: true
+        connectgaps: true,
+        line: {
+            dash: dash,
+            color: color
+        }
     };
     data.push(trace);
     console.log(data);

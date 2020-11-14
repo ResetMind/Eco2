@@ -110,7 +110,7 @@ header a:hover {
 
 .new_chart_form_div {
     margin: 0.5vh;
-    background: #ff52ff
+    /*background: #ff52ff*/
 }
 
 .common {
@@ -119,16 +119,22 @@ header a:hover {
 
 .chart_div {
     margin: 0.5vh 0.5vh 0 0.5vh;
-    overflow: auto;
-    background: #b80bb8;
+    overflow: hidden;
+    /*background: #b80bb8;*/
     display: flex;
     flex-direction: column;
     /*display: none;*/
 }
 
 .plotly_div {
+    background: rgba(110, 173, 58, 0.1);
     margin: 0 0 0.5vh 0;
     height: 40vh;
+    overflow: auto;
+}
+
+.param_form {
+    user-select: none;
 }
 
 .chart_div span:not(.add_chart_button) {
@@ -162,7 +168,30 @@ header a:hover {
     padding: 0.5vh;
     margin-right: 0.5vh;
     margin-top: 0.5vh;
+    user-select: none;
     transition: 0.3s;
+}
+
+.chart_restangle:hover {
+    border: 1px solid #6ead3a;
+    background: rgba(110, 173, 58, 0.1);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.chart_restangle.active {
+    border: 1px solid #6ead3a;
+}
+
+.chart_restangle a {
+    color: #ceccce;
+    margin-left: 0.5vh;
+    transition-duration: 0.3s;
+}
+
+.chart_restangle a:hover {
+    transition-duration: 0.3s;
+    color: #efedef;
 }
 
 .chart_settings {
@@ -171,7 +200,7 @@ header a:hover {
     overflow: hidden;
     background: #222022;
     border: 1px solid #6ead3a;
-    display: flex;
+    display: none;
 }
 
 .chart_settings.active {
@@ -181,7 +210,7 @@ header a:hover {
 .chart_data {
     display: flex;
     flex-direction: column;
-    background: #005eac;
+    /*background: #005eac;*/
     width: auto;
     max-height: 40vh;
     overflow: auto;
@@ -191,7 +220,7 @@ header a:hover {
 .chart_stuff {
     display: flex;
     flex-direction: column;
-    background: #00ac87;
+    /*background: #00ac87;*/
     flex: auto;
     max-height: 40vh;
     overflow: auto;
@@ -480,7 +509,7 @@ input, select {
     color: #f4f8f9;
     font-size: 0.8rem;
     padding: 0.5vh;
-    margin-right: 0;
+    margin: 0;
     outline: none;
     font-family: 'Open Sans', sans-serif;
     opacity: 100%;
@@ -488,8 +517,7 @@ input, select {
 }
 
 input[type="submit"]:hover,
-input[type="button"]:hover, 
-.chart_restangle:hover {
+input[type="button"]:hover {
     background: #f4f8f9;
     color: #222022;
     cursor: pointer;
