@@ -149,7 +149,7 @@ header a:hover {
     /*padding: 0.5vh 0;*/
 }
 
-.chart_div select {
+.param_form select {
     margin-left: 0.5vh;
     margin-bottom: 0.5vh;
 }
@@ -225,6 +225,19 @@ header a:hover {
     max-height: 40vh;
     overflow: auto;
     margin: 0.5vh;
+}
+
+.chart_stuff select {
+    margin-bottom: 0.5vh;
+}
+
+.trends_2d {
+    display: flex;
+    flex-direction: column;
+}
+
+.trends_2d span {
+    margin-bottom: 0.5vh;
 }
 
 /*checkbox*/

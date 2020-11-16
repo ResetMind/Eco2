@@ -132,14 +132,18 @@ function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
         old_restangle = chart_settings.classList.contains("active") ? window.event.target : null;
     } else if (old_restangle == null) {
         chart_data.innerHTML = "";
+        chart_stuff.innerHTML = "";
         chart_data.append(createTable(data, name));
+        chart_stuff.append(trends_2d);
         chart_settings.classList.toggle("active");
         old_restangle = window.event.target;
         old_restangle.classList.add("active");
         addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
     } else {
         chart_data.innerHTML = "";
+        chart_stuff.innerHTML = "";
         chart_data.append(createTable(data, name));
+        chart_stuff.append(trends_2d);
         old_restangle.classList.remove("active");
         old_restangle = window.event.target;
         old_restangle.classList.add("active");

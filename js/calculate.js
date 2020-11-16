@@ -13,6 +13,7 @@ let add_drm_button = document.querySelector(".add_drm_button");
 let select_culture = document.querySelector(".select_culture");
 let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
+let trends_2d = document.querySelector(".trends_2d");
 let cultures_list = [];
 let fields_list = [];
 
