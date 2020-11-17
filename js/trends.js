@@ -1,4 +1,6 @@
 function linear(x, y, back, forward, step) {
+    console.log(x);
+    console.log(y);
     let a = create2DimArray(2);
     let b = new Array(2);
     a[0][0] = x.length;
@@ -21,23 +23,31 @@ function linear(x, y, back, forward, step) {
     let x_tr = new Array();
     for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_linear(coef, i));
     }
     for(let i = 0; i < x.length; i++) {
         x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+        y_tr.push(get_y_linear(coef, x[i]));
+        y_tr_2.push(get_y_linear(coef, x[i]));
     }
     let last = x_tr[x_tr.length - 1];
     for(let i = last + step; i <= last + forward * step; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_linear(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x;
-    }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    //console.log(x_tr);
+    console.log(y_tr);
+    return {
+        x_tr: x_tr, 
+        y_tr: y_tr, 
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_linear(coef, x) {
+    return coef[0] + coef[1] * x;
 }
 
 function hyperbole(x, y, back, forward, step) {
@@ -63,23 +73,30 @@ function hyperbole(x, y, back, forward, step) {
     let x_tr = new Array();
     for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_hyperbole(coef, i));
     }
     for(let i = 0; i < x.length; i++) {
         x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+        y_tr.push(get_y_hyperbole(coef, x[i]));
+        y_tr_2.push(get_y_hyperbole(coef, x[i]));
     }
     let last = x_tr[x_tr.length - 1];
     for(let i = last + step; i <= last + forward * step; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_hyperbole(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * 1 / x;
-    }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    console.log(y_tr);
+    return {
+        x_tr: x_tr, 
+        y_tr: y_tr, 
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_hyperbole(coef, x) {
+    return coef[0] + coef[1] * 1 / x;
 }
 
 function parabole2(x, y, back, forward, step) {
@@ -590,6 +607,15 @@ function r2(y0, y1) {
     return 1 - s_rem / s_full;
 }
 
+function get_a(y0, y1) {
+    let sum = 0;
+    for(let i = 0; i < y0.length; i++) {
+        sum += Math.abs((y0[i] - y1[i]) / y0[i]);
+    }
+    console.log(sum);
+    return sum / y0.length * 100;
+}
+
 function holeckiy(a, b) {
     let n = a.length;
     let l = create2DimArray(n);
@@ -627,7 +653,7 @@ function holeckiy(a, b) {
         }
         x[i] = y[i] - sum_x;
     }
-    console.log(x);
+    //console.log(x);
     return x;
 }
 

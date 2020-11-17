@@ -64,8 +64,9 @@ function add2DChartDiv(content) {
     let add_chart_button = div.querySelector(".add_chart_button");
     let plotly_div = div.querySelector(".plotly_div");
     let chart_restangles = div.querySelector(".chart_restangles");
-    let chart_settings = document.querySelector(".chart_settings");
-    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings);
+    let chart_settings = div.querySelector(".chart_settings");
+    let old_restangle = null;
+    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings, old_restangle);
 }
 
 function addSelect(form, select, name) {

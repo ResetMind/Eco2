@@ -141,7 +141,7 @@ header a:hover {
     font-size: 0.8rem;
 }
 
-.chart_div span:not(:nth-of-type(1)) {
+.param_form span:not(:nth-of-type(1)) {
     margin-left: 2vh;
 }
 
@@ -231,6 +231,10 @@ header a:hover {
     margin-bottom: 0.5vh;
 }
 
+.chart_stuff form span, .chart_stuff form label {
+    margin-left: 1vh;
+}
+
 .trends_2d {
     display: flex;
     flex-direction: column;
@@ -251,7 +255,16 @@ input[type="checkbox"]+label {
     display: inline-flex;
     align-items: center;
     user-select: none;
+    vertical-align: middle;
     line-height: 1em;
+}
+
+.a_error_checkbox+label {
+    margin-bottom: 0.5vh;
+}
+
+.a_error_checkbox+label::before {
+    margin-right: 0.5em;
 }
 
 input[type="checkbox"]+label::before {
@@ -259,6 +272,7 @@ input[type="checkbox"]+label::before {
     display: inline-block;
     width: 1em;
     height: 1em;
+    vertical-align: middle;
     flex-shrink: 0;
     flex-grow: 0;
     border: 1px solid #8b8c8e;
@@ -403,7 +417,7 @@ td {
     padding: 2px 5px;
     overflow: hidden;
     white-space: nowrap;
-    position: relative;
+    /*position: relative;*/
     background-clip: padding-box;
 }
 
@@ -527,6 +541,10 @@ input, select {
     font-family: 'Open Sans', sans-serif;
     opacity: 100%;
     transition: 0.3s;
+}
+
+input:disabled {
+    opacity: 0.5;
 }
 
 input[type="submit"]:hover,

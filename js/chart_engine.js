@@ -12,7 +12,7 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {    
+function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -96,10 +96,10 @@ function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, c
             return;
         }
         let color_index = data.length + 1;
-        if(color_index >= colors.length) {
+        if (color_index >= colors.length) {
             color_index -= colors.length;
         }
-        addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid");
+        addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", null, null, null, null, null, null, null, null, null);
         new2DPlot(plotly_div, data);
         span_chart_info.innerHTML = "";
         addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, "2d").onclick = onChartRestangleClick.bind(null, plotly_div, data, name, chart_settings, "2d");
@@ -123,6 +123,7 @@ function getValidatedData(data) {
 }
 
 function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
+    console.log(chart_settings);
     let chart_data = chart_settings.querySelector(".chart_data");
     let chart_stuff = chart_settings.querySelector(".chart_stuff");
     let restangle = window.event.target;
@@ -139,6 +140,7 @@ function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
         old_restangle = window.event.target;
         old_restangle.classList.add("active");
         addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+        addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d.querySelector(".trend_2d_form"));
     } else {
         chart_data.innerHTML = "";
         chart_stuff.innerHTML = "";
@@ -148,6 +150,211 @@ function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
         old_restangle = window.event.target;
         old_restangle.classList.add("active");
         addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+        addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d.querySelector(".trend_2d_form"));
+    }
+}
+
+function addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trend_2d_form) {
+    let r_span = trends_2d.querySelector(".r");
+    let a_span = trends_2d.querySelector(".a");
+    let trend_function_span = trends_2d.querySelector(".trend_function");
+    let a_error_checkbox = trends_2d.querySelector(".a_error_checkbox");
+    let a_error_checkbox_label = trends_2d.querySelector(".a_error_checkbox_label");
+    trend_2d_form.select_2d_trend_type.onchange = function() {
+        setDisabled();
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_level.onchange = function() {
+        console.log("number_2d_trend_level");
+        validateNumberInput(trend_2d_form.number_2d_trend_level);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_back.onchange = function() {
+        console.log("number_2d_trend_back");
+        validateNumberInput(trend_2d_form.number_2d_trend_back);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_forward.onchange = function() {
+        console.log("number_2d_trend_forward");
+        validateNumberInput(trend_2d_form.number_2d_trend_forward);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_step.onchange = function() {
+        console.log("number_2d_trend_step");
+        validateNumberInput(trend_2d_form.number_2d_trend_step);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    a_error_checkbox.onchange = function() {
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    let trend_params = getTrendParams(data, name);
+    //console.log(trend_params);
+    if (!trend_params) {
+        trend_2d_form.select_2d_trend_type.value = "none";
+        trend_2d_form.number_2d_trend_level.value = "2";
+        trend_2d_form.number_2d_trend_back.value = "0";
+        trend_2d_form.number_2d_trend_forward.value = "0";
+        trend_2d_form.number_2d_trend_step.value = "1";
+        removeSpans();
+    } else {
+        trend_2d_form.select_2d_trend_type.value = trend_params.trend_type;
+        trend_2d_form.number_2d_trend_level.value = trend_params.level;
+        trend_2d_form.number_2d_trend_back.value = trend_params.back;
+        trend_2d_form.number_2d_trend_forward.value = trend_params.forward;
+        trend_2d_form.number_2d_trend_step.value = trend_params.step;
+        a_error_checkbox.checked = trend_params.error_bar;
+        showErrors(trend_params.r, trend_params.a);
+        showFunction(trend_params.trend_type, trend_params.coef);
+    }
+    setDisabled();
+
+    function setDisabled() {
+        let select_2d_trend_type_value = trend_2d_form.select_2d_trend_type.value;
+        trend_2d_form.number_2d_trend_level.disabled = select_2d_trend_type_value != "2"
+        trend_2d_form.number_2d_trend_back.disabled = select_2d_trend_type_value == "none"
+        trend_2d_form.number_2d_trend_forward.disabled = select_2d_trend_type_value == "none"
+        trend_2d_form.number_2d_trend_step.disabled = select_2d_trend_type_value == "none"
+    }
+
+    function addTrend(type, data, name) {
+        let data_index = dataIndex(data, name);
+        let color = data[data_index]["line"]["color"];
+        let back = trend_2d_form.number_2d_trend_back.value;
+        let forward = trend_2d_form.number_2d_trend_forward.value;
+        let step = trend_2d_form.number_2d_trend_step.value;
+        let level = "2";
+        let data_v = validateDataForTrends(data);
+        if (type == "0") {
+            let xy = linear(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "1") {
+            let xy = hyperbole(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "none") {
+            removeTrend();
+        }
+
+        function showTrend(xy) {
+            replaceIfExist(data, name);
+            let a_error_checkbox_status = a_error_checkbox.checked;
+            addTo2DData(false, data, xy.x_tr, xy.y_tr, null, name + " тренд", "", "", color, "dash", type, level, back, forward, step, xy.r, xy.a, xy.coef, a_error_checkbox_status);
+            if(a_error_checkbox_status) {
+                let error_bars = getErrorBars(xy);
+                //console.log(error_bars);
+                let error_bar_color = color.replace("1)", "0.3)");
+                addToErrorBarData(data, error_bars.x_e_up, error_bars.y_e_up, name + " тренд", "", "", error_bar_color);
+                addToErrorBarData(data, error_bars.x_e_down, error_bars.y_e_down, name + " тренд", "tonexty", error_bar_color, error_bar_color);
+            }
+            new2DPlot(plotly_div, data);
+            showErrors(xy.r, xy.a);
+        }
+
+        function removeTrend() {
+            replaceIfExist(data, name);
+            new2DPlot(plotly_div, data);
+            removeSpans();
+        }
+
+        function validateDataForTrends(data) {
+            let data_v = getValidatedData(data);
+            for (let k = 0; k < data_v[data_index]["x"].length; k++) {
+                if (data_v[data_index]["x"][k] == null) {
+                    data_v[data_index]["x"].splice(k, 1);
+                    data_v[data_index]["y"].splice(k, 1);
+                    k--;
+                } else {
+                    data_v[data_index]["x"][k] = parseFloat(data_v[data_index]["x"][k]);
+                }
+            }
+            return data_v;
+        }
+
+        function getErrorBars(xy) {
+            /*console.log(xy.x_tr);
+            console.log(xy.y_tr);*/
+            let x_e_up = [],
+                y_e_up = [],
+                x_e_down = [],
+                y_e_down = [];
+            for (let k = 0; k < xy.x_tr.length; k++) {
+                x_e_up.push(xy.x_tr[k]);
+                x_e_down.push(xy.x_tr[k]);
+                y_e_up.push(xy.y_tr[k] + xy.y_tr[k] * xy.a / 100);
+                y_e_down.push(xy.y_tr[k] - xy.y_tr[k] * xy.a / 100);
+            }
+            return {
+                x_e_up: x_e_up,
+                y_e_up: y_e_up,
+                x_e_down: x_e_down,
+                y_e_down: y_e_down
+            }
+        }
+    }
+
+    function replaceIfExist(data, name) {
+        let data_index = dataIndex(data, name + " тренд");
+        while (data_index != -1) {
+            data.splice(data_index, 1);
+            data_index = dataIndex(data, name + " тренд");
+        }
+    }
+
+    function showFunction(type, coef) {
+        if (type == "0") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + " + " + coef[1].toFixed(4) + "x";
+        } else if (type == "1") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + " + " + coef[1].toFixed(4) + " * 1 / x";
+        }
+    }
+
+    function showErrors(r, a) {
+        r_span.innerHTML = "R<sup>2</sup>=" + r;
+        a_span.innerHTML = "A=" + a;
+        a_error_checkbox_label.style.display = ['inline-flex'];
+    }
+
+    function removeSpans() {
+        r_span.innerHTML = "";
+        a_span.innerHTML = "";
+        trend_function_span.innerHTML = "";
+        a_error_checkbox_label.style.display = "none";
+    }
+}
+
+function getTrendParams(data, name) {
+    let data_index = dataIndex(data, name + " тренд");
+    if (data_index == -1) return false;
+    let trend_type = data[data_index]["trend"]["trend_type"];
+    let level = data[data_index]["trend"]["level"];
+    let back = data[data_index]["trend"]["back"];
+    let forward = data[data_index]["trend"]["forward"];
+    let step = data[data_index]["trend"]["step"];
+    let r = data[data_index]["trend"]["r"];
+    let a = data[data_index]["trend"]["a"];
+    let coef = data[data_index]["trend"]["coef"];
+    let error_bar = data[data_index]["trend"]["error_bar"];
+    return {
+        trend_type: trend_type,
+        level: level,
+        back: back,
+        forward: forward,
+        step: step,
+        r: r,
+        a: a,
+        coef: coef,
+        error_bar: error_bar
+    }
+    //console.log(data[data_index]["trend"]["trend_type"]);
+}
+
+function validateNumberInput(number_input) {
+    let value = number_input.value;
+    if (value > parseFloat(number_input.max)) {
+        number_input.value = number_input.max;
+    } else if (value < parseFloat(number_input.min)) {
+        number_input.value = number_input.min;
     }
 }
 
@@ -185,11 +392,13 @@ function createTable(data, name) {
         td.innerHTML = inner;
         tr.append(td);
     }
+
     function addTh(tr, inner) {
         let th = newTh();
         th.innerHTML = inner;
         tr.append(th);
     }
+
     function newCheckboxCell(num) {
         let td = document.createElement("td");
         let input = document.createElement("input");
@@ -201,8 +410,11 @@ function createTable(data, name) {
         td.append(input, label);
         return td.innerHTML;
     }
+
     function newTr() { return document.createElement("tr"); }
+
     function newTd() { return document.createElement("td"); }
+
     function newTh() { return document.createElement("th"); }
 }
 
@@ -226,6 +438,7 @@ function addOnCheckboxChangeListeners(plotly_div, checkboxes, data, name, type) 
     for (let k = 0; k < checkboxes.length; k++) {
         checkboxes[k].onchange = onCheckboxChange.bind(null, k, data);
     }
+
     function onCheckboxChange(index, data) {
         if (index == 0) {
             let all_checked = checkboxes[index].checked == true;
@@ -253,13 +466,16 @@ function addOnCheckboxChangeListeners(plotly_div, checkboxes, data, name, type) 
         } else {
             checkboxes[0].checked = false;
         }
-        if (type == "2d") new2DPlot(plotly_div, data);
+        //if (type == "2d") new2DPlot(plotly_div, data);
+        if (type == "2d") document.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+
         function addPre(x) {
             if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
                 return "<label>" + x + "</label>";
             }
             return x;
         }
+
         function removePre(x) {
             x = x.replace("<label>", "");
             x = x.replace("</label>", "");
@@ -282,15 +498,18 @@ function addChartRestangle(plotly_div, chart_settings, chart_restangles, data, n
 
 function deleteChartRestangle(plotly_div, chart_settings, chart_restangle, data, name, type) {
     window.event.stopPropagation();
-    if(chart_restangle.classList.contains("active")) {
+    if (chart_restangle.classList.contains("active")) {
         chart_settings.classList.remove("active");
         old_restangle = null;
     }
     chart_restangle.remove();
-    while (dataIndex(data, name) != -1) {
+    if (dataIndex(data, name) != -1) {
         data.splice(dataIndex(data, name), 1);
     }
-    if(type == "2d") new2DPlot(plotly_div, data);
+    while (dataIndex(data, name + " тренд") != -1) {
+        data.splice(dataIndex(data, name + " тренд"), 1);
+    }
+    if (type == "2d") new2DPlot(plotly_div, data);
     console.log(data);
 }
 
@@ -313,19 +532,44 @@ function dataIndex(data, name) {
     return -1;
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, dash) {
-    //сортировка по возрастанию х
-    let x_arr_sorted = x_arr.slice();
-    let y_arr_sorted = [], year_arr_sorted = [];
-    x_arr_sorted.sort(function (a, b) { return a - b });
-    for (let k = 0; k < x_arr.length; k++) {
-        let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
-        y_arr_sorted.push(y_arr[old_index]);
-        year_arr_sorted.push(year_arr[old_index]);
-        x_arr[old_index] = null;
+function addToErrorBarData(data, x_arr, y_arr, name, fill, fillcolor, marker_color) {
+    let trace = {
+        x: x_arr,
+        y: y_arr,
+        fill: fill,
+        fillcolor: fillcolor,
+        marker: { color: marker_color },
+        line: { width: 0 },
+        mode: "lines",
+        name: name,
+        type: "scatter",
+        showlegend: false
+
+    };
+    data.push(trace);
+}
+
+function addTo2DData(sort, data, x_arr, y_arr, year_arr, name, x_name, y_name, color, dash, trend_type, level, back, forward, step, r, a, coef, error_bar) {
+    let x_arr_sorted, y_arr_sorted = [],
+        year_arr_sorted = [];
+    if (sort) {
+        //сортировка по возрастанию х
+        x_arr_sorted = x_arr.slice();
+        x_arr_sorted.sort(function(a, b) { return a - b });
+        for (let k = 0; k < x_arr.length; k++) {
+            let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
+            y_arr_sorted.push(y_arr[old_index]);
+            if (year_arr != null) {
+                year_arr_sorted.push(year_arr[old_index]);
+            }
+            x_arr[old_index] = null;
+        }
+    } else {
+        x_arr_sorted = x_arr.slice();
+        y_arr_sorted = y_arr.slice();
     }
-    let trace;
-    trace = {
+
+    let trace = {
         years: year_arr_sorted,
         x: x_arr_sorted,
         y: y_arr_sorted,
@@ -338,10 +582,21 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, 
         line: {
             dash: dash,
             color: color
+        },
+        trend: {
+            trend_type: trend_type,
+            level: level,
+            back: back,
+            forward: forward,
+            step: step,
+            r: r,
+            a: a,
+            coef: coef,
+            error_bar: error_bar
         }
     };
     data.push(trace);
-    console.log(data);
+    //console.log(data);
 }
 
 function set2DLayout(plotly_div) {
