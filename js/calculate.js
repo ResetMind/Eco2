@@ -13,7 +13,7 @@ let add_drm_button = document.querySelector(".add_drm_button");
 let select_culture = document.querySelector(".select_culture");
 let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
-let trends_2d = document.querySelector(".trends_2d");
+let trends_2d_template = document.querySelector(".trends_2d");
 let cultures_list = [];
 let fields_list = [];
 
@@ -31,14 +31,14 @@ document.addEventListener("DOMContentLoaded", () => {
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
     contents[1].style.display = "flex";
     setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
-    add_2d_button.onclick = add2DChartDiv.bind(null, contents[1]);
+    add_2d_button.onclick = add2DChartDiv.bind(null, 1);
     /*add_3d_button.onclick = addChartDiv(content[2]);
     add_drm_button.onclick = addChartDiv(content[3]);*/
     onRadioChange();
     doRequest();
 });
 
-function add2DChartDiv(content) {
+function add2DChartDiv(num) {
     let div = document.createElement("div");
     div.className = "chart_div";
     div.innerHTML = chart_div.innerHTML;
@@ -65,8 +65,8 @@ function add2DChartDiv(content) {
     let plotly_div = div.querySelector(".plotly_div");
     let chart_restangles = div.querySelector(".chart_restangles");
     let chart_settings = div.querySelector(".chart_settings");
-    let old_restangle = null;
-    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings, old_restangle);
+    let trends_2d = document.createElement("div");
+    add_chart_button.onclick = add2DChart.bind(null, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings, trends_2d);
 }
 
 function addSelect(form, select, name) {

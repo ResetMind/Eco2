@@ -12,7 +12,7 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings) {
+function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, chart_settings, trends_2d) {
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -102,7 +102,7 @@ function add2DChart(plotly_div, data, form, span_chart_info, chart_restangles, c
         addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", null, null, null, null, null, null, null, null, null);
         new2DPlot(plotly_div, data);
         span_chart_info.innerHTML = "";
-        addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, "2d").onclick = onChartRestangleClick.bind(null, plotly_div, data, name, chart_settings, "2d");
+        addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_restangles, plotly_div, data, name, chart_settings, trends_2d, "2d");
     }
 }
 
@@ -122,8 +122,35 @@ function getValidatedData(data) {
     return data_v;
 }
 
-function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
+function onChartRestangleClick(chart_restangles, plotly_div, data, name, chart_settings, trends_2d, type) {
+    let chart_data = chart_settings.querySelector(".chart_data");
+    let chart_stuff = chart_settings.querySelector(".chart_stuff");
+    let restangles = chart_restangles.querySelectorAll(".chart_restangle");
+    //console.log(restangles);
+    let restangle = window.event.target;
+    if(restangle.classList.contains("active")) {
+        restangle.classList.remove("active");
+        chart_settings.classList.remove("active");
+        chart_data.innerHTML = "";
+        chart_stuff.innerHTML = "";
+    } else {
+        for(let k = 0; k < restangles.length; k++) {
+            restangles[k].classList.remove("active");
+            if(k == 0) {
+                chart_settings.classList.remove("active");
+                chart_data.innerHTML = "";
+                chart_stuff.innerHTML = "";
+            }
+        }
+        restangle.classList.add("active");
+        chart_data.append(createTable(data, name));
+        chart_stuff.append(trends_2d);
+        chart_settings.classList.add("active");
+        addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+        addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d, trends_2d.querySelector(".trend_2d_form"));
+    }
     console.log(chart_settings);
+/*
     let chart_data = chart_settings.querySelector(".chart_data");
     let chart_stuff = chart_settings.querySelector(".chart_stuff");
     let restangle = window.event.target;
@@ -151,10 +178,10 @@ function onChartRestangleClick(plotly_div, data, name, chart_settings, type) {
         old_restangle.classList.add("active");
         addOnCheckboxChangeListeners(plotly_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
         addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d.querySelector(".trend_2d_form"));
-    }
+    }*/
 }
 
-function addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trend_2d_form) {
+function addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d, trend_2d_form) {
     let r_span = trends_2d.querySelector(".r");
     let a_span = trends_2d.querySelector(".a");
     let trend_function_span = trends_2d.querySelector(".trend_function");
