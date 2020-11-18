@@ -12,7 +12,10 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function add2DChart(chart_div, plotly_div, data, form, span_chart_info, chart_restangles, chart_settings, trends_2d, cnt_num, plotly_num) {
+function add2DChart(chart_div, data, trends_2d, plotly_num) {
+    let form = chart_div.querySelector(".param_form");
+    let span_chart_info = chart_div.querySelector(".span_chart_info");
+    
     let x_col = parseFloat(form.x_select_param.value);
     let x_index = form.x_select_param.selectedIndex;
     let x_text = form.x_select_param[x_index].text;
@@ -100,9 +103,9 @@ function add2DChart(chart_div, plotly_div, data, form, span_chart_info, chart_re
             color_index -= colors.length;
         }
         addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", null, null, null, null, null, null, null, null, null);
-        new2DPlot(plotly_div, data);
+        new2DPlot(chart_div.querySelector(".plotly_div"), data);
         span_chart_info.innerHTML = "";
-        addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_restangles, chart_div, data, name, chart_settings, trends_2d, "2d", plotly_num);
+        addChartRestangle(chart_div, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_div, trends_2d, data, name, "2d", plotly_num);
     }
 }
 
@@ -122,19 +125,21 @@ function getValidatedData(data) {
     return data_v;
 }
 
-function addChartRestangle(plotly_div, chart_settings, chart_restangles, data, name, type) {
+function addChartRestangle(chart_div, data, name, type) {
     let chart_restangle = document.createElement("div");
     chart_restangle.className = "chart_restangle";
     chart_restangle.innerHTML = name;
     let delete_button = document.createElement("a");
     delete_button.innerHTML = "&#215;"
     chart_restangle.append(delete_button);
-    chart_restangles.append(chart_restangle);
-    delete_button.onclick = deleteChartRestangle.bind(null, plotly_div, chart_settings, chart_restangle, data, name, type);
+    chart_div.querySelector(".chart_restangles").append(chart_restangle);
+    delete_button.onclick = deleteChartRestangle.bind(null, chart_div, chart_restangle, data, name, type);
     return chart_restangle;
 }
 
-function onChartRestangleClick(chart_restangles, chart_div, plotly_div, data, name, chart_settings, trends_2d, type, plotly_num) {
+function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_num) {
+    let chart_settings = chart_div.querySelector(".chart_settings");
+    let chart_restangles = chart_div.querySelector(".chart_restangles");
     let chart_data = chart_settings.querySelector(".chart_data");
     let chart_stuff = chart_settings.querySelector(".chart_stuff");
     let restangles = chart_restangles.querySelectorAll(".chart_restangle");
@@ -159,40 +164,79 @@ function onChartRestangleClick(chart_restangles, chart_div, plotly_div, data, na
         chart_stuff.append(trends_2d);
         chart_settings.classList.add("active");
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
-        addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d, trends_2d.querySelector(".trend_2d_form"));
+        addOn2DTrendsParamsChangeListeners(chart_div, data, name);
     }
     console.log(chart_settings);
 }
 
-function addOn2DTrendsParamsChangeListeners(plotly_div, data, name, trends_2d, trend_2d_form) {
+function deleteChartRestangle(chart_div, chart_restangle, data, name, type) {
+    window.event.stopPropagation();
+
+    if (chart_restangle.classList.contains("active")) {
+        chart_div.querySelector(".chart_settings").classList.remove("active");
+    }
+    chart_restangle.remove();
+    if (dataIndex(data, name) != -1) {
+        data.splice(dataIndex(data, name), 1);
+    }
+    while (dataIndex(data, name + " тренд") != -1) {
+        data.splice(dataIndex(data, name + " тренд"), 1);
+    }
+    if (type == "2d") new2DPlot(chart_div.querySelector(".plotly_div"), data);
+    console.log(data);
+}
+
+function isAllNull(arr) {
+    let count = 0;
+    for (let k = 0; k < arr.length; k++) {
+        if (arr[k] != null) {
+            count++;
+        }
+    }
+    return count < 2;
+}
+
+function dataIndex(data, name) {
+    for (let k = 0; k < data.length; k++) {
+        if (data[k]["name"] == name) {
+            return k;
+        }
+    }
+    return -1;
+}
+
+function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
+    let trends_2d = chart_div.querySelector(".trends_2d");
     let r_span = trends_2d.querySelector(".r");
     let a_span = trends_2d.querySelector(".a");
     let trend_function_span = trends_2d.querySelector(".trend_function");
     let a_error_checkbox = trends_2d.querySelector(".a_error_checkbox");
     let a_error_checkbox_label = trends_2d.querySelector(".a_error_checkbox_label");
+    let trend_2d_form = trends_2d.querySelector(".trend_2d_form");
+    let plotly_div = chart_div.querySelector(".plotly_div");
     trend_2d_form.select_2d_trend_type.onchange = function() {
         setDisabled();
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     trend_2d_form.number_2d_trend_level.onchange = function() {
-        console.log("number_2d_trend_level");
+        //console.log("number_2d_trend_level");
         validateNumberInput(trend_2d_form.number_2d_trend_level);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     trend_2d_form.number_2d_trend_back.onchange = function() {
-        console.log("number_2d_trend_back");
+        //console.log("number_2d_trend_back");
         validateNumberInput(trend_2d_form.number_2d_trend_back);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     trend_2d_form.number_2d_trend_forward.onchange = function() {
-        console.log("number_2d_trend_forward");
+        //console.log("number_2d_trend_forward");
         validateNumberInput(trend_2d_form.number_2d_trend_forward);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     trend_2d_form.number_2d_trend_step.onchange = function() {
-        console.log("number_2d_trend_step");
+        //console.log("number_2d_trend_step");
         validateNumberInput(trend_2d_form.number_2d_trend_step);
-        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+        //addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     a_error_checkbox.onchange = function() {
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
@@ -428,13 +472,6 @@ function createTable(data, name, plotly_num) {
     function newTh() { return document.createElement("th"); }
 }
 
-function setChecked(checkboxes, data, name) {
-    /*let data_index = dataIndex(data, name);
-    for (let k = 0; k < data[data_index]["x"].length; k++) {
-        if(data[data_index]["x"][k].indexOf(""))
-    }*/
-}
-
 function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
     console.log(checkboxes);
     let data_index = dataIndex(data, name);
@@ -478,7 +515,7 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
             checkboxes[0].checked = false;
         }
         //if (type == "2d") new2DPlot(plotly_div, data);
-        if (type == "2d") document.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+        if (type == "2d") chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
 
         function addPre(x) {
             if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
@@ -493,42 +530,6 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
             return x;
         }
     }
-}
-
-function deleteChartRestangle(plotly_div, chart_settings, chart_restangle, data, name, type) {
-    window.event.stopPropagation();
-    if (chart_restangle.classList.contains("active")) {
-        chart_settings.classList.remove("active");
-        old_restangle = null;
-    }
-    chart_restangle.remove();
-    if (dataIndex(data, name) != -1) {
-        data.splice(dataIndex(data, name), 1);
-    }
-    while (dataIndex(data, name + " тренд") != -1) {
-        data.splice(dataIndex(data, name + " тренд"), 1);
-    }
-    if (type == "2d") new2DPlot(plotly_div, data);
-    console.log(data);
-}
-
-function isAllNull(arr) {
-    let count = 0;
-    for (let k = 0; k < arr.length; k++) {
-        if (arr[k] != null) {
-            count++;
-        }
-    }
-    return count < 2;
-}
-
-function dataIndex(data, name) {
-    for (let k = 0; k < data.length; k++) {
-        if (data[k]["name"] == name) {
-            return k;
-        }
-    }
-    return -1;
 }
 
 function addToErrorBarData(data, x_arr, y_arr, name, fill, fillcolor, marker_color) {

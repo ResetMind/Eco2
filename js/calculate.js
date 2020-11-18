@@ -67,10 +67,11 @@ function add2DChartDiv(cnt_num) {
     let chart_restangles = div.querySelector(".chart_restangles");
     let chart_settings = div.querySelector(".chart_settings");
     let trends_2d = document.createElement("div");
+    trends_2d.className = "trends_2d";
     trends_2d_template.querySelector(".a_error_checkbox").setAttribute("id", "a_error_checkbox_" + plotly_num);
     trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
     trends_2d.innerHTML = trends_2d_template.innerHTML;
-    add_chart_button.onclick = add2DChart.bind(null, div, plotly_div, data, param_form, span_chart_info, chart_restangles, chart_settings, trends_2d, cnt_num, plotly_num);
+    add_chart_button.onclick = add2DChart.bind(null, div, data, trends_2d, plotly_num);
 }
 
 function addSelect(form, select, name) {
