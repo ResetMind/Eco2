@@ -227,11 +227,11 @@ header a:hover {
     margin: 0.5vh;
 }
 
-.chart_stuff select {
+.chart_stuff input {
     margin-bottom: 0.5vh;
 }
 
-.chart_stuff form span, .chart_stuff form label {
+.trends_2d form span, .trends_2d form label {
     margin-left: 1vh;
 }
 
@@ -240,8 +240,47 @@ header a:hover {
     flex-direction: column;
 }
 
-.trends_2d span {
+.trends_part {
+    display: none;
+}
+
+.trends_part.active {
+    /*display: block;*/
+    display: flex;
+    flex-direction: column;
+}
+
+.hr_line {
+    margin: 0.5vh 0;
+	padding: 0;
+	height: 0;
+	border: none;
+	border-top: 1px solid #333;
+}
+
+.trends_2d_header {
+    margin-bottom: 1vh;
+}
+
+.trend_results {
     margin-bottom: 0.5vh;
+    display: none;
+}
+
+.trend_results.active {
+    display: block;
+}
+
+/*.trends_2d_optimisation_form label:not(:nth-of-type(1)) {
+    margin-left: 1vh;
+}*/
+
+.a_error_checkbox_label {
+    display: none;
+}
+
+.a_error_checkbox_label.active {
+    display: inline-flex;
 }
 
 /*checkbox*/
@@ -251,8 +290,11 @@ input[type="checkbox"] {
     display: none;
 }
 
-input[type="checkbox"]+label {
+input[type="checkbox"]+label:not(.a_error_checkbox_label) {
     display: inline-flex;
+}
+
+input[type="checkbox"]+label {
     align-items: center;
     user-select: none;
     vertical-align: middle;
