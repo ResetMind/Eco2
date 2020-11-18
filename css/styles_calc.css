@@ -248,7 +248,7 @@ header a:hover {
 input[type="checkbox"] {
     position: absolute;
     z-index: -1;
-    opacity: 0;
+    display: none;
 }
 
 input[type="checkbox"]+label {
