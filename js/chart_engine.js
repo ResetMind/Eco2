@@ -244,7 +244,6 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         showErrors(trend_params.r, trend_params.a);
         showFunction(trend_params.trend_type, trend_params.coef);
         showTrendsParts();
-        //console.log(data[dataIndex(data, name)]);
     }
     setDisabled();
 
@@ -292,7 +291,9 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
                 coef: xy.coef,
                 error_bar: a_error_checkbox_status
             }
-            addTo2DData(false, data, xy.x_tr, xy.y_tr, null, name + " тренд", "", "", color, "dash", "trendt", trend);
+            //addTo2DData(false, data, xy.x_tr, xy.y_tr, null, name + " тренд", "", "", color, "dash", "trendt", trend);
+            data[data_index]["trend"] = trend;
+            addToTrendData(data, xy.x_tr, xy.y_tr, name + " тренд", color, "trendt");
             if (a_error_checkbox_status) {
                 let error_bars = getErrorBars(xy);
                 //console.log(error_bars);
@@ -348,13 +349,13 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         }
     }
 
-    /*function replaceIfExist(data, name) {
-        let data_index = dataIndex(data, name + " тренд");
-        while (data_index != -1) {
-            data.splice(data_index, 1);
-            data_index = dataIndex(data, name + " тренд");
-        }
-    }*/
+    function getTrendParams(data, name) {
+        let data_index = dataIndex(data, name, "normal");
+        if (data_index == -1) return false;
+        if(data[data_index]["trend"] == null) return false;
+        return data[data_index]["trend"];
+        //console.log(data[data_index]["trend"]["trend_type"]);
+    }
 
     function replaceIfExist(which) {
         let data_index = dataIndex(data, name + " тренд", which);
@@ -397,32 +398,6 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         trends_2d_optimisation.classList.remove("active");
         trends_2d_imitation.classList.remove("active");
     }
-}
-
-function getTrendParams(data, name) {
-    let data_index = dataIndex(data, name + " тренд", "trendt");
-    if (data_index == -1) return false;
-    let trend_type = data[data_index]["trend"]["trend_type"];
-    let level = data[data_index]["trend"]["level"];
-    let back = data[data_index]["trend"]["back"];
-    let forward = data[data_index]["trend"]["forward"];
-    let step = data[data_index]["trend"]["step"];
-    let r = data[data_index]["trend"]["r"];
-    let a = data[data_index]["trend"]["a"];
-    let coef = data[data_index]["trend"]["coef"];
-    let error_bar = data[data_index]["trend"]["error_bar"];
-    return {
-        trend_type: trend_type,
-        level: level,
-        back: back,
-        forward: forward,
-        step: step,
-        r: r,
-        a: a,
-        coef: coef,
-        error_bar: error_bar
-    }
-    //console.log(data[data_index]["trend"]["trend_type"]);
 }
 
 function validateNumberInput(number_input) {
@@ -495,7 +470,6 @@ function createTable(data, name, plotly_num) {
 }
 
 function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
-    console.log(checkboxes);
     let data_index = dataIndex(data, name);
     let checked_count = 1;
     for (let k = 0; k < data[data_index]["x"].length; k++) {
@@ -506,10 +480,11 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
     }
     if (checked_count == checkboxes.length) checkboxes[0].checked = true;
     for (let k = 0; k < checkboxes.length; k++) {
-        checkboxes[k].onchange = onCheckboxChange.bind(null, k, data);
+        checkboxes[k].onchange = onCheckboxChange.bind(null, k, data, name);
     }
 
-    function onCheckboxChange(index, data) {
+    function onCheckboxChange(index, data, name) {
+        let data_index = dataIndex(data, name);
         if (index == 0) {
             let all_checked = checkboxes[index].checked == true;
             for (let k = 1; k < checkboxes.length; k++) {
@@ -622,6 +597,7 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
             result_x: null,
             result_y: null
         }
+        let data_index = dataIndex(data, name);
         data[data_index]["optimisation"] = optimisation;
         console.log(data);
     }
