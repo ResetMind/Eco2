@@ -513,6 +513,7 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
 }
 
 function addOn2DOptimisationParamsListeners(chart_div, data, name) {
+    let select_2d_trend_type = chart_div.querySelector(".select_2d_trend_type");
     let plotly_div = chart_div.querySelector(".plotly_div");
     let trends_2d_optimisation_form = chart_div.querySelector(".trends_2d_optimisation_form");
     let select_trends_2d_optimisation_method = trends_2d_optimisation_form.select_trends_2d_optimisation_method;
@@ -559,8 +560,6 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
             replaceIfExist(data, name, "right_opt_line");
             new2DPlot(plotly_div, data);
             data[data_index]["optimisation"] = null;
-        } else if (value == "0") {
-
         }
         setDisabled();
     }
@@ -579,22 +578,45 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         showLine(number_trends_2d_optimisation_right, "right_opt_line");
     }
     button_trends_2d_optimisation.onclick = function () {
+        let data_index = dataIndex(data, name);
         showLine(number_trends_2d_optimisation_left, "left_opt_line");
         showLine(number_trends_2d_optimisation_right, "right_opt_line");
-        let data_v = validateDataForCalculations(data, name);
-        let data_index = dataIndex(data, name);
-        
+        let method = select_trends_2d_optimisation_method.value;
+        let left = parseFloat(number_trends_2d_optimisation_left.value);
+        let right = parseFloat(number_trends_2d_optimisation_right.value);
+        let coef = data[data_index]["trend"]["coef"];
+        let type = data[data_index]["trend"]["trend_type"];
+        console.log("coef " + coef);
+        console.log("type " + type);
+        let x = null, y = null;
+        if(method == "0") {
+            
+        } else if(method == "1") {
+
+        } else if(method == "2") {
+            [x, y] = fibonacci(left, right, getFunction(type), coef);
+        }
+        showOptSpans(x, y);
         let optimisation = {
             method: select_trends_2d_optimisation_method.value,
             type: select_trends_2d_optimisation_type.value,
             left: number_trends_2d_optimisation_left.value,
             right: number_trends_2d_optimisation_right.value,
-            result_x: null,
-            result_y: null
+            result_x: x,
+            result_y: y
         }
-        let data_index = dataIndex(data, name);
         data[data_index]["optimisation"] = optimisation;
         console.log(data);
+    }
+
+    function getFunction(type) {
+        if(type == "0") {
+            console.log("get_y_linear");
+            return get_y_linear;
+        } else if(type == "1") {
+            console.log("get_y_hyperbole");
+            return get_y_hyperbole;
+        }
     }
 
     function showLine(input, which) {
