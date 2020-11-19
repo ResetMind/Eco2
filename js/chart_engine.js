@@ -155,6 +155,7 @@ function deleteChartRestangle(chart_div, chart_restangle, data, name, type) {
 }
 
 function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_num) {
+    let plotly_div = chart_div.querySelector(".plotly_div");
     let chart_settings = chart_div.querySelector(".chart_settings");
     let chart_restangles = chart_div.querySelector(".chart_restangles");
     let chart_data = chart_settings.querySelector(".chart_data");
@@ -167,8 +168,11 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         chart_settings.classList.remove("active");
         chart_data.innerHTML = "";
         chart_stuff.innerHTML = "";
+        removeOptLine(data, name);
     } else {
         for (let k = 0; k < restangles.length; k++) {
+            let name_ = restangles[k].innerText.replace("×", "");
+            removeOptLine(data, name_);
             restangles[k].classList.remove("active");
             if (k == 0) {
                 chart_settings.classList.remove("active");
@@ -176,6 +180,7 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
                 chart_stuff.innerHTML = "";
             }
         }
+        //removeOptLines();
         restangle.classList.add("active");
         chart_data.append(createTable(data, name, plotly_num));
         chart_stuff.append(trends_2d);
@@ -183,6 +188,15 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
         addOn2DOptimisationParamsListeners(chart_div, data, name);
         addOn2DTrendsParamsChangeListeners(chart_div, data, name);
+    }
+
+    function removeOptLine(data, name) {
+        let data_index = dataIndex(data, name);
+        if (data[data_index]["optimisation"] == null) {
+            replaceIfExist(data, name, "left_opt_line");
+            replaceIfExist(data, name, "right_opt_line");
+            new2DPlot(plotly_div, data);
+        }
     }
 }
 
@@ -262,7 +276,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         let forward = trend_2d_form.number_2d_trend_forward.value;
         let step = trend_2d_form.number_2d_trend_step.value;
         let level = "2";
-        let data_v = validateDataForTrends(data);
+        let data_v = validateDataForCalculations(data, name);
         if (type == "0") {
             let xy = linear(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
             showTrend(xy);
@@ -277,8 +291,8 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
 
         function showTrend(xy) {
             //replaceIfExist(data, name);
-            replaceIfExist("error_bar");
-            replaceIfExist("trendt");
+            replaceIfExist(data, name, "error_bar");
+            replaceIfExist(data, name, "trendt");
             let a_error_checkbox_status = a_error_checkbox.checked;
             let trend = {
                 trend_type: type,
@@ -307,24 +321,10 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         }
 
         function removeTrend() {
-            replaceIfExist();
+            replaceIfExist(data, name);
             new2DPlot(plotly_div, data);
             removeResultsSpans();
             removeTrendsParts();
-        }
-
-        function validateDataForTrends(data) {
-            let data_v = getValidatedData(data);
-            for (let k = 0; k < data_v[data_index]["x"].length; k++) {
-                if (data_v[data_index]["x"][k] == null) {
-                    data_v[data_index]["x"].splice(k, 1);
-                    data_v[data_index]["y"].splice(k, 1);
-                    k--;
-                } else {
-                    data_v[data_index]["x"][k] = parseFloat(data_v[data_index]["x"][k]);
-                }
-            }
-            return data_v;
         }
 
         function getErrorBars(xy) {
@@ -352,17 +352,9 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     function getTrendParams(data, name) {
         let data_index = dataIndex(data, name, "normal");
         if (data_index == -1) return false;
-        if(data[data_index]["trend"] == null) return false;
+        if (data[data_index]["trend"] == null) return false;
         return data[data_index]["trend"];
         //console.log(data[data_index]["trend"]["trend_type"]);
-    }
-
-    function replaceIfExist(which) {
-        let data_index = dataIndex(data, name + " тренд", which);
-        while (data_index != -1) {
-            data.splice(data_index, 1);
-            data_index = dataIndex(data, name + " тренд", which);
-        }
     }
 
     function showFunction(type, coef) {
@@ -397,15 +389,6 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     function removeTrendsParts() {
         trends_2d_optimisation.classList.remove("active");
         trends_2d_imitation.classList.remove("active");
-    }
-}
-
-function validateNumberInput(number_input) {
-    let value = number_input.value;
-    if (value > parseFloat(number_input.max)) {
-        number_input.value = number_input.max;
-    } else if (value < parseFloat(number_input.min) || isNaN(parseFloat(value))) {
-        number_input.value = number_input.min;
     }
 }
 
@@ -540,55 +523,67 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
     let x_opt_span = chart_div.querySelector(".x_opt");
     let y_opt_span = chart_div.querySelector(".y_opt");
     let data_index = dataIndex(data, name);
+    let length = data[data_index]["x"].length;
+    let min_x = removeLabel(data[data_index]["x"][0] + "");
+    let max_x = removeLabel(data[data_index]["x"][length - 1] + "");
     let min_y = getMinOfArray(data[data_index]["y"]);
     let max_y = getMaxOfArray(data[data_index]["y"]);
+    /*console.log("min_x " + min_x + " max_x " + max_x);
+    console.log("min_y " + min_y + " max_y " + max_y);*/
+    number_trends_2d_optimisation_left.min = min_x;
+    number_trends_2d_optimisation_left.max = max_x;
+    number_trends_2d_optimisation_right.min = min_x;
+    number_trends_2d_optimisation_right.max = max_x;
     let optimisation_params = getOptimisationParams(data, name);
     if (!optimisation_params) {
-        let length = data[data_index]["x"].length;
-        let min_x = removeLabel(data[data_index]["x"][0] + "");
-        let max_x = removeLabel(data[data_index]["x"][length - 1] + "");
-        console.log("min_x " + min_x + " max_x " + max_x);
-        console.log("min_y " + min_y + " max_y " + max_y);
-        number_trends_2d_optimisation_left.min = min_x;
-        number_trends_2d_optimisation_left.max = max_x;
+        select_trends_2d_optimisation_method.value = "none";
         number_trends_2d_optimisation_left.value = min_x;
-        number_trends_2d_optimisation_right.min = min_x;
-        number_trends_2d_optimisation_right.max = max_x;
         number_trends_2d_optimisation_right.value = max_x;
         removeOptSpans();
     } else {
-        //optimisation_params
         console.log(optimisation_params);
+        select_trends_2d_optimisation_method.value = optimisation_params.method;
+        select_trends_2d_optimisation_type.value = optimisation_params.type;
+        number_trends_2d_optimisation_left.value = optimisation_params.left;
+        number_trends_2d_optimisation_right.value = optimisation_params.right;
+        showOptSpans(optimisation_params.result_x, optimisation_params.result_y);
     }
+    setDisabled();
+    let color = data[data_index]["line"]["color"].replace("1)", "0.5)");
+    select_trends_2d_optimisation_method.onchange = function () {
+        let data_index = dataIndex(data, name);
+        let value = select_trends_2d_optimisation_method.value;
+        if (value == "none") {
+            removeOptSpans();
+            replaceIfExist(data, name, "left_opt_line");
+            replaceIfExist(data, name, "right_opt_line");
+            new2DPlot(plotly_div, data);
+            data[data_index]["optimisation"] = null;
+        } else if (value == "0") {
 
-    let color = data[data_index]["line"]["color"];
-
-    /*for(let k = length - 1; k >= 0; k--) {
-        if((data[data_index]["x"][k] + "").indexOf("<label>") == -1) {
-            max_x = data[data_index]["x"][k];
-            break;
         }
-    }*/
-
+        setDisabled();
+    }
     number_trends_2d_optimisation_left.onchange = function () {
-        let value = number_trends_2d_optimisation_left.value;
         validateNumberInput(number_trends_2d_optimisation_left);
-        replaceIfExist("left_opt_line");
-        let x = [value, value];
-        let y = [min_y, max_y];
-        addToOptimisationBordersData(data, x, y, name + " тренд", color, "left_opt_line");
-        new2DPlot(plotly_div, data);
+        if (parseFloat(number_trends_2d_optimisation_left.value) > parseFloat(number_trends_2d_optimisation_right.value)) {
+            number_trends_2d_optimisation_left.value = number_trends_2d_optimisation_right.value;
+        }
+        showLine(number_trends_2d_optimisation_left, "left_opt_line");
     }
     number_trends_2d_optimisation_right.onchange = function () {
-        let value = number_trends_2d_optimisation_right.value;
         validateNumberInput(number_trends_2d_optimisation_right);
-        replaceIfExist("right_opt_line");
-        let x = [value, value];
-        let y = [min_y, max_y];
-        addToOptimisationBordersData(data, x, y, name + " тренд", color, "right_opt_line");
-        new2DPlot(plotly_div, data);
+        if (parseFloat(number_trends_2d_optimisation_right.value) < parseFloat(number_trends_2d_optimisation_left.value)) {
+            number_trends_2d_optimisation_right.value = number_trends_2d_optimisation_left.value;
+        }
+        showLine(number_trends_2d_optimisation_right, "right_opt_line");
     }
     button_trends_2d_optimisation.onclick = function () {
+        showLine(number_trends_2d_optimisation_left, "left_opt_line");
+        showLine(number_trends_2d_optimisation_right, "right_opt_line");
+        let data_v = validateDataForCalculations(data, name);
+        let data_index = dataIndex(data, name);
+        
         let optimisation = {
             method: select_trends_2d_optimisation_method.value,
             type: select_trends_2d_optimisation_type.value,
@@ -600,6 +595,15 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         let data_index = dataIndex(data, name);
         data[data_index]["optimisation"] = optimisation;
         console.log(data);
+    }
+
+    function showLine(input, which) {
+        replaceIfExist(data, name, which);
+        let value = input.value;
+        let x = [value, value];
+        let y = [min_y, max_y];
+        addToOptimisationBordersData(data, x, y, name + " тренд", color, which);
+        new2DPlot(plotly_div, data);
     }
 
     function getOptimisationParams(data, name) {
@@ -621,18 +625,18 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         y_opt_span.classList.remove("active");
     }
 
-    function replaceIfExist(which) {
-        let data_index = dataIndex(data, name + " тренд", which);
-        while (data_index != -1) {
-            data.splice(data_index, 1);
-            data_index = dataIndex(data, name + " тренд", which);
-        }
-    }
-
     function removeLabel(x) {
         x = x.replace("<label>", "");
         x = x.replace("</label>", "");
         return x;
+    }
+
+    function setDisabled() {
+        let value = select_trends_2d_optimisation_method.value;
+        select_trends_2d_optimisation_type.disabled = value == "none";
+        number_trends_2d_optimisation_left.disabled = value == "none";
+        number_trends_2d_optimisation_right.disabled = value == "none";
+        button_trends_2d_optimisation.disabled = value == "none";
     }
 
     function getMaxOfArray(arr) {
@@ -650,6 +654,38 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         result_x: result_x,
         result_y: result_y
     }*/
+}
+
+function validateNumberInput(number_input) {
+    let value = number_input.value;
+    if (value > parseFloat(number_input.max)) {
+        number_input.value = number_input.max;
+    } else if (value < parseFloat(number_input.min) || isNaN(parseFloat(value))) {
+        number_input.value = number_input.min;
+    }
+}
+
+function validateDataForCalculations(data, name) {
+    let data_index = dataIndex(data, name);
+    let data_v = getValidatedData(data);
+    for (let k = 0; k < data_v[data_index]["x"].length; k++) {
+        if (data_v[data_index]["x"][k] == null) {
+            data_v[data_index]["x"].splice(k, 1);
+            data_v[data_index]["y"].splice(k, 1);
+            k--;
+        } else {
+            data_v[data_index]["x"][k] = parseFloat(data_v[data_index]["x"][k]);
+        }
+    }
+    return data_v;
+}
+
+function replaceIfExist(data, name, which = null) {
+    let data_index = dataIndex(data, name + " тренд", which);
+    while (data_index != -1) {
+        data.splice(data_index, 1);
+        data_index = dataIndex(data, name + " тренд", which);
+    }
 }
 
 function addToOptimisationBordersData(data, x_arr, y_arr, name, color, which) {

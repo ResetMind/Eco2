@@ -585,12 +585,12 @@ input, select {
     transition: 0.3s;
 }
 
-input:disabled {
+input:disabled, select:disabled, button:disabled {
     opacity: 0.5;
 }
 
-input[type="submit"]:hover,
-input[type="button"]:hover {
+input[type="submit"]:hover:not(:disabled),
+input[type="button"]:hover:not(:disabled) {
     background: #f4f8f9;
     color: #222022;
     cursor: pointer;
