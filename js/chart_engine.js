@@ -580,7 +580,7 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         new2DPlot(plotly_div, data);
     }
 
-    function replaceIfExist() { //////////////????????????????????
+    function replaceIfExist() {
         let data_index = dataIndex(data, name + " тренд");
         while (data_index != -1) {
             if(data[data_index]["which"] == "opt_line") {
