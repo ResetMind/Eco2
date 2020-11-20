@@ -195,6 +195,7 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         if (data[data_index]["optimisation"] == null) {
             replaceIfExist(data, name, "left_opt_line");
             replaceIfExist(data, name, "right_opt_line");
+            replaceIfExist(data, name, "point");
             new2DPlot(plotly_div, data);
         }
     }
@@ -233,7 +234,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     trend_2d_form.number_2d_trend_step.onchange = function () {
         //console.log("number_2d_trend_step");
         validateNumberInput(trend_2d_form.number_2d_trend_step);
-        //addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
     a_error_checkbox.onchange = function () {
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
@@ -288,15 +289,15 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         } else if (type == "2") {
             let xy = null;
             let level = trend_2d_form.number_2d_trend_level.value;
-            if(level == "2") {
+            if (level == "2") {
                 xy = parabole2(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
-            } else if(level == "3") {
+            } else if (level == "3") {
                 xy = parabole3(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
-            } else if(level == "4") {
+            } else if (level == "4") {
                 xy = parabole4(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
-            } else if(level == "5") {
+            } else if (level == "5") {
                 xy = parabole5(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
-            } else if(level == "6") {
+            } else if (level == "6") {
                 xy = parabole6(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
             }
             showTrend(xy);
@@ -390,14 +391,14 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         } else if (type == "2") {
             trend_function_span.innerHTML = getParaboleFunction();
         } else if (type == "3") {
-            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4)  + "e<sup>" + coef[1].toFixed(4) + "x</sup>";
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + "e<sup>" + coef[1].toFixed(4) + "x</sup>";
         } else if (type == "4") {
             trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + "x<sup>" + coef[1].toFixed(4) + "</sup>";
         }
         trend_function_span.classList.add("active");
 
         function getSign(num) {
-            if(num >= 0) {
+            if (num >= 0) {
                 return " + " + num;
             } else {
                 return " - " + (num * -1);
@@ -407,8 +408,8 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         function getParaboleFunction() {
             level = parseFloat(level);
             let res = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + "x";
-            for(let k = 2; k <= level; k++) {
-                res +=  getSign(coef[k].toFixed(4)) + "x<sup>" + k + "</sup>";
+            for (let k = 2; k <= level; k++) {
+                res += getSign(coef[k].toFixed(4)) + "x<sup>" + k + "</sup>";
             }
             return res;
         }
@@ -606,6 +607,7 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
             removeOptSpans();
             replaceIfExist(data, name, "left_opt_line");
             replaceIfExist(data, name, "right_opt_line");
+            replaceIfExist(data, name, "point");
             new2DPlot(plotly_div, data);
             data[data_index]["optimisation"] = null;
         }
@@ -630,23 +632,26 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         showLine(number_trends_2d_optimisation_left, "left_opt_line");
         showLine(number_trends_2d_optimisation_right, "right_opt_line");
         let method = select_trends_2d_optimisation_method.value;
+        let type = select_trends_2d_optimisation_type.value;
         let left = parseFloat(number_trends_2d_optimisation_left.value);
         let right = parseFloat(number_trends_2d_optimisation_right.value);
         let coef = data[data_index]["trend"]["coef"];
-        let type = data[data_index]["trend"]["trend_type"];
+        let trend_type = data[data_index]["trend"]["trend_type"];
         let level = data[data_index]["trend"]["level"];
         console.log("coef " + coef);
-        console.log("type " + type);
+        console.log("trend_type " + trend_type);
         console.log("level " + level);
         let x = null, y = null;
-        if(method == "0") {
-            [x, y] = halfDivision(left, right, getFunction(type, level), coef);
-        } else if(method == "1") {
-            [x, y] = goldenRatio(left, right, getFunction(type, level), coef);
-        } else if(method == "2") {
-            [x, y] = fibonacci(left, right, getFunction(type, level), coef);
+        if (method == "0") {
+            [x, y] = halfDivision(type, left, right, getFunction(trend_type, level), coef);
+        } else if (method == "1") {
+            [x, y] = goldenRatio(type, left, right, getFunction(trend_type, level), coef);
+        } else if (method == "2") {
+            [x, y] = fibonacci(type, left, right, getFunction(trend_type, level), coef);
         }
         showOptSpans(x, y);
+        showPoint(x, y);
+
         let optimisation = {
             method: select_trends_2d_optimisation_method.value,
             type: select_trends_2d_optimisation_type.value,
@@ -659,26 +664,26 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         console.log(data);
     }
 
-    function getFunction(type, level) {
-        if(type == "0") {
+    function getFunction(trend_type, level) {
+        if (trend_type == "0") {
             return get_y_linear;
-        } else if(type == "1") {
+        } else if (trend_type == "1") {
             return get_y_hyperbole;
-        } else if(type == "2") {
-            if(level == "2") {
+        } else if (trend_type == "2") {
+            if (level == "2") {
                 return get_y_parabole2;
-            } else if(level == "3") {
+            } else if (level == "3") {
                 return get_y_parabole3;
-            } else if(level == "4") {
+            } else if (level == "4") {
                 return get_y_parabole4;
-            } else if(level == "5") {
+            } else if (level == "5") {
                 return get_y_parabole5;
-            } else if(level == "6") {
+            } else if (level == "6") {
                 return get_y_parabole6;
             }
-        } else if(type == "3") {
+        } else if (trend_type == "3") {
             return get_y_exponent;
-        } else if(type == "4") {
+        } else if (trend_type == "4") {
             return get_y_stepennaya;
         }
     }
@@ -689,6 +694,12 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         let x = [value, value];
         let y = [min_y, max_y];
         addToOptimisationBordersData(data, x, y, name + " тренд", color, which);
+        new2DPlot(plotly_div, data);
+    }
+
+    function showPoint(x, y) {
+        replaceIfExist(data, name, "point");
+        addToOptimisationPointData(data, [x], [y], name + " тренд", color, "point");
         new2DPlot(plotly_div, data);
     }
 
@@ -764,6 +775,22 @@ function replaceIfExist(data, name, which = null) {
         data.splice(data_index, 1);
         data_index = dataIndex(data, name + " тренд", which);
     }
+}
+
+function addToOptimisationPointData(data, x, y, name, color, which) {
+    let trace = {
+        x: x,
+        y: y,
+        mode: "markers",
+        name: name,
+        marker: {
+            color: color,
+            size: 12
+        },
+        showlegend: false,
+        which: which
+    };
+    data.push(trace);
 }
 
 function addToOptimisationBordersData(data, x_arr, y_arr, name, color, which) {
