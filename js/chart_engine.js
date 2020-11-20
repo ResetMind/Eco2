@@ -212,6 +212,7 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         if(type == "0") {
             addOn2DOptimisationParamsListeners(chart_div, data, name);
             addOn2DTrendsParamsChangeListeners(chart_div, data, name);
+            addOn2DImitationListeners(chart_div, data, name);
         }
     }
 
@@ -771,6 +772,65 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
     function getMinOfArray(arr) {
         return Math.min.apply(null, arr);
     }
+}
+
+function addOn2DImitationListeners(chart_div, data, name) {
+    let imitation_div = chart_div.querySelector(".imitation_div");
+    let imitation_table = imitation_div.querySelector(".imitation_table");
+    let rows = imitation_table.querySelectorAll("tr");
+    let x_name = imitation_table.querySelector(".x_name");
+    let y_name = imitation_table.querySelector(".y_name");
+    let right_context_menu = chart_div.querySelector(".right_context_menu");
+    let r_col = right_context_menu.querySelector(".r_col");
+    let r_delete_col = right_context_menu.querySelector(".r_delete_col");
+    let col = 0;
+    imitation_table.oncontextmenu = function(e) {
+        if (e.target.nodeName == "TD") {
+            let tds = imitation_table.querySelectorAll("td");
+            let row_length = rows[0].querySelectorAll("td").length;
+            let selected_index = arrayIndex(tds, e.target);
+            col = getCol(selected_index, row_length);
+            e.preventDefault();
+            let x = e.clientX;
+            let y = e.clientY;
+            if(col == 0) {
+                r_delete_col.style.display = "none";
+            } else {
+                r_delete_col.style.display = "block";
+            }
+            right_context_menu.classList.add("active");
+            if (y + right_context_menu.getBoundingClientRect().height > chart_div.clientHeight) {
+                y = y - right_context_menu.getBoundingClientRect().height - 4;
+            }
+            if (x + right_context_menu.getBoundingClientRect().width > chart_div.clientWidth) {
+                x = x - right_context_menu.getBoundingClientRect().width - 4;
+            }
+            right_context_menu.style.top = (y + 2) + "px";
+            right_context_menu.style.left = (x + 2) + "px";
+        }
+    }
+    document.documentElement.onclick = function(e) {
+        right_context_menu.classList.remove("active");
+    }
+    r_col.onclick = function(e) {
+        addTd(rows[0]);
+        addTd(rows[1]);
+    }
+    r_delete_col.onclick = function(e) {
+        console.log("col " + col);
+    }
+
+    function getCol(i, row_length) {
+        return [i % row_length];
+    }
+
+    function addTd(tr) {
+        let td = newTd();
+        td.setAttribute("contenteditable", "true");
+        tr.append(td);
+    }
+
+    function newTd() { return document.createElement("td"); }
 }
 
 function validateNumberInput(number_input) {

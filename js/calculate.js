@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     search.onsubmit = function (e) {
         e.preventDefault();
     }
+    doRequest();
     find();
     search.year1.onkeyup = find;
     search.year1.onclick = find;
@@ -30,13 +31,11 @@ document.addEventListener("DOMContentLoaded", () => {
     search.culture.onkeyup = find;
     search.field.onkeyup = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    contents[2].style.display = "flex";
-    setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
+    contents[1].style.display = "flex";
     add_2d_button.onclick = addChartDiv.bind(null, 0);
     add_3d_button.onclick = addChartDiv.bind(null, 1);;
     //add_drm_button.onclick = addChartDiv(content[3]);
     onRadioChange();
-    doRequest();
 });
 
 function addChartDiv(type) {
@@ -181,6 +180,7 @@ function find() {
             } else {
                 clearTable(table_body_main);
             }
+            setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
         }
     }
 }

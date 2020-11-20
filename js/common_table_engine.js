@@ -13,18 +13,21 @@ function setTableEngine(cnt, cnt_i, tbl_b, tbl_h) {
     table_body = tbl_b;
     table_header = tbl_h;
     tds = table_body.querySelectorAll("td");
-    ths = table_header.querySelectorAll("th");
-    content.onscroll = function() {
-        table_header.style.left = -content.scrollLeft + "px";
+    if (table_header != null) {
+        ths = table_header.querySelectorAll("th");
+        content.onscroll = function () {
+            table_header.style.left = -content.scrollLeft + "px";
+        }
     }
-    window.onresize = function() {
+    window.onresize = function () {
         onWindowResize();
     }
     onTdSelect();
+    removeCellRect();
 }
 
 function onTdSelect() {
-    table_body.onkeydown = function(e) {
+    table_body.onkeydown = function (e) {
         if (e.code == "Enter" || e.code == "Escape" || e.code == "NumpadEnter") {
             e.preventDefault();
             tds[td_i].blur();
@@ -34,8 +37,7 @@ function onTdSelect() {
             removeCellRect();
         }
     }
-    table_body.onclick = function(e) {
-        console.log("onmouseclick ");
+    table_body.onmousedown = function (e) {
         if (e.target.nodeName != "TD") {
             return false;
         }

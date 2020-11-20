@@ -238,17 +238,21 @@
         </div>
     </div>
     <div class="content">
-        <div class="new_chart_form_div">
-            <form name="new_chart_form" class="new_chart_form">
-                <input type="button" class="add_3d_button" name="add_2d_button" value="Новый 3D график">
-            </form>
+        <div class="chart_container">
+            <div class="new_chart_form_div">
+                <form name="new_chart_form" class="new_chart_form">
+                    <input type="button" class="add_3d_button" name="add_2d_button" value="Новый 3D график">
+                </form>
+            </div>
         </div>
     </div>
     <div class="content">
-        <div class="new_chart_form_div">
-            <form name="new_chart_form" class="new_chart_form">
-                <input type="button" class="add_drm_button" name="add_drm_button" value="Новая диаграмма">
-            </form>
+        <div class="chart_container">
+            <div class="new_chart_form_div">
+                <form name="new_chart_form" class="new_chart_form">
+                    <input type="button" class="add_drm_button" name="add_drm_button" value="Новая диаграмма">
+                </form>
+            </div>
         </div>
     </div>
     <div class="common">
@@ -329,12 +333,17 @@
                 <div class="imitation_div">
                     <table class="imitation_table">
                         <tr>
-                            <td class="x_name"></td>
+                            <td class="x_name">&nbsp;</td>
                         </tr>
                         <tr>
-                            <td class="y_name"></td>
+                            <td class="y_name">&nbsp;</td>
                         </tr>
                     </table>
+                    <ul class="right_context_menu">
+                        <li class="r_col">Вставить столбец</li>
+                        <li class="r_delete_col">Удалить столбец</li>
+                    </ul>
+                    <div class="td_selection"><iframe name="td_selection_frame"></iframe></div>
                 </div>
             </div>
             <span class="trends_2d_header">Интерполяция</span>
