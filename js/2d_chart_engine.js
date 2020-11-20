@@ -12,6 +12,117 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
+function add3DChart(chart_div, data, trends_2d, plotly_num) {
+    let form = chart_div.querySelector(".param_form");
+    let span_chart_info = chart_div.querySelector(".span_chart_info");
+
+    let x_col = parseFloat(form.x_select_param.value);
+    let x_index = form.x_select_param.selectedIndex;
+    let x_text = form.x_select_param[x_index].text;
+
+    let cx_index = form.x_select_culture.selectedIndex;
+    let cx_text = cx_index > 1 ? form.x_select_culture[cx_index].text : "";
+
+    let fx_index = form.x_select_field.selectedIndex;
+    let fx_text = fx_index > 1 ? form.x_select_field[fx_index].text : "";
+
+    let y_col = parseFloat(form.y_select_param.value);
+    let y_index = form.y_select_param.selectedIndex;
+    let y_text = form.y_select_param[y_index].text;
+
+    let cy_index = form.y_select_culture.selectedIndex;
+    let cy_text = cy_index > 1 ? form.y_select_culture[cy_index].text : "";
+
+    let fy_index = form.y_select_field.selectedIndex;
+    let fy_text = fy_index > 1 ? form.y_select_field[fy_index].text : "";
+
+    let z_col = parseFloat(form.z_select_param.value);
+    let z_index = form.z_select_param.selectedIndex;
+    let z_text = form.z_select_param[z_index].text;
+
+    let cz_index = form.z_select_culture.selectedIndex;
+    let cz_text = cz_index > 1 ? form.z_select_culture[cz_index].text : "";
+
+    let fz_index = form.z_select_field.selectedIndex;
+    let fz_text = fz_index > 1 ? form.z_select_field[fz_index].text : "";
+
+    if (isNaN(x_col) || isNaN(y_col) || isNaN(z_col)) {
+        span_chart_info.innerHTML = "Не выбраны параметры";
+        return;
+    }
+    let x_arr = [],
+        y_arr = [],
+        z_arr = [],
+        year_arr = [];
+    let trs = table_body_main.querySelectorAll("tr");
+    for (let i = 0; i < trs.length; i++) {
+        let tds = trs[i].querySelectorAll("td");
+        let x = parseFloat(tds[x_col].innerHTML);
+        let c = tds[1].innerHTML;
+        let f = tds[2].innerHTML;
+        if (isNaN(x) || c.indexOf(cx_text) == -1 || f.indexOf(fx_text) == -1) {
+            continue;
+        }
+        x_arr.push(x);
+        year_arr.push(tds[0].innerHTML);
+        //console.log("year: " + tds[0].innerHTML + " row: " + i + " x: " + x + " c: " + cx_text + " f: " + fx_text);
+
+        let y = parseFloat(tds[y_col].innerHTML);
+        if (isNaN(y) || c.indexOf(cy_text) == -1 || f.indexOf(fy_text) == -1) {
+            y_arr.push(null);
+        } else {
+            y_arr.push(y);
+        }
+
+        let z = parseFloat(tds[z_col].innerHTML);
+        if (isNaN(z) || c.indexOf(cz_text) == -1 || f.indexOf(fz_text) == -1) {
+            z_arr.push(null);
+        } else {
+            z_arr.push(z);
+        }
+        //console.log("year: " + tds[0].innerHTML + " row: " + i + " y: " + x + " c: " + cy_text + " f: " + fy_text);
+    }
+    if (x_arr.length < 2 || isAllNull(y_arr) || isAllNull(z_arr)) {
+        span_chart_info.innerHTML = "Недостаточно данных для построения";
+    } else {
+        let name = x_text + " ";
+        if (cx_text != "") {
+            name += "(" + cx_text;
+            if (fx_text != "") {
+                name += ", " + fx_text + ") ";
+            } else {
+                name += ") ";
+            }
+        } else if (fx_text != "") {
+            name += "(" + fx_text + ") ";
+        }
+        name += "от " + y_text;
+        if (cy_text != "") {
+            name += " (" + cy_text;
+            if (fy_text != "") {
+                name += ", " + fy_text + ") ";
+            } else {
+                name += ") ";
+            }
+        } else if (fy_text != "") {
+            name += " (" + fy_text + ") ";
+        }
+        console.log(name);
+        if (dataIndex(data, name) != -1) {
+            span_chart_info.innerHTML = "График уже построен";
+            return;
+        }
+        let color_index = data.length + 1;
+        if (color_index >= colors.length) {
+            color_index -= colors.length;
+        }
+        addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", "normal");
+        new2DPlot(chart_div.querySelector(".plotly_div"), data);
+        span_chart_info.innerHTML = "";
+        addChartRestangle(chart_div, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_div, trends_2d, data, name, "2d", plotly_num);
+    }
+}
+
 function add2DChart(chart_div, data, trends_2d, plotly_num) {
     let form = chart_div.querySelector(".param_form");
     let span_chart_info = chart_div.querySelector(".span_chart_info");
@@ -182,7 +293,7 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         }
         //removeOptLines();
         restangle.classList.add("active");
-        chart_data.append(createTable(data, name, plotly_num));
+        chart_data.append(createDataTable(data, name, plotly_num));
         chart_stuff.append(trends_2d);
         chart_settings.classList.add("active");
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
@@ -441,7 +552,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     }
 }
 
-function createTable(data, name, plotly_num) {
+function createDataTable(data, name, plotly_num) {
     let data_index = dataIndex(data, name);
     if (data_index == -1) {
         return;

@@ -14,6 +14,7 @@ let select_culture = document.querySelector(".select_culture");
 let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
 let trends_2d_template = document.querySelector(".trends_2d");
+let trends_3d_template = document.querySelector(".trends_3d");
 let cultures_list = [];
 let fields_list = [];
 
@@ -29,11 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
     search.culture.onkeyup = find;
     search.field.onkeyup = find;
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    contents[1].style.display = "flex";
+    contents[2].style.display = "flex";
     setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
     add_2d_button.onclick = add2DChartDiv.bind(null, 1);
-    /*add_3d_button.onclick = addChartDiv(content[2]);
-    add_drm_button.onclick = addChartDiv(content[3]);*/
+    add_3d_button.onclick = add3DChartDiv;
+    //add_drm_button.onclick = addChartDiv(content[3]);
     onRadioChange();
     doRequest();
 });
@@ -72,6 +73,43 @@ function add2DChartDiv(cnt_num) {
     trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
     trends_2d.innerHTML = trends_2d_template.innerHTML;
     add_chart_button.onclick = add2DChart.bind(null, div, data, trends_2d, plotly_num);
+}
+
+function add3DChartDiv() {
+    let plotly_num = document.querySelectorAll(".plotly_div").length;
+    let div = document.createElement("div");
+    div.className = "chart_div";
+    div.innerHTML = chart_div.innerHTML;
+    new_chart_form_div[1].before(div);
+    let param_form = div.querySelector(".param_form");
+
+    addSpan(param_form, "Ось Х:");
+    let x_select_param = addSelect(param_form, select_param, "x_select_param");
+    let x_select_culture = addSelect(param_form, select_culture, "x_select_culture");
+    addOptions(x_select_culture, cultures_list, "name"); 
+    let x_select_field = addSelect(param_form, select_field, "x_select_field");
+    addOptions(x_select_field, fields_list, "cadastral");
+
+    addSpan(param_form, "Ось Y:");
+    let y_select_param = addSelect(param_form, select_param, "y_select_param");
+    let y_select_culture = addSelect(param_form, select_culture, "y_select_culture");
+    y_select_culture.innerHTML = x_select_culture.innerHTML;
+    let y_select_field = addSelect(param_form, select_field, "y_select_field");
+    y_select_field.innerHTML = x_select_field.innerHTML;
+
+    addSpan(param_form, "Ось Z:");
+    let z_select_param = addSelect(param_form, select_param, "z_select_param");
+    let z_select_culture = addSelect(param_form, select_culture, "z_select_culture");
+    z_select_culture.innerHTML = x_select_culture.innerHTML;
+    let z_select_field = addSelect(param_form, select_field, "z_select_field");
+    z_select_field.innerHTML = x_select_field.innerHTML;
+
+    let data = [];
+    let add_chart_button = div.querySelector(".add_chart_button");
+    let trends_3d = document.createElement("div");
+    trends_3d.className = "trends_3d";
+    trends_3d.innerHTML = trends_3d_template.innerHTML;
+    add_chart_button.onclick = add3DChart.bind(null, div, data, trends_2d, plotly_num);
 }
 
 function addSelect(form, select, name) {

@@ -211,8 +211,9 @@ header a:hover {
     display: flex;
     flex-direction: column;
     /*background: #005eac;*/
-    width: auto;
+    flex: auto;
     max-height: 40vh;
+    min-width: auto;
     overflow: auto;
     margin: 0.5vh 0 0.5vh 0.5vh;
 }
@@ -231,11 +232,11 @@ header a:hover {
     margin-bottom: 0.5vh;
 }
 
-.trends_2d form span, .trends_2d form label {
+.trends_2d form span, .trends_2d form label, .trends_3d form span, .trends_3d form label{
     margin-left: 1vh;
 }
 
-.trends_2d {
+.trends_2d, .trends_3d {
     display: flex;
     flex-direction: column;
 }
@@ -258,7 +259,7 @@ header a:hover {
 	border-top: 1px solid #333;
 }
 
-.trends_2d_header {
+.trends_2d_header, .trends_3d_header {
     margin-bottom: 1vh;
 }
 
@@ -281,6 +282,10 @@ header a:hover {
 
 .a_error_checkbox_label.active {
     display: inline-flex;
+}
+
+.imitation_div {
+    overflow: auto;
 }
 
 /*checkbox*/

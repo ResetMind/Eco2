@@ -312,10 +312,13 @@
                         <option value="1">Максимум</option>
                     </select>
                     <input type="number" class="number_trends_2d_optimisation_left"
-                        name="number_trends_2d_optimisation_left" id="number_trends_2d_optimisation_left "placeholder="левая граница">
+                        name="number_trends_2d_optimisation_left" id="number_trends_2d_optimisation_left "
+                        placeholder="левая граница">
                     <input type="number" class="number_trends_2d_optimisation_right"
-                        name="number_trends_2d_optimisation_right" id="number_trends_2d_optimisation_right" placeholder="правая граница">
-                    <input type="button" class="button_trends_2d_optimisation" name="button_trends_2d_optimisation" value="Найти">
+                        name="number_trends_2d_optimisation_right" id="number_trends_2d_optimisation_right"
+                        placeholder="правая граница">
+                    <input type="button" class="button_trends_2d_optimisation" name="button_trends_2d_optimisation"
+                        value="Найти">
                 </form>
                 <span class="x_opt trend_results"></span>
                 <span class="y_opt trend_results"></span>
@@ -323,7 +326,21 @@
             <div class="trends_2d_imitation trends_part">
                 <hr class="hr_line">
                 <span class="trends_2d_header">Имитационное моделирование</span>
+                <div class="imitation_div">
+                    <table class="imitation_table">
+                        <tr>
+                            <td class="x_name"></td>
+                        </tr>
+                        <tr>
+                            <td class="y_name"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
+            <span class="trends_2d_header">Интерполяция</span>
+        </div>
+        <div class="trends_3d">
+            <span class="trends_3d_header">Интерполяция</span>
         </div>
         <select class="select_culture" name="select_culture">
             <option value="" disabled selected>Культура</option>
@@ -416,7 +433,7 @@
 <script src="js/form_checkers.js" defer></script>
 <script src="js/trends.js" defer></script>
 <script src="js/optimisation.js" defer></script>
-<script src="js/chart_engine.js" defer></script>
+<script src="js/2d_chart_engine.js" defer></script>
 <script src="js/calculate.js" defer></script>
 <script src="js/common_table_engine.js" defer></script>
 
