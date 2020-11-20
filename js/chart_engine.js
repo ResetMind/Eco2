@@ -12,7 +12,7 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function add3DChart(chart_div, data, trends_2d, plotly_num) {
+function addChart(chart_div, data, stuff, plotly_num, type) {
     let form = chart_div.querySelector(".param_form");
     let span_chart_info = chart_div.querySelector(".span_chart_info");
 
@@ -36,17 +36,20 @@ function add3DChart(chart_div, data, trends_2d, plotly_num) {
     let fy_index = form.y_select_field.selectedIndex;
     let fy_text = fy_index > 1 ? form.y_select_field[fy_index].text : "";
 
-    let z_col = parseFloat(form.z_select_param.value);
-    let z_index = form.z_select_param.selectedIndex;
-    let z_text = form.z_select_param[z_index].text;
+    let z_col, z_text, cz_text, fz_text;
+    if (type == 1) {
+        z_col = parseFloat(form.z_select_param.value);
+        let z_index = form.z_select_param.selectedIndex;
+        z_text = form.z_select_param[z_index].text;
 
-    let cz_index = form.z_select_culture.selectedIndex;
-    let cz_text = cz_index > 1 ? form.z_select_culture[cz_index].text : "";
+        let cz_index = form.z_select_culture.selectedIndex;
+        cz_text = cz_index > 1 ? form.z_select_culture[cz_index].text : "";
 
-    let fz_index = form.z_select_field.selectedIndex;
-    let fz_text = fz_index > 1 ? form.z_select_field[fz_index].text : "";
+        let fz_index = form.z_select_field.selectedIndex;
+        fz_text = fz_index > 1 ? form.z_select_field[fz_index].text : "";
+    }
 
-    if (isNaN(x_col) || isNaN(y_col) || isNaN(z_col)) {
+    if (isNaN(x_col) || isNaN(y_col) || (type == 1 && isNaN(z_col))) {
         span_chart_info.innerHTML = "Не выбраны параметры";
         return;
     }
@@ -73,166 +76,72 @@ function add3DChart(chart_div, data, trends_2d, plotly_num) {
         } else {
             y_arr.push(y);
         }
+        //console.log("year: " + tds[0].innerHTML + " row: " + i + " y: " + y + " c: " + cy_text + " f: " + fy_text);
 
-        let z = parseFloat(tds[z_col].innerHTML);
-        if (isNaN(z) || c.indexOf(cz_text) == -1 || f.indexOf(fz_text) == -1) {
-            z_arr.push(null);
-        } else {
-            z_arr.push(z);
+        if (type == 1) {
+            let z = parseFloat(tds[z_col].innerHTML);
+            if (isNaN(z) || c.indexOf(cz_text) == -1 || f.indexOf(fz_text) == -1) {
+                z_arr.push(null);
+            } else {
+                z_arr.push(z);
+            }
+            //console.log("year: " + tds[0].innerHTML + " row: " + i + " z: " + z + " c: " + cz_text + " f: " + fz_text);
         }
-        //console.log("year: " + tds[0].innerHTML + " row: " + i + " y: " + x + " c: " + cy_text + " f: " + fy_text);
     }
-    if (x_arr.length < 2 || isAllNull(y_arr) || isAllNull(z_arr)) {
+    if (x_arr.length < 2 || isAllNull(y_arr) || (type == 1 && isAllNull(z_arr))) {
         span_chart_info.innerHTML = "Недостаточно данных для построения";
     } else {
-        let name = x_text + " ";
-        if (cx_text != "") {
-            name += "(" + cx_text;
-            if (fx_text != "") {
-                name += ", " + fx_text + ") ";
-            } else {
-                name += ") ";
-            }
-        } else if (fx_text != "") {
-            name += "(" + fx_text + ") ";
-        }
-        name += "от " + y_text;
-        if (cy_text != "") {
-            name += " (" + cy_text;
-            if (fy_text != "") {
-                name += ", " + fy_text + ") ";
-            } else {
-                name += ") ";
-            }
-        } else if (fy_text != "") {
-            name += " (" + fy_text + ") ";
-        }
+        let name = x_text;
+        if (type == 1) name += ", " + y_text + " от " + z_text;
+        else name += " от " + y_text;
         console.log(name);
         if (dataIndex(data, name) != -1) {
             span_chart_info.innerHTML = "График уже построен";
             return;
         }
-        let color_index = data.length + 1;
+        let color_index = 0;
+        for (let k = 0; k < data.length; k++) {
+            if (data[k]["which"] == "normal") {
+                color_index++;
+            }
+        }
         if (color_index >= colors.length) {
             color_index -= colors.length;
         }
-        addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", "normal");
-        new2DPlot(chart_div.querySelector(".plotly_div"), data);
+        if (type == 0) {
+            addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "normal");
+            newPlot(chart_div.querySelector(".plotly_div"), data, type);
+            addChartRestangle(chart_div, data, name, "0").onclick = onChartRestangleClick.bind(null, chart_div, stuff, data, name, "0", plotly_num);
+        } else if (type == 1) {
+            addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_text, y_text, z_text, colors[color_index], "normal");
+            newPlot(chart_div.querySelector(".plotly_div"), data, type);
+            addChartRestangle(chart_div, data, name, "1").onclick = onChartRestangleClick.bind(null, chart_div, stuff, data, name, "1", plotly_num);
+        }
         span_chart_info.innerHTML = "";
-        addChartRestangle(chart_div, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_div, trends_2d, data, name, "2d", plotly_num);
     }
 }
 
-function add2DChart(chart_div, data, trends_2d, plotly_num) {
-    let form = chart_div.querySelector(".param_form");
-    let span_chart_info = chart_div.querySelector(".span_chart_info");
-
-    let x_col = parseFloat(form.x_select_param.value);
-    let x_index = form.x_select_param.selectedIndex;
-    let x_text = form.x_select_param[x_index].text;
-
-    let cx_index = form.x_select_culture.selectedIndex;
-    let cx_row = form.x_select_culture.value;
-    let cx_text = cx_index > 1 ? form.x_select_culture[cx_index].text : "";
-
-    let fx_row = form.x_select_field.value;
-    let fx_index = form.x_select_field.selectedIndex;
-    let fx_text = fx_index > 1 ? form.x_select_field[fx_index].text : "";
-
-    let y_col = parseFloat(form.y_select_param.value);
-    let y_index = form.y_select_param.selectedIndex;
-    let y_text = form.y_select_param[y_index].text;
-
-    let cy_index = form.y_select_culture.selectedIndex;
-    let cy_row = form.y_select_culture.value;
-    let cy_text = cy_index > 1 ? form.y_select_culture[cy_index].text : "";
-
-    let fy_row = form.y_select_field.value;
-    let fy_index = form.y_select_field.selectedIndex;
-    let fy_text = fy_index > 1 ? form.y_select_field[fy_index].text : "";
-
-    if (isNaN(x_col) || isNaN(y_col)) {
-        span_chart_info.innerHTML = "Не выбраны параметры";
-        return;
-    }
-    let x_arr = [],
-        y_arr = [],
-        year_arr = [];
-    let trs = table_body_main.querySelectorAll("tr");
-    for (let i = 0; i < trs.length; i++) {
-        let tds = trs[i].querySelectorAll("td");
-        let x = parseFloat(tds[x_col].innerHTML);
-        let c = tds[1].innerHTML;
-        let f = tds[2].innerHTML;
-        if (isNaN(x) || c.indexOf(cx_text) == -1 || f.indexOf(fx_text) == -1) {
-            continue;
-        }
-        x_arr.push(x);
-        year_arr.push(tds[0].innerHTML);
-        //console.log("year: " + tds[0].innerHTML + " row: " + i + " x: " + x + " c: " + cx_text + " f: " + fx_text);
-
-        let y = parseFloat(tds[y_col].innerHTML);
-        if (isNaN(y) || c.indexOf(cy_text) == -1 || f.indexOf(fy_text) == -1) {
-            y_arr.push(null);
-        } else {
-            y_arr.push(y);
-        }
-        //console.log("year: " + tds[0].innerHTML + " row: " + i + " y: " + x + " c: " + cy_text + " f: " + fy_text);
-    }
-    if (x_arr.length < 2 || isAllNull(y_arr)) {
-        span_chart_info.innerHTML = "Недостаточно данных для построения";
-    } else {
-        let name = x_text + " ";
-        if (cx_text != "") {
-            name += "(" + cx_text;
-            if (fx_text != "") {
-                name += ", " + fx_text + ") ";
-            } else {
-                name += ") ";
-            }
-        } else if (fx_text != "") {
-            name += "(" + fx_text + ") ";
-        }
-        name += "от " + y_text;
-        if (cy_text != "") {
-            name += " (" + cy_text;
-            if (fy_text != "") {
-                name += ", " + fy_text + ") ";
-            } else {
-                name += ") ";
-            }
-        } else if (fy_text != "") {
-            name += " (" + fy_text + ") ";
-        }
-        console.log(name);
-        if (dataIndex(data, name) != -1) {
-            span_chart_info.innerHTML = "График уже построен";
-            return;
-        }
-        let color_index = data.length + 1;
-        if (color_index >= colors.length) {
-            color_index -= colors.length;
-        }
-        addTo2DData(true, data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "solid", "normal");
-        new2DPlot(chart_div.querySelector(".plotly_div"), data);
-        span_chart_info.innerHTML = "";
-        addChartRestangle(chart_div, data, name, "2d").onclick = onChartRestangleClick.bind(null, chart_div, trends_2d, data, name, "2d", plotly_num);
-    }
+function newPlot(plotly_div, data, type) {
+    Plotly.newPlot(plotly_div, getValidatedData(data, type), setChartLayout(plotly_div), { scrollZoom: true, responsive: true });
+    //console.log(type);
 }
 
-function new2DPlot(plotly_div, data) {
-    Plotly.newPlot(plotly_div, getValidatedData(data), set2DLayout(plotly_div), { scrollZoom: true, responsive: true });
-}
-
-function getValidatedData(data) {
+function getValidatedData(data, type) {
     let data_v = JSON.parse(JSON.stringify(data));
     for (let i = 0; i < data_v.length; i++) {
         for (let k = 0; k < data_v[i]["x"].length; k++) {
             if ((data_v[i]["x"][k] + "").indexOf("<label>") != -1) {
-                data_v[i]["x"][k] = null;
+                if(type == "0") data_v[i]["x"][k] = null;
+                else if(type == "1") {
+                    data_v[i]["x"].splice(k, 1);
+                    data_v[i]["y"].splice(k, 1);
+                    data_v[i]["z"].splice(k, 1);
+                    k--;
+                }
             }
         }
     }
+    //console.log(data_v);
     return data_v;
 }
 
@@ -250,19 +159,23 @@ function addChartRestangle(chart_div, data, name, type) {
 
 function deleteChartRestangle(chart_div, chart_restangle, data, name, type) {
     window.event.stopPropagation();
-
     if (chart_restangle.classList.contains("active")) {
         chart_div.querySelector(".chart_settings").classList.remove("active");
     }
     chart_restangle.remove();
-    if (dataIndex(data, name) != -1) {
+    let data_index = dataIndex(data, name);
+    let color = data[data_index]["line"]["color"];
+    let color_index = arrayIndex(colors, color);
+    colors.push(...colors.splice(color_index, 1));
+    console.log(colors);
+    if (data_index != -1) {
         data.splice(dataIndex(data, name), 1);
     }
     while (dataIndex(data, name + " тренд") != -1) {
         data.splice(dataIndex(data, name + " тренд"), 1);
     }
-    if (type == "2d") new2DPlot(chart_div.querySelector(".plotly_div"), data);
-    console.log(data);
+    newPlot(chart_div.querySelector(".plotly_div"), data, type);
+    //console.log(data);
 }
 
 function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_num) {
@@ -291,14 +204,15 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
                 chart_stuff.innerHTML = "";
             }
         }
-        //removeOptLines();
         restangle.classList.add("active");
-        chart_data.append(createDataTable(data, name, plotly_num));
+        chart_data.append(createDataTable(data, name, plotly_num, type));
         chart_stuff.append(trends_2d);
         chart_settings.classList.add("active");
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
-        addOn2DOptimisationParamsListeners(chart_div, data, name);
-        addOn2DTrendsParamsChangeListeners(chart_div, data, name);
+        if(type == "0") {
+            addOn2DOptimisationParamsListeners(chart_div, data, name);
+            addOn2DTrendsParamsChangeListeners(chart_div, data, name);
+        }
     }
 
     function removeOptLine(data, name) {
@@ -307,9 +221,71 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
             replaceIfExist(data, name, "left_opt_line");
             replaceIfExist(data, name, "right_opt_line");
             replaceIfExist(data, name, "point");
-            new2DPlot(plotly_div, data);
+            newPlot(plotly_div, data, type);
         }
     }
+}
+
+function createDataTable(data, name, plotly_num, type) {
+    let data_index = dataIndex(data, name);
+    if (data_index == -1) {
+        return;
+    }
+    let table = document.createElement("table");
+    let tr = newTr();
+    let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
+    //add th
+    addTh(tr, newCheckboxCell("_" + plotly_num + "_all"));
+    addTh(tr, data[data_index]["year_name"]);
+    if (!is_year_chart) {
+        addTh(tr, data[data_index]["x_name"]);
+    }
+    addTh(tr, data[data_index]["y_name"]);
+    if(type == "1") addTh(tr, data[data_index]["z_name"]);
+    table.append(tr);
+    //add td
+    for (let k = 0; k < data[data_index]["x"].length; k++) {
+        tr = newTr();
+        addTd(tr, newCheckboxCell(plotly_num + "_" + k));
+        if (!is_year_chart) {
+            addTd(tr, data[data_index]["years"][k]);
+        }
+        addTd(tr, data[data_index]["x"][k]);
+        addTd(tr, data[data_index]["y"][k]);
+        if(type == "1") addTd(tr, data[data_index]["z"][k]);
+        table.append(tr);
+    }
+    return table;
+
+    function addTd(tr, inner) {
+        let td = newTd();
+        td.innerHTML = inner;
+        tr.append(td);
+    }
+
+    function addTh(tr, inner) {
+        let th = newTh();
+        th.innerHTML = inner;
+        tr.append(th);
+    }
+
+    function newCheckboxCell(num) {
+        let td = document.createElement("td");
+        let input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = "chart_checkbox" + num;
+        input.className = "chart_checkbox" + num;
+        let label = document.createElement("label");
+        label.htmlFor = "chart_checkbox" + num;
+        td.append(input, label);
+        return td.innerHTML;
+    }
+
+    function newTr() { return document.createElement("tr"); }
+
+    function newTd() { return document.createElement("td"); }
+
+    function newTh() { return document.createElement("th"); }
 }
 
 function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
@@ -388,7 +364,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         let forward = trend_2d_form.number_2d_trend_forward.value;
         let step = trend_2d_form.number_2d_trend_step.value;
         let level = trend_2d_form.number_2d_trend_level.value;
-        let data_v = validateDataForCalculations(data, name);
+        let data_v = validateDataForCalculations(data, name, "0");
         if (type == "0") {
             let xy = linear(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
             showTrend(xy);
@@ -451,14 +427,14 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
                 addToErrorBarData(data, error_bars.x_e_up, error_bars.y_e_up, name + " тренд", "", "", error_bar_color, "error_bar");
                 addToErrorBarData(data, error_bars.x_e_down, error_bars.y_e_down, name + " тренд", "tonexty", error_bar_color, error_bar_color, "error_bar");
             }
-            new2DPlot(plotly_div, data);
+            newPlot(plotly_div, data, "0");
             showErrors(xy.r, xy.a);
             showTrendsParts();
         }
 
         function removeTrend() {
             replaceIfExist(data, name);
-            new2DPlot(plotly_div, data);
+            newPlot(plotly_div, data, "0");
             removeResultsSpans();
             removeTrendsParts();
         }
@@ -552,66 +528,6 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     }
 }
 
-function createDataTable(data, name, plotly_num) {
-    let data_index = dataIndex(data, name);
-    if (data_index == -1) {
-        return;
-    }
-    let table = document.createElement("table");
-    let tr = newTr();
-    let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
-    //add th
-    addTh(tr, newCheckboxCell("_" + plotly_num + "_all"));
-    addTh(tr, data[data_index]["year_name"]);
-    if (!is_year_chart) {
-        addTh(tr, data[data_index]["x_name"]);
-    }
-    addTh(tr, data[data_index]["y_name"]);
-    table.append(tr);
-    //add td
-    for (let k = 0; k < data[data_index]["x"].length; k++) {
-        tr = newTr();
-        addTd(tr, newCheckboxCell(plotly_num + "_" + k));
-        if (!is_year_chart) {
-            addTd(tr, data[data_index]["years"][k]);
-        }
-        addTd(tr, data[data_index]["x"][k]);
-        addTd(tr, data[data_index]["y"][k]);
-        table.append(tr);
-    }
-    return table;
-
-    function addTd(tr, inner) {
-        let td = newTd();
-        td.innerHTML = inner;
-        tr.append(td);
-    }
-
-    function addTh(tr, inner) {
-        let th = newTh();
-        th.innerHTML = inner;
-        tr.append(th);
-    }
-
-    function newCheckboxCell(num) {
-        let td = document.createElement("td");
-        let input = document.createElement("input");
-        input.type = "checkbox";
-        input.id = "chart_checkbox" + num;
-        input.className = "chart_checkbox" + num;
-        let label = document.createElement("label");
-        label.htmlFor = "chart_checkbox" + num;
-        td.append(input, label);
-        return td.innerHTML;
-    }
-
-    function newTr() { return document.createElement("tr"); }
-
-    function newTd() { return document.createElement("td"); }
-
-    function newTh() { return document.createElement("th"); }
-}
-
 function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
     let data_index = dataIndex(data, name);
     let checked_count = 1;
@@ -654,8 +570,9 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
         } else {
             checkboxes[0].checked = false;
         }
-        //if (type == "2d") new2DPlot(plotly_div, data);
-        if (type == "2d") chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+
+        if (type == "0") chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+        else if(type == "1") newPlot(chart_div.querySelector(".plotly_div"), data, "1");
 
         function addPre(x) {
             if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
@@ -719,7 +636,7 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
             replaceIfExist(data, name, "left_opt_line");
             replaceIfExist(data, name, "right_opt_line");
             replaceIfExist(data, name, "point");
-            new2DPlot(plotly_div, data);
+            newPlot(plotly_div, data, "0");
             data[data_index]["optimisation"] = null;
         }
         setDisabled();
@@ -805,13 +722,13 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         let x = [value, value];
         let y = [min_y, max_y];
         addToOptimisationBordersData(data, x, y, name + " тренд", color, which);
-        new2DPlot(plotly_div, data);
+        newPlot(plotly_div, data, "0");
     }
 
     function showPoint(x, y) {
         replaceIfExist(data, name, "point");
         addToOptimisationPointData(data, [x], [y], name + " тренд", color, "point");
-        new2DPlot(plotly_div, data);
+        newPlot(plotly_div, data, "0");
     }
 
     function getOptimisationParams(data, name) {
@@ -865,9 +782,9 @@ function validateNumberInput(number_input) {
     }
 }
 
-function validateDataForCalculations(data, name) {
+function validateDataForCalculations(data, name, type) {
     let data_index = dataIndex(data, name);
-    let data_v = getValidatedData(data);
+    let data_v = getValidatedData(data, type);
     for (let k = 0; k < data_v[data_index]["x"].length; k++) {
         if (data_v[data_index]["x"][k] == null) {
             data_v[data_index]["x"].splice(k, 1);
@@ -954,24 +871,52 @@ function addToTrendData(data, x_arr, y_arr, name, color, which) {
     data.push(trace);
 }
 
-function addTo2DData(sort, data, x_arr, y_arr, year_arr, name, x_name, y_name, color, dash, which, trend = null, optimisation = null) {
-    let x_arr_sorted, y_arr_sorted = [],
+function addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_name, y_name, z_name, color, which) {
+    let y_arr_sorted = [],
+        z_arr_sorted = [],
         year_arr_sorted = [];
-    if (sort) {
-        //сортировка по возрастанию х
-        x_arr_sorted = x_arr.slice();
-        x_arr_sorted.sort(function (a, b) { return a - b });
-        for (let k = 0; k < x_arr.length; k++) {
-            let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
-            y_arr_sorted.push(y_arr[old_index]);
-            if (year_arr != null) {
-                year_arr_sorted.push(year_arr[old_index]);
-            }
-            x_arr[old_index] = null;
-        }
-    } else {
-        x_arr_sorted = x_arr.slice();
-        y_arr_sorted = y_arr.slice();
+    //сортировка по возрастанию х
+    let x_arr_sorted = x_arr.slice();
+    x_arr_sorted.sort(function (a, b) { return a - b });
+    for (let k = 0; k < x_arr.length; k++) {
+        let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
+        y_arr_sorted.push(y_arr[old_index]);
+        z_arr_sorted.push(z_arr[old_index]);
+        year_arr_sorted.push(year_arr[old_index]);
+        x_arr[old_index] = null;
+    }
+
+    let trace = {
+        years: year_arr_sorted,
+        x: x_arr_sorted,
+        y: y_arr_sorted,
+        z: z_arr_sorted,
+        type: "mesh3d",
+        opacity: 0.8,
+        color: color,
+        name: name,
+        year_name: "Год",
+        x_name: x_name,
+        y_name: y_name,
+        z_name: z_name,
+        connectgaps: true,
+        showlegend: true,
+        which: which
+    };
+    data.push(trace);
+}
+
+function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, which, trend = null, optimisation = null) {
+    let y_arr_sorted = [],
+        year_arr_sorted = [];
+    //сортировка по возрастанию х
+    let x_arr_sorted = x_arr.slice();
+    x_arr_sorted.sort(function (a, b) { return a - b });
+    for (let k = 0; k < x_arr.length; k++) {
+        let old_index = arrayIndex(x_arr, x_arr_sorted[k]);
+        y_arr_sorted.push(y_arr[old_index]);
+        year_arr_sorted.push(year_arr[old_index]);
+        x_arr[old_index] = null;
     }
 
     let trace = {
@@ -985,7 +930,7 @@ function addTo2DData(sort, data, x_arr, y_arr, year_arr, name, x_name, y_name, c
         y_name: y_name,
         connectgaps: true,
         line: {
-            dash: dash,
+            dash: "solid",
             color: color
         },
         which: which,
@@ -1022,7 +967,7 @@ function dataIndex(data, name, which = null) {
     return -1;
 }
 
-function set2DLayout(plotly_div) {
+function setChartLayout(plotly_div) {
     return {
         autosize: false,
         height: plotly_div.clientHeight,

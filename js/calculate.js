@@ -4,7 +4,7 @@ let radios = document.querySelectorAll("input[type=\"radio\"]");
 let span_footer = document.querySelector(".span_footer");
 let table_body_main = contents[0].querySelector(".table_body");
 let table_header_main = contents[0].querySelector(".table_header");
-let chart_div = document.querySelector(".chart_div");
+let chart_div_template = document.querySelector(".chart_div");
 let checkbox_td = document.querySelector(".checkbox_td");
 let new_chart_form_div = document.querySelectorAll(".new_chart_form_div");
 let add_2d_button = document.querySelector(".add_2d_button");
@@ -19,7 +19,7 @@ let cultures_list = [];
 let fields_list = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    search.onsubmit = function(e) {
+    search.onsubmit = function (e) {
         e.preventDefault();
     }
     find();
@@ -32,84 +32,60 @@ document.addEventListener("DOMContentLoaded", () => {
     search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
     contents[2].style.display = "flex";
     setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
-    add_2d_button.onclick = add2DChartDiv.bind(null, 1);
-    add_3d_button.onclick = add3DChartDiv;
+    add_2d_button.onclick = addChartDiv.bind(null, 0);
+    add_3d_button.onclick = addChartDiv.bind(null, 1);;
     //add_drm_button.onclick = addChartDiv(content[3]);
     onRadioChange();
     doRequest();
 });
 
-function add2DChartDiv(cnt_num) {
+function addChartDiv(type) {
     let plotly_num = document.querySelectorAll(".plotly_div").length;
-    let div = document.createElement("div");
-    div.className = "chart_div";
-    div.innerHTML = chart_div.innerHTML;
-    new_chart_form_div[0].before(div);
-    let param_form = div.querySelector(".param_form");
+    let chart_div = document.createElement("div");
+    chart_div.className = "chart_div";
+    chart_div.innerHTML = chart_div_template.innerHTML;
+    new_chart_form_div[type].before(chart_div); // type 0 = 2d
+    let param_form = chart_div.querySelector(".param_form");
 
     addSpan(param_form, "Ось Х:");
-    let x_select_param = addSelect(param_form, select_param, "x_select_param");
+    addSelect(param_form, select_param, "x_select_param");
     let x_select_culture = addSelect(param_form, select_culture, "x_select_culture");
-    addOptions(x_select_culture, cultures_list, "name"); 
+    addOptions(x_select_culture, cultures_list, "name");
     let x_select_field = addSelect(param_form, select_field, "x_select_field");
     addOptions(x_select_field, fields_list, "cadastral");
 
     addSpan(param_form, "Ось Y:");
-    let y_select_param = addSelect(param_form, select_param, "y_select_param");
+    addSelect(param_form, select_param, "y_select_param");
     let y_select_culture = addSelect(param_form, select_culture, "y_select_culture");
     y_select_culture.innerHTML = x_select_culture.innerHTML;
     let y_select_field = addSelect(param_form, select_field, "y_select_field");
     y_select_field.innerHTML = x_select_field.innerHTML;
 
-    let span_chart_info = div.querySelector(".span_chart_info");
-    let data = [];
-    let add_chart_button = div.querySelector(".add_chart_button");
-    let plotly_div = div.querySelector(".plotly_div");
-    let chart_restangles = div.querySelector(".chart_restangles");
-    let chart_settings = div.querySelector(".chart_settings");
-    let trends_2d = document.createElement("div");
-    trends_2d.className = "trends_2d";
-    trends_2d_template.querySelector(".a_error_checkbox").setAttribute("id", "a_error_checkbox_" + plotly_num);
-    trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
-    trends_2d.innerHTML = trends_2d_template.innerHTML;
-    add_chart_button.onclick = add2DChart.bind(null, div, data, trends_2d, plotly_num);
-}
-
-function add3DChartDiv() {
-    let plotly_num = document.querySelectorAll(".plotly_div").length;
-    let div = document.createElement("div");
-    div.className = "chart_div";
-    div.innerHTML = chart_div.innerHTML;
-    new_chart_form_div[1].before(div);
-    let param_form = div.querySelector(".param_form");
-
-    addSpan(param_form, "Ось Х:");
-    let x_select_param = addSelect(param_form, select_param, "x_select_param");
-    let x_select_culture = addSelect(param_form, select_culture, "x_select_culture");
-    addOptions(x_select_culture, cultures_list, "name"); 
-    let x_select_field = addSelect(param_form, select_field, "x_select_field");
-    addOptions(x_select_field, fields_list, "cadastral");
-
-    addSpan(param_form, "Ось Y:");
-    let y_select_param = addSelect(param_form, select_param, "y_select_param");
-    let y_select_culture = addSelect(param_form, select_culture, "y_select_culture");
-    y_select_culture.innerHTML = x_select_culture.innerHTML;
-    let y_select_field = addSelect(param_form, select_field, "y_select_field");
-    y_select_field.innerHTML = x_select_field.innerHTML;
-
-    addSpan(param_form, "Ось Z:");
-    let z_select_param = addSelect(param_form, select_param, "z_select_param");
-    let z_select_culture = addSelect(param_form, select_culture, "z_select_culture");
-    z_select_culture.innerHTML = x_select_culture.innerHTML;
-    let z_select_field = addSelect(param_form, select_field, "z_select_field");
-    z_select_field.innerHTML = x_select_field.innerHTML;
+    if (type == 1) {
+        addSpan(param_form, "Ось Z:");
+        addSelect(param_form, select_param, "z_select_param");
+        let z_select_culture = addSelect(param_form, select_culture, "z_select_culture");
+        z_select_culture.innerHTML = x_select_culture.innerHTML;
+        let z_select_field = addSelect(param_form, select_field, "z_select_field");
+        z_select_field.innerHTML = x_select_field.innerHTML;
+    }
 
     let data = [];
-    let add_chart_button = div.querySelector(".add_chart_button");
-    let trends_3d = document.createElement("div");
-    trends_3d.className = "trends_3d";
-    trends_3d.innerHTML = trends_3d_template.innerHTML;
-    add_chart_button.onclick = add3DChart.bind(null, div, data, trends_2d, plotly_num);
+    let add_chart_button = chart_div.querySelector(".add_chart_button");
+    if (type == 0) {
+        let trends_2d = document.createElement("div");
+        trends_2d.className = "trends_2d";
+        trends_2d_template.querySelector(".a_error_checkbox").setAttribute("id", "a_error_checkbox_" + plotly_num);
+        trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
+        trends_2d.innerHTML = trends_2d_template.innerHTML;
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_2d, plotly_num, type);
+    } else if(type == 1) {
+        let trends_3d = document.createElement("div");
+        trends_3d.className = "trends_3d";
+        trends_3d.innerHTML = trends_3d_template.innerHTML;
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_3d, plotly_num, type);
+    }
+
 }
 
 function addSelect(form, select, name) {
@@ -137,17 +113,17 @@ function addSpan(form, text) {
 }
 
 function getFieldsCulturesList(xhr) {
-    if(xhr.response.fields_rows.length > 0) {
+    if (xhr.response.fields_rows.length > 0) {
         fields_list = xhr.response.fields_rows;
     }
-    if(xhr.response.cultures_rows.length > 0) {
+    if (xhr.response.cultures_rows.length > 0) {
         cultures_list = xhr.response.cultures_rows;
     }
 }
 
 function doRequest() {
     let xhr = request("php/calculate.php", null);
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
@@ -171,7 +147,7 @@ function onRadioChange() {
     console.log(contents);
     for (let i = 0; i < radios.length; i++) {
         console.log(i);
-        radios[i].addEventListener("change", function() {
+        radios[i].addEventListener("change", function () {
             for (let k = 0; k < contents.length; k++) {
                 contents[k].style.display = "none";
             }
@@ -184,23 +160,23 @@ function onRadioChange() {
 
 function find() {
     let xhr = request("php/find.php", new FormData(search));
-    xhr.onload = function() {
+    xhr.onload = function () {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
             console.log(xhr.response);
             if (xhr.response == null) return;
             if (!checkBdServerHome(xhr)) {
-                showText(span_footer, xhr.response.bd_e[0], true);    
+                showText(span_footer, xhr.response.bd_e[0], true);
             } else {
                 showText(span_footer, "", false);
             }
-            if(!checkInfoServerHome(xhr)) {
-                showText(span_footer, xhr.response.info[0], false); 
+            if (!checkInfoServerHome(xhr)) {
+                showText(span_footer, xhr.response.info[0], false);
             } else {
                 showText(span_footer, "", false);
             }
-            if(xhr.response.factors_result.length > 0) {
+            if (xhr.response.factors_result.length > 0) {
                 fillTable(table_body_main, xhr.response.factors_result[0]);
             } else {
                 clearTable(table_body_main);
