@@ -256,7 +256,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         trend_2d_form.number_2d_trend_step.value = trend_params.step;
         a_error_checkbox.checked = trend_params.error_bar;
         showErrors(trend_params.r, trend_params.a);
-        showFunction(trend_params.trend_type, trend_params.coef);
+        showFunction(trend_params.trend_type, trend_params.coef, trend_params.level);
         showTrendsParts();
     }
     setDisabled();
@@ -275,7 +275,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         let back = trend_2d_form.number_2d_trend_back.value;
         let forward = trend_2d_form.number_2d_trend_forward.value;
         let step = trend_2d_form.number_2d_trend_step.value;
-        let level = "2";
+        let level = trend_2d_form.number_2d_trend_level.value;
         let data_v = validateDataForCalculations(data, name);
         if (type == "0") {
             let xy = linear(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
@@ -283,6 +283,30 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
             showFunction(type, xy.coef);
         } else if (type == "1") {
             let xy = hyperbole(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "2") {
+            let xy = null;
+            let level = trend_2d_form.number_2d_trend_level.value;
+            if(level == "2") {
+                xy = parabole2(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if(level == "3") {
+                xy = parabole3(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if(level == "4") {
+                xy = parabole4(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if(level == "5") {
+                xy = parabole5(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if(level == "6") {
+                xy = parabole6(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            }
+            showTrend(xy);
+            showFunction(type, xy.coef, level);
+        } else if (type == "3") {
+            let xy = exponent(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "4") {
+            let xy = stepennaya(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
             showTrend(xy);
             showFunction(type, xy.coef);
         } else if (type == "none") {
@@ -357,18 +381,42 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         //console.log(data[data_index]["trend"]["trend_type"]);
     }
 
-    function showFunction(type, coef) {
+    function showFunction(type, coef, level = null) {
+        console.log(coef);
         if (type == "0") {
-            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + " + " + coef[1].toFixed(4) + "x";
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + "x";
         } else if (type == "1") {
-            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + " + " + coef[1].toFixed(4) + " * 1 / x";
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + " * 1 / x";
+        } else if (type == "2") {
+            trend_function_span.innerHTML = getParaboleFunction();
+        } else if (type == "3") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4)  + "e<sup>" + coef[1].toFixed(4) + "x</sup>";
+        } else if (type == "4") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + "x<sup>" + coef[1].toFixed(4) + "</sup>";
         }
         trend_function_span.classList.add("active");
+
+        function getSign(num) {
+            if(num >= 0) {
+                return " + " + num;
+            } else {
+                return " - " + (num * -1);
+            }
+        }
+
+        function getParaboleFunction() {
+            level = parseFloat(level);
+            let res = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + "x";
+            for(let k = 2; k <= level; k++) {
+                res +=  getSign(coef[k].toFixed(4)) + "x<sup>" + k + "</sup>";
+            }
+            return res;
+        }
     }
 
     function showErrors(r, a) {
-        r_span.innerHTML = "R<sup>2</sup>=" + r;
-        a_span.innerHTML = "A=" + a;
+        r_span.innerHTML = "R<sup>2</sup> = " + r;
+        a_span.innerHTML = "A = " + a;
         r_span.classList.add("active");
         a_span.classList.add("active");
         a_error_checkbox_label.classList.add("active");
@@ -586,15 +634,17 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         let right = parseFloat(number_trends_2d_optimisation_right.value);
         let coef = data[data_index]["trend"]["coef"];
         let type = data[data_index]["trend"]["trend_type"];
+        let level = data[data_index]["trend"]["level"];
         console.log("coef " + coef);
         console.log("type " + type);
+        console.log("level " + level);
         let x = null, y = null;
         if(method == "0") {
-            
+            [x, y] = halfDivision(left, right, getFunction(type, level), coef);
         } else if(method == "1") {
-
+            [x, y] = goldenRatio(left, right, getFunction(type, level), coef);
         } else if(method == "2") {
-            [x, y] = fibonacci(left, right, getFunction(type), coef);
+            [x, y] = fibonacci(left, right, getFunction(type, level), coef);
         }
         showOptSpans(x, y);
         let optimisation = {
@@ -609,13 +659,27 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         console.log(data);
     }
 
-    function getFunction(type) {
+    function getFunction(type, level) {
         if(type == "0") {
-            console.log("get_y_linear");
             return get_y_linear;
         } else if(type == "1") {
-            console.log("get_y_hyperbole");
             return get_y_hyperbole;
+        } else if(type == "2") {
+            if(level == "2") {
+                return get_y_parabole2;
+            } else if(level == "3") {
+                return get_y_parabole3;
+            } else if(level == "4") {
+                return get_y_parabole4;
+            } else if(level == "5") {
+                return get_y_parabole5;
+            } else if(level == "6") {
+                return get_y_parabole6;
+            }
+        } else if(type == "3") {
+            return get_y_exponent;
+        } else if(type == "4") {
+            return get_y_stepennaya;
         }
     }
 
@@ -636,8 +700,8 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
     }
 
     function showOptSpans(x, y) {
-        x_opt_span.innerHTML = "x=" + x;
-        y_opt_span.innerHTML = "y=" + y;
+        x_opt_span.innerHTML = "x = " + x;
+        y_opt_span.innerHTML = "y = " + y;
         x_opt_span.classList.add("active");
         y_opt_span.classList.add("active");
     }
@@ -668,14 +732,6 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
     function getMinOfArray(arr) {
         return Math.min.apply(null, arr);
     }
-    /*optimisation: {
-        method: method,
-        type: type,
-        left: left,
-        right: right,
-        result_x: result_x,
-        result_y: result_y
-    }*/
 }
 
 function validateNumberInput(number_input) {

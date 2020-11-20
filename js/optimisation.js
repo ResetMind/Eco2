@@ -1,12 +1,53 @@
 const e = 0.001;
 let fibList = [];
 
+function halfDivision(a, b, func, coef) {
+    while(Math.abs(a - b) > e) {
+        let x1 = a + 0.25 * (b - a);
+        let x2 = b - 0.25 * (b - a);
+        let y1 = func(coef, x1);
+        let y2 = func(coef, x2);
+        if(y1 < y2) {
+            b = x2;
+        } else {
+            a = x1;
+        }
+    }
+    let x_res = (a + b) / 2;
+    let y_res = func(coef, x_res);;
+    console.log(x_res + " " + y_res);
+    return [x_res, y_res];
+}
 
+function goldenRatio(a, b, func, coef) {
+    let x1 = a + 0.38 * (b - a);
+    let x2 = b - 0.38 * (b - a);
+    let y1 = func(coef, x1);
+    let y2 = func(coef, x2);
+    while(Math.abs(a - b) > e) {
+        if(y1 < y2) {
+            b = x2;
+            x2 = x1;
+            y2 = y1;
+            x1 = a + 0.38 * (b - a);
+            y1 = func(coef, x1);
+        } else {
+            a = x1;
+            x1 = x2;
+            y1 = y2;
+            x2 = b - 0.38 * (b - a);
+            y2 = func(coef, x2);
+        }
+    }
+    let x_res = (a + b) / 2;
+    let y_res = func(coef, x_res);;
+    return [x_res, y_res];
+}
 
 function fibonacci(a, b, func, coef) {
     let n = (b - a) / e;
     getFibList(n);
-    let y_res = 0, x_res = 0;
+    let y_res = null, x_res = null;
     for (let k = 2; k <= fibList.length; k++) {
         let x1 = b - fibList[fibList.length - k] * (b - a) / fibList[fibList.length - k + 1];
         let x2 = a + fibList[fibList.length - k] * (b - a) / fibList[fibList.length - k + 1];

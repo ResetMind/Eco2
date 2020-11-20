@@ -6,14 +6,14 @@ function linear(x, y, back, forward, step) {
     a[0][0] = x.length;
     a[0][1] = 0;
     a[1][1] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[1][1] += Math.pow(x[i], 2);
     }
     a[1][0] = a[0][1];
     b[0] = 0;
     b[1] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
     }
@@ -21,25 +21,29 @@ function linear(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
         y_tr.unshift(get_y_linear(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_linear(coef, x[i]));
+
+    for (let i = 0; i < x.length; i++) {
         y_tr_2.push(get_y_linear(coef, x[i]));
     }
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_linear(coef, i));
+    }
+    
     let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = last + step; i <= last + forward * step; i += step) {
         x_tr.push(i);
         y_tr.push(get_y_linear(coef, i));
     }
     //console.log(x_tr);
-    console.log(y_tr);
+    //console.log(y_tr);
     return {
-        x_tr: x_tr, 
-        y_tr: y_tr, 
+        x_tr: x_tr,
+        y_tr: y_tr,
         r: r2(y, y_tr_2).toFixed(4),
         a: get_a(y, y_tr_2).toFixed(4),
         coef: coef
@@ -56,14 +60,14 @@ function hyperbole(x, y, back, forward, step) {
     a[0][0] = x.length;
     a[0][1] = 0;
     a[1][1] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += 1 / x[i];
         a[1][1] += 1 / Math.pow(x[i], 2);;
     }
     a[1][0] = a[0][1];
     b[0] = 0;
     b[1] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] / x[i];
     }
@@ -71,24 +75,28 @@ function hyperbole(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
         y_tr.unshift(get_y_hyperbole(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_hyperbole(coef, x[i]));
+
+    for (let i = 0; i < x.length; i++) {
         y_tr_2.push(get_y_hyperbole(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
         y_tr.push(get_y_hyperbole(coef, i));
     }
-    console.log(y_tr);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_hyperbole(coef, i));
+    }
+    //console.log(y_tr);
     return {
-        x_tr: x_tr, 
-        y_tr: y_tr, 
+        x_tr: x_tr,
+        y_tr: y_tr,
         r: r2(y, y_tr_2).toFixed(4),
         a: get_a(y, y_tr_2).toFixed(4),
         coef: coef
@@ -107,7 +115,7 @@ function parabole2(x, y, back, forward, step) {
     a[0][2] = 0;
     a[1][2] = 0;
     a[2][2] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[0][2] += Math.pow(x[i], 2);
         a[1][2] += Math.pow(x[i], 3);
@@ -122,7 +130,7 @@ function parabole2(x, y, back, forward, step) {
     b[0] = 0;
     b[1] = 0;
     b[2] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
         b[2] += y[i] * Math.pow(x[i], 2);
@@ -131,25 +139,35 @@ function parabole2(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_parabole2(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_parabole2(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_parabole2(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_parabole2(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_parabole2(coef, x) {
+    return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2);
 }
 
 function parabole3(x, y, back, forward, step) {
@@ -162,7 +180,7 @@ function parabole3(x, y, back, forward, step) {
     a[1][3] = 0;
     a[2][3] = 0;
     a[3][3] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[0][2] += Math.pow(x[i], 2);
         a[0][3] += Math.pow(x[i], 3);
@@ -186,7 +204,7 @@ function parabole3(x, y, back, forward, step) {
     b[1] = 0;
     b[2] = 0;
     b[3] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
         b[2] += y[i] * Math.pow(x[i], 2);
@@ -196,25 +214,36 @@ function parabole3(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_parabole3(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_parabole3(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_parabole3(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_parabole3(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    //console.log(coef);
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_parabole3(coef, x) {
+    return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3);
 }
 
 function parabole4(x, y, back, forward, step) {
@@ -229,7 +258,7 @@ function parabole4(x, y, back, forward, step) {
     a[2][4] = 0;
     a[3][4] = 0;
     a[4][4] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[0][2] += Math.pow(x[i], 2);
         a[0][3] += Math.pow(x[i], 3);
@@ -264,7 +293,7 @@ function parabole4(x, y, back, forward, step) {
     b[2] = 0;
     b[3] = 0;
     b[4] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
         b[2] += y[i] * Math.pow(x[i], 2);
@@ -275,25 +304,35 @@ function parabole4(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_parabole4(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_parabole4(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_parabole4(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_parabole4(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_parabole4(coef, x) {
+    return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4);
 }
 
 function parabole5(x, y, back, forward, step) {
@@ -310,7 +349,7 @@ function parabole5(x, y, back, forward, step) {
     a[3][5] = 0;
     a[4][5] = 0;
     a[5][5] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[0][2] += Math.pow(x[i], 2);
         a[0][3] += Math.pow(x[i], 3);
@@ -358,7 +397,7 @@ function parabole5(x, y, back, forward, step) {
     b[3] = 0;
     b[4] = 0;
     b[5] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
         b[2] += y[i] * Math.pow(x[i], 2);
@@ -370,25 +409,35 @@ function parabole5(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_parabole5(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_parabole5(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_parabole5(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4) + coef[5] * Math.pow(x, 5);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_parabole5(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_parabole5(coef, x) {
+    return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4) + coef[5] * Math.pow(x, 5);
 }
 
 function parabole6(x, y, back, forward, step) {
@@ -407,7 +456,7 @@ function parabole6(x, y, back, forward, step) {
     a[4][6] = 0;
     a[5][6] = 0;
     a[6][6] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[0][2] += Math.pow(x[i], 2);
         a[0][3] += Math.pow(x[i], 3);
@@ -470,7 +519,7 @@ function parabole6(x, y, back, forward, step) {
     b[4] = 0;
     b[5] = 0;
     b[6] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += y[i];
         b[1] += y[i] * x[i];
         b[2] += y[i] * Math.pow(x[i], 2);
@@ -483,25 +532,35 @@ function parabole6(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_parabole6(coef, i));
     }
+
     for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+        y_tr_2.push(get_y_parabole6(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_parabole6(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4) + coef[5] * Math.pow(x, 5) + coef[6] * Math.pow(x, 6);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_parabole6(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_parabole6(coef, x) {
+    return coef[0] + coef[1] * x + coef[2] * Math.pow(x, 2) + coef[3] * Math.pow(x, 3) + coef[4] * Math.pow(x, 4) + coef[5] * Math.pow(x, 5) + coef[6] * Math.pow(x, 6);
 }
 
 function exponent(x, y, back, forward, step) {
@@ -510,14 +569,14 @@ function exponent(x, y, back, forward, step) {
     a[0][0] = x.length;
     a[0][1] = 0;
     a[1][1] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += x[i];
         a[1][1] += Math.pow(x[i], 2);
     }
     a[1][0] = a[0][1];
     b[0] = 0;
     b[1] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += Math.log(y[i]);
         b[1] += Math.log(y[i]) * x[i];
     }
@@ -526,25 +585,35 @@ function exponent(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_exponent(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_exponent(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_exponent(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] * Math.exp(coef[1] * x);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_exponent(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_exponent(coef, x) {
+    return coef[0] * Math.exp(coef[1] * x);
 }
 
 function stepennaya(x, y, back, forward, step) {
@@ -553,14 +622,14 @@ function stepennaya(x, y, back, forward, step) {
     a[0][0] = x.length;
     a[0][1] = 0;
     a[1][1] = 0;
-    for(let i = 0; i < x.length; i++) {
+    for (let i = 0; i < x.length; i++) {
         a[0][1] += Math.log(x[i]);
         a[1][1] += Math.pow(Math.log(x[i]), 2);
     }
     a[1][0] = a[0][1];
     b[0] = 0;
     b[1] = 0;
-    for(let i = 0; i < y.length; i++) {
+    for (let i = 0; i < y.length; i++) {
         b[0] += Math.log(y[i]);
         b[1] += Math.log(y[i]) * Math.log(x[i]);
     }
@@ -570,37 +639,47 @@ function stepennaya(x, y, back, forward, step) {
     let y_tr = new Array();
     let y_tr_2 = new Array();
     let x_tr = new Array();
-    for(let i = x[0] - step; i >= x[0] - back * step; i -= step) {
+    for (let i = x[0] - step; i >= x[0] - back * step; i -= step) {
         x_tr.unshift(i);
-        y_tr.unshift(get_y_tr(i));
+        y_tr.unshift(get_y_stepennaya(coef, i));
     }
-    for(let i = 0; i < x.length; i++) {
-        x_tr.push(x[i]);
-        y_tr.push(get_y_tr(x[i]));
-        y_tr_2.push(get_y_tr(x[i]));
+
+    for (let i = 0; i < x.length; i++) {
+        y_tr_2.push(get_y_stepennaya(coef, x[i]));
     }
-    let last = x_tr[x_tr.length - 1];
-    for(let i = last + step; i <= last + forward * step; i += step) {
+    for (let i = x[0]; i <= x[x.length - 1]; i += step) {
         x_tr.push(i);
-        y_tr.push(get_y_tr(i));
+        y_tr.push(get_y_stepennaya(coef, i));
     }
-    function get_y_tr(x) {
-        return coef[0] * Math.pow(x, coef[1]);
+
+    let last = x_tr[x_tr.length - 1];
+    for (let i = last + step; i <= last + forward * step; i += step) {
+        x_tr.push(i);
+        y_tr.push(get_y_stepennaya(coef, i));
     }
-    let xy = [x_tr, y_tr, r2(y, y_tr_2)];
-    return xy;
+    return {
+        x_tr: x_tr,
+        y_tr: y_tr,
+        r: r2(y, y_tr_2).toFixed(4),
+        a: get_a(y, y_tr_2).toFixed(4),
+        coef: coef
+    };
+}
+
+function get_y_stepennaya(coef, x) {
+    return coef[0] * Math.pow(x, coef[1]);
 }
 
 function r2(y0, y1) {
     let s_rem = 0;
     let y_avg = 0;
-    for(let i = 0; i < y0.length; i++) {
+    for (let i = 0; i < y0.length; i++) {
         s_rem += Math.pow(y1[i] - y0[i], 2);
         y_avg += y0[i];
     }
     y_avg /= y0.length;
     let s_reg = 0;
-    for(let i = 0; i < y0.length; i++) {
+    for (let i = 0; i < y0.length; i++) {
         s_reg += Math.pow(y1[i] - y_avg, 2);
     }
     let s_full = s_reg + s_rem;
@@ -609,7 +688,7 @@ function r2(y0, y1) {
 
 function get_a(y0, y1) {
     let sum = 0;
-    for(let i = 0; i < y0.length; i++) {
+    for (let i = 0; i < y0.length; i++) {
         sum += Math.abs((y0[i] - y1[i]) / y0[i]);
     }
     console.log(sum);
@@ -622,18 +701,18 @@ function holeckiy(a, b) {
     let u = create2DimArray(n);
     let y = create2DimArray(n);
     let x = create2DimArray(n);
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         l[i][0] = a[i][0];
         u[0][i] = a[0][i] / l[0][0];
-        if(i == 0) {
+        if (i == 0) {
             y[0] = b[0] / l[0][0];
         }
         let sum_y = 0;
-        for(let j = 1; j <= i; j++) {
+        for (let j = 1; j <= i; j++) {
             let sum_l = 0;
             let sum_u = 0;
             sum_y = 0;
-            for(let k = 0; k <= j - 1; k++) {
+            for (let k = 0; k <= j - 1; k++) {
                 sum_l += l[i][k] * u[k][j];
                 sum_u += l[j][k] * u[k][i];
                 sum_y += l[i][k] * y[k];
@@ -641,14 +720,14 @@ function holeckiy(a, b) {
             l[i][j] = a[i][j] - sum_l;
             u[j][i] = (a[j][i] - sum_u) / l[j][j];
         }
-        if(i != 0) {
+        if (i != 0) {
             y[i] = (b[i] - sum_y) / l[i][i];
         }
     }
     x[n - 1] = y[n - 1];
-    for(let i = n - 2; i >= 0; i--) {
+    for (let i = n - 2; i >= 0; i--) {
         let sum_x = 0;
-        for(let k = i + 1; k < n; k++) {
+        for (let k = i + 1; k < n; k++) {
             sum_x += u[i][k] * x[k];
         }
         x[i] = y[i] - sum_x;
@@ -659,11 +738,15 @@ function holeckiy(a, b) {
 
 function create2DimArray(n) {
     let arr = new Array(n);
-    for(let i = 0; i < n; i++) {
+    for (let i = 0; i < n; i++) {
         arr[i] = new Array(n);
-        for(let j = 0; j < n; j++) {
+        for (let j = 0; j < n; j++) {
             arr[i][j] = 0;
         }
     }
     return arr;
+}
+
+function get_f(coef, x) {
+    return Math.pow(x, 3) - 15 * x * x + 63 * x + 12;
 }
