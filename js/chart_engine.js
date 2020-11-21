@@ -805,11 +805,8 @@ function addOn2DImitationListeners(chart_div, data, name) {
     }
     let rows = imitation_table.querySelectorAll("tr");
     imitation_table.oncontextmenu = function (e) {
-        let right_context_menus = document.querySelectorAll(".right_context_menu");
-        for(let k = 0; k < right_context_menus.length; k++) {
-            right_context_menus[k].classList.remove("active");
-        }
         if (e.target.nodeName == "TD") {
+            document.documentElement.dispatchEvent(new Event("click"));
             e.preventDefault();
             let x = e.clientX;
             let y = e.clientY;
@@ -830,7 +827,10 @@ function addOn2DImitationListeners(chart_div, data, name) {
         }
     }
     document.documentElement.onclick = function (e) {
-        right_context_menu.classList.remove("active");
+        let right_context_menus = document.querySelectorAll(".right_context_menu");
+        for(let k = 0; k < right_context_menus.length; k++) {
+            right_context_menus[k].classList.remove("active");
+        }
     }
     r_col.onclick = function (e) {
         addTd(rows[0], rows[0].querySelectorAll("td")[col], true);
