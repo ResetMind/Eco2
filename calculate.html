@@ -339,9 +339,22 @@
                     </ul>
                 </div>
             </div>
-            <div class="trends_2d_interpolation trends_part">
-                <span class="trends_2d_header">Интерполяция</span>
-            </div>
+        </div>
+        <div class="interpolation_2d">
+            <hr class="hr_line">
+            <span class="trends_2d_header">Интерполяция</span>
+            <form name="interpolation_2d_form" class="interpolation_2d_form">
+                <select class="select_interpolation_2d_method" name="select_interpolation_2d_method">
+                    <option value="none">Отсутствует</option>
+                    <option value="0">Линейная</option>
+                    <option value="1">Кубические сплайны</option>
+                </select>
+                <input type="number" class="number_2d_interpolation_step"
+                    name="number_2d_interpolation_step" id="number_2d_interpolation_step"
+                    value="1">
+                <input type="button" class="button_2d_interpolation" name="button_2d_interpolation"
+                    value="Интерполировать">
+            </form>
         </div>
         <div class="trends_3d">
             <span class="trends_3d_header">Интерполяция</span>
@@ -437,6 +450,7 @@
 <script src="js/form_checkers.js" defer></script>
 <script src="js/trends.js" defer></script>
 <script src="js/optimisation.js" defer></script>
+<script src="js/interpolation.js" defer></script>
 <script src="js/chart_engine.js" defer></script>
 <script src="js/calculate.js" defer></script>
 <script src="js/common_table_engine.js" defer></script>

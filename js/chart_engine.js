@@ -12,7 +12,7 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function addChart(chart_div, data, stuff, plotly_num, type) {
+function addChart(chart_div, data, trends, interpolation, plotly_num, type) {
     let form = chart_div.querySelector(".param_form");
     let span_chart_info = chart_div.querySelector(".span_chart_info");
 
@@ -111,11 +111,11 @@ function addChart(chart_div, data, stuff, plotly_num, type) {
         if (type == 0) {
             addTo2DData(data, x_arr, y_arr, year_arr, name, x_text, y_text, colors[color_index], "normal");
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
-            addChartRestangle(chart_div, data, name, "0").onclick = onChartRestangleClick.bind(null, chart_div, stuff, data, name, "0", plotly_num);
+            addChartRestangle(chart_div, data, name, "0").onclick = onChartRestangleClick.bind(null, chart_div, trends, interpolation, data, name, "0", plotly_num);
         } else if (type == 1) {
             addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_text, y_text, z_text, colors[color_index], "normal");
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
-            addChartRestangle(chart_div, data, name, "1").onclick = onChartRestangleClick.bind(null, chart_div, stuff, data, name, "1", plotly_num);
+            addChartRestangle(chart_div, data, name, "1").onclick = onChartRestangleClick.bind(null, chart_div, trends, interpolation, data, name, "1", plotly_num);
         }
         span_chart_info.innerHTML = "";
     }
@@ -178,7 +178,7 @@ function deleteChartRestangle(chart_div, chart_restangle, data, name, type) {
     //console.log(data);
 }
 
-function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_num) {
+function onChartRestangleClick(chart_div, trends, interpolation, data, name, type, plotly_num) {
     let plotly_div = chart_div.querySelector(".plotly_div");
     let chart_settings = chart_div.querySelector(".chart_settings");
     let chart_restangles = chart_div.querySelector(".chart_restangles");
@@ -206,13 +206,15 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         }
         restangle.classList.add("active");
         chart_data.append(createDataTable(data, name, plotly_num, type));
-        chart_stuff.append(trends_2d);
+        if (trends != null) chart_stuff.append(trends);
+        chart_stuff.append(interpolation);
         chart_settings.classList.add("active");
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
         if (type == "0") {
             addOn2DOptimisationParamsListeners(chart_div, data, name);
             addOn2DTrendsParamsChangeListeners(chart_div, data, name);
             addOn2DImitationListeners(chart_div, data, name);
+            addOn2DInterpolationListeners(chart_div, data, name);
         }
     }
 
@@ -300,6 +302,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     let plotly_div = chart_div.querySelector(".plotly_div");
     let trends_2d_optimisation = chart_div.querySelector(".trends_2d_optimisation");
     let trends_2d_imitation = chart_div.querySelector(".trends_2d_imitation");
+    let trends_2d_interpolation = chart_div.querySelector(".trends_2d_interpolation");
     trend_2d_form.select_2d_trend_type.onchange = function () {
         setDisabled();
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
@@ -777,10 +780,6 @@ function getFunction(trend_type, level) {
 function addOn2DImitationListeners(chart_div, data, name) {
     let imitation_div = chart_div.querySelector(".imitation_div");
     let imitation_table = imitation_div.querySelector(".imitation_table");
-    /*let right_context_menu = document.createElement("ul");
-    right_context_menu.className = "right_context_menu";
-    right_context_menu.innerHTML = right_context_menu_template.innerHTML;
-    imitation_table.append(right_context_menu);*/
     let right_context_menu = chart_div.querySelector(".right_context_menu");
     let r_col = right_context_menu.querySelector(".r_col");
     let r_delete_col = right_context_menu.querySelector(".r_delete_col");
@@ -828,7 +827,7 @@ function addOn2DImitationListeners(chart_div, data, name) {
     }
     document.documentElement.onclick = function (e) {
         let right_context_menus = document.querySelectorAll(".right_context_menu");
-        for(let k = 0; k < right_context_menus.length; k++) {
+        for (let k = 0; k < right_context_menus.length; k++) {
             right_context_menus[k].classList.remove("active");
         }
     }
@@ -898,7 +897,7 @@ function addOn2DImitationListeners(chart_div, data, name) {
 
     function saveInner() {
         let tds = imitation_table.querySelectorAll("td");
-        for(let k = 0; k < tds.length; k++) {
+        for (let k = 0; k < tds.length; k++) {
             tds[k].classList.remove("error");
             tds[k].classList.remove("active");
         }
@@ -932,6 +931,64 @@ function addOn2DImitationListeners(chart_div, data, name) {
     function newTd() { return document.createElement("td"); }
 }
 
+function addOn2DInterpolationListeners(chart_div, data, name) {
+    let plotly_div = chart_div.querySelector(".plotly_div");
+    let interpolation_2d_form = chart_div.querySelector(".interpolation_2d_form");
+    let select_interpolation_2d_method = interpolation_2d_form.select_interpolation_2d_method;
+    let number_2d_interpolation_step = interpolation_2d_form.number_2d_interpolation_step;
+    let button_2d_interpolation = interpolation_2d_form.button_2d_interpolation;
+    let data_index = dataIndex(data, name);
+    setDisabled();
+    let color = data[data_index]["line"]["color"].replace("1)", "0.5)");
+    select_interpolation_2d_method.onchange = function () {
+        let data_index = dataIndex(data, name);
+        let value = select_interpolation_2d_method.value;
+        if (value == "none") {
+            data[data_index]["interpolation"] = null;
+        }
+        setDisabled();
+    }
+    button_2d_interpolation.onclick = function () {
+        let method = select_interpolation_2d_method.value;
+        let data_index = dataIndex(data, name);
+        let data_v = validateDataForCalculations(data, name, "0");
+        if (method == "1") {
+            let x_arr = data_v[data_index]["x"];
+            let y_arr = data_v[data_index]["y"];
+            /*y_arr = [33.1154, 34.8138, 36.5982, 38.4747, 40.4473, 42.5211,
+                44.7012, 46.9931, 49.4024, 51.9354, 54.5982, 57.3975, 60.3403];
+            x_arr = [3.5, 3.55, 3.6, 3.65, 3.7, 3.75, 3.8, 3.85, 3.9, 3.95, 4.0, 4.05, 4.1];*/
+            console.log(x_arr);
+            console.log(y_arr);
+            let [b, c, d] = process_th_spl(x_arr, y_arr);
+            /*console.log(data_v[data_index]["x"]);
+            console.log( data_v[data_index]["y"]);*/
+            let step = parseFloat(number_2d_interpolation_step.value);
+            if (isNaN(step) || x_arr.length < 2) return;
+            let res_x = [], res_y = [];
+            console.log("step " + step);
+            for (let x = x_arr[0]; x <= x_arr[x_arr.length - 1]; x += step) {
+                res_x.push(x);
+                res_y.push(get_th_spl(x_arr, y_arr, b, c, d, x));
+            }
+            /*for (let k = 0; k < x_arr.length; k++) {
+                res_x.push(x_arr[k]);
+                res_y.push(get_th_spl(x_arr, y_arr, b, c, d, x_arr[k]));
+            }*/
+            console.log(res_x);
+            console.log(res_y);
+            replaceIfExist(data, name, "interpolation");
+            addTo2DInterpolationData(data, res_x, res_y, name + " тренд", color, "interpolation")
+            newPlot(plotly_div, data, "0");
+        }
+    }
+    function setDisabled() {
+        let value = select_interpolation_2d_method.value;
+        number_2d_interpolation_step.disabled = value == "none";
+        button_2d_interpolation.disabled = value == "none";
+    }
+}
+
 function validateNumberInput(number_input) {
     let value = number_input.value;
     if (value > parseFloat(number_input.max)) {
@@ -963,6 +1020,23 @@ function replaceIfExist(data, name, which = null) {
         data_index = dataIndex(data, name + " тренд", which);
     }
 }
+
+function addTo2DInterpolationData(data, x_arr, y_arr, name, color, which) {
+    let trace = {
+        x: x_arr,
+        y: y_arr,
+        type: "scatter",
+        name: name,
+        connectgaps: true,
+        line: {
+            dash: "solid",
+            color: color
+        },
+        which: which
+    };
+    data.push(trace);
+}
+
 
 function addToOptimisationPointData(data, x, y, name, color, which) {
     let trace = {
@@ -1065,7 +1139,7 @@ function addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_name, y_name, 
     data.push(trace);
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, which, trend = null, optimisation = null, imitation = null) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, which, trend = null, optimisation = null, imitation = null, interpolation = null) {
     let y_arr_sorted = [],
         year_arr_sorted = [];
     //сортировка по возрастанию х
@@ -1095,7 +1169,8 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, 
         which: which,
         trend: trend,
         optimisation: optimisation,
-        imitation: imitation
+        imitation: imitation,
+        interpolation: interpolation
     };
     data.push(trace);
     //console.log(data);

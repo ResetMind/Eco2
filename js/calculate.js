@@ -14,6 +14,7 @@ let select_culture = document.querySelector(".select_culture");
 let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
 let trends_2d_template = document.querySelector(".trends_2d");
+let interpolation_2d_template = document.querySelector(".interpolation_2d");
 let trends_3d_template = document.querySelector(".trends_3d");
 let right_context_menu_template = document.querySelector(".right_context_menu");
 let cultures_list = [];
@@ -78,7 +79,10 @@ function addChartDiv(type) {
         trends_2d_template.querySelector(".a_error_checkbox").setAttribute("id", "a_error_checkbox_" + plotly_num);
         trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
         trends_2d.innerHTML = trends_2d_template.innerHTML;
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_2d, plotly_num, type);
+        let interpolation_2d = document.createElement("div");
+        interpolation_2d.className = "interpolation_2d";
+        interpolation_2d.innerHTML = interpolation_2d_template.innerHTML;
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_2d, interpolation_2d, plotly_num, type);
     } else if(type == 1) {
         let trends_3d = document.createElement("div");
         trends_3d.className = "trends_3d";
