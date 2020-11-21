@@ -15,6 +15,7 @@ let select_field = document.querySelector(".select_field");
 let select_param = document.querySelector(".select_param");
 let trends_2d_template = document.querySelector(".trends_2d");
 let trends_3d_template = document.querySelector(".trends_3d");
+let right_context_menu_template = document.querySelector(".right_context_menu");
 let cultures_list = [];
 let fields_list = [];
 

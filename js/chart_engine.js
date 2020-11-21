@@ -131,8 +131,8 @@ function getValidatedData(data, type) {
     for (let i = 0; i < data_v.length; i++) {
         for (let k = 0; k < data_v[i]["x"].length; k++) {
             if ((data_v[i]["x"][k] + "").indexOf("<label>") != -1) {
-                if(type == "0") data_v[i]["x"][k] = null;
-                else if(type == "1") {
+                if (type == "0") data_v[i]["x"][k] = null;
+                else if (type == "1") {
                     data_v[i]["x"].splice(k, 1);
                     data_v[i]["y"].splice(k, 1);
                     data_v[i]["z"].splice(k, 1);
@@ -209,7 +209,7 @@ function onChartRestangleClick(chart_div, trends_2d, data, name, type, plotly_nu
         chart_stuff.append(trends_2d);
         chart_settings.classList.add("active");
         addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
-        if(type == "0") {
+        if (type == "0") {
             addOn2DOptimisationParamsListeners(chart_div, data, name);
             addOn2DTrendsParamsChangeListeners(chart_div, data, name);
             addOn2DImitationListeners(chart_div, data, name);
@@ -242,7 +242,7 @@ function createDataTable(data, name, plotly_num, type) {
         addTh(tr, data[data_index]["x_name"]);
     }
     addTh(tr, data[data_index]["y_name"]);
-    if(type == "1") addTh(tr, data[data_index]["z_name"]);
+    if (type == "1") addTh(tr, data[data_index]["z_name"]);
     table.append(tr);
     //add td
     for (let k = 0; k < data[data_index]["x"].length; k++) {
@@ -253,7 +253,7 @@ function createDataTable(data, name, plotly_num, type) {
         }
         addTd(tr, data[data_index]["x"][k]);
         addTd(tr, data[data_index]["y"][k]);
-        if(type == "1") addTd(tr, data[data_index]["z"][k]);
+        if (type == "1") addTd(tr, data[data_index]["z"][k]);
         table.append(tr);
     }
     return table;
@@ -573,7 +573,7 @@ function addOnCheckboxChangeListeners(chart_div, checkboxes, data, name, type) {
         }
 
         if (type == "0") chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
-        else if(type == "1") newPlot(chart_div.querySelector(".plotly_div"), data, "1");
+        else if (type == "1") newPlot(chart_div.querySelector(".plotly_div"), data, "1");
 
         function addPre(x) {
             if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
@@ -693,30 +693,6 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
         console.log(data);
     }
 
-    function getFunction(trend_type, level) {
-        if (trend_type == "0") {
-            return get_y_linear;
-        } else if (trend_type == "1") {
-            return get_y_hyperbole;
-        } else if (trend_type == "2") {
-            if (level == "2") {
-                return get_y_parabole2;
-            } else if (level == "3") {
-                return get_y_parabole3;
-            } else if (level == "4") {
-                return get_y_parabole4;
-            } else if (level == "5") {
-                return get_y_parabole5;
-            } else if (level == "6") {
-                return get_y_parabole6;
-            }
-        } else if (trend_type == "3") {
-            return get_y_exponent;
-        } else if (trend_type == "4") {
-            return get_y_stepennaya;
-        }
-    }
-
     function showLine(input, which) {
         replaceIfExist(data, name, which);
         let value = input.value;
@@ -774,26 +750,70 @@ function addOn2DOptimisationParamsListeners(chart_div, data, name) {
     }
 }
 
+function getFunction(trend_type, level) {
+    if (trend_type == "0") {
+        return get_y_linear;
+    } else if (trend_type == "1") {
+        return get_y_hyperbole;
+    } else if (trend_type == "2") {
+        if (level == "2") {
+            return get_y_parabole2;
+        } else if (level == "3") {
+            return get_y_parabole3;
+        } else if (level == "4") {
+            return get_y_parabole4;
+        } else if (level == "5") {
+            return get_y_parabole5;
+        } else if (level == "6") {
+            return get_y_parabole6;
+        }
+    } else if (trend_type == "3") {
+        return get_y_exponent;
+    } else if (trend_type == "4") {
+        return get_y_stepennaya;
+    }
+}
+
 function addOn2DImitationListeners(chart_div, data, name) {
     let imitation_div = chart_div.querySelector(".imitation_div");
     let imitation_table = imitation_div.querySelector(".imitation_table");
-    let rows = imitation_table.querySelectorAll("tr");
-    let x_name = imitation_table.querySelector(".x_name");
-    let y_name = imitation_table.querySelector(".y_name");
+    /*let right_context_menu = document.createElement("ul");
+    right_context_menu.className = "right_context_menu";
+    right_context_menu.innerHTML = right_context_menu_template.innerHTML;
+    imitation_table.append(right_context_menu);*/
     let right_context_menu = chart_div.querySelector(".right_context_menu");
     let r_col = right_context_menu.querySelector(".r_col");
     let r_delete_col = right_context_menu.querySelector(".r_delete_col");
-    let col = 0;
-    imitation_table.oncontextmenu = function(e) {
+    let col = 0, tds, row_length;
+    let imitation_params = getImitationParams(data, name);
+    if (!imitation_params) {
+        imitation_table.innerHTML = "";
+        let tr = newTr();
+        tr.innerHTML = "<td class=\"x_name\" tabindex=\"0\">&nbsp;</td>";
+        imitation_table.append(tr);
+        tr = newTr();
+        tr.innerHTML = "<td class=\"y_name\" tabindex=\"0\">&nbsp;</td>";
+        imitation_table.append(tr);
+        let x_name = imitation_table.querySelector(".x_name");
+        let y_name = imitation_table.querySelector(".y_name");
+        let data_index = dataIndex(data, name);
+        x_name.innerHTML = data[data_index]["x_name"];
+        y_name.innerHTML = data[data_index]["y_name"];
+    } else {
+        console.log(imitation_params.inner);
+        imitation_table.innerHTML = imitation_params.inner;
+    }
+    let rows = imitation_table.querySelectorAll("tr");
+    imitation_table.oncontextmenu = function (e) {
+        let right_context_menus = document.querySelectorAll(".right_context_menu");
+        for(let k = 0; k < right_context_menus.length; k++) {
+            right_context_menus[k].classList.remove("active");
+        }
         if (e.target.nodeName == "TD") {
-            let tds = imitation_table.querySelectorAll("td");
-            let row_length = rows[0].querySelectorAll("td").length;
-            let selected_index = arrayIndex(tds, e.target);
-            col = getCol(selected_index, row_length);
             e.preventDefault();
             let x = e.clientX;
             let y = e.clientY;
-            if(col == 0) {
+            if (col == 0) {
                 r_delete_col.style.display = "none";
             } else {
                 r_delete_col.style.display = "block";
@@ -809,26 +829,105 @@ function addOn2DImitationListeners(chart_div, data, name) {
             right_context_menu.style.left = (x + 2) + "px";
         }
     }
-    document.documentElement.onclick = function(e) {
+    document.documentElement.onclick = function (e) {
         right_context_menu.classList.remove("active");
     }
-    r_col.onclick = function(e) {
-        addTd(rows[0]);
-        addTd(rows[1]);
+    r_col.onclick = function (e) {
+        addTd(rows[0], rows[0].querySelectorAll("td")[col], true);
+        addTd(rows[1], rows[1].querySelectorAll("td")[col]);
+        saveInner();
     }
-    r_delete_col.onclick = function(e) {
-        console.log("col " + col);
+    r_delete_col.onclick = function (e) {
+        rows[0].querySelectorAll("td")[col].remove();
+        rows[1].querySelectorAll("td")[col].remove();
+        saveInner();
+    }
+
+    imitation_table.oninput = onInput;
+
+    imitation_table.onmousedown = function (e) {
+        if (e.target.nodeName == "TD") {
+            let selected_td = e.target;
+            selected_td.classList.add("active");
+            selected_td.onblur = function (e) {
+                e.target.classList.remove("active");
+            }
+            tds = imitation_table.querySelectorAll("td");
+            row_length = rows[0].querySelectorAll("td").length;
+            let selected_index = arrayIndex(tds, e.target);
+            col = getCol(selected_index, row_length);
+        }
+    }
+
+    function getImitationParams(data, name) {
+        let data_index = dataIndex(data, name, "normal");
+        if (data_index == -1) return false;
+        if (data[data_index]["imitation"] == null) return false;
+        return data[data_index]["imitation"];
+    }
+
+    function onInput(e) {
+        let data_index = dataIndex(data, name, "normal");
+        if (isNaN(parseFloat(+e.target.innerHTML))) {
+            e.target.classList.add("error");
+            rows[1].querySelectorAll("td")[col].innerHTML = "";
+            e.target.onblur = function () {
+                e.target.innerHTML = "";
+                e.target.classList.remove("error");
+                e.target.classList.remove("active");
+                saveInner();
+            }
+            e.target.onmousedown = function () {
+                e.target.innerHTML = "";
+                e.target.classList.remove("error");
+                e.target.classList.add("active");
+            }
+        } else {
+            e.target.classList.remove("error");
+            e.target.onblur = function () {
+                e.target.classList.remove("active");
+                saveInner();
+            }
+            let coef = data[data_index]["trend"]["coef"];
+            let trend_type = data[data_index]["trend"]["trend_type"];
+            let level = data[data_index]["trend"]["level"];
+            let result = calculate(trend_type, level, coef, e.target.innerHTML);
+            rows[1].querySelectorAll("td")[col].innerHTML = isNaN(result) ? "" : result.toFixed(4);
+        }
+    }
+
+    function saveInner() {
+        let tds = imitation_table.querySelectorAll("td");
+        for(let k = 0; k < tds.length; k++) {
+            tds[k].classList.remove("error");
+            tds[k].classList.remove("active");
+        }
+        let data_index = dataIndex(data, name, "normal");
+        let imitation = {
+            inner: imitation_table.innerHTML
+        }
+        data[data_index]["imitation"] = imitation;
+    }
+
+    function calculate(trend_type, level, coef, value) {
+        return getFunction(trend_type, level)(coef, parseFloat(value));
     }
 
     function getCol(i, row_length) {
-        return [i % row_length];
+        return i % row_length;
     }
 
-    function addTd(tr) {
+    function addTd(row, cell, editable = false) {
         let td = newTd();
-        td.setAttribute("contenteditable", "true");
-        tr.append(td);
+        if (editable) {
+            td.setAttribute("contenteditable", "true");
+        } else {
+            td.setAttribute("tabindex", "0");
+        }
+        row.insertBefore(td, cell.nextSibling);
     }
+
+    function newTr() { return document.createElement("tr"); }
 
     function newTd() { return document.createElement("td"); }
 }
@@ -966,7 +1065,7 @@ function addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_name, y_name, 
     data.push(trace);
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, which, trend = null, optimisation = null) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, which, trend = null, optimisation = null, imitation = null) {
     let y_arr_sorted = [],
         year_arr_sorted = [];
     //сортировка по возрастанию х
@@ -995,7 +1094,8 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, x_name, y_name, color, 
         },
         which: which,
         trend: trend,
-        optimisation: optimisation
+        optimisation: optimisation,
+        imitation: imitation
     };
     data.push(trace);
     //console.log(data);

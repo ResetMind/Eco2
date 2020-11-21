@@ -284,23 +284,44 @@ header a:hover {
 
 .imitation_div {
     overflow: auto;
+    margin-bottom: 0.5vh;
 }
 
-.imitation_table td {
-    width: 95px;
+.imitation_table td, .imitation_table th {
+    min-width: 95px;
     max-width: 95px;
     position: relative;
 }
 
-.imitation_table td:focus:after {
-    content: '';
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
+.imitation_table td.active:after {
+	content: '';
+	position: absolute;
+	top: 0px;
+	right: 0px; 
+	bottom: 0px;    
+	left: 0px;
     border: 1px solid #6ead3a;
+    background: rgba(110, 173, 58, 0.1);
 }
+
+.imitation_table td.error:after {
+	content: '';
+	position: absolute;
+	top: 0px;
+	right: 0px; 
+	bottom: 0px;    
+	left: 0px;
+    border: 1px solid #ff0000;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+/*.imitation_table td:focus {
+    background: rgba(110, 173, 58, 0.1);
+}
+
+.imitation_table td.error:focus {
+    background: rgba(255, 0, 0, 0.1);
+}*/
 
 .right_context_menu{
     list-style: none;
