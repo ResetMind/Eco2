@@ -76,6 +76,7 @@ function setRightContextMenu() {
         let ref = table_body[selected_content_i].querySelectorAll("tr")[row];
         ref.parentNode.insertBefore(new_tr, ref);
         setTableEngine(selected_content_i);
+        console.log(tds[selected_td_i + ths.length]);
         tds[selected_td_i + ths.length].dispatchEvent(new Event("mousedown", { bubbles: true }));
         tds[selected_td_i + ths.length].dispatchEvent(new Event("mouseup", { bubbles: true }));
     }

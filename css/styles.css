@@ -147,6 +147,7 @@ table {
     border-collapse: collapse;
     table-layout: fixed;
     empty-cells: show;
+    outline: none;
 }
 
 table:focus {

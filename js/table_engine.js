@@ -29,6 +29,7 @@ window.onload = function() {
 function setTableEngine(n) {
     tds = table_body[n].querySelectorAll("td");
     ths = table_header[n].querySelectorAll("th");
+    console.log("setTableEngine");
     /*перемещение фиксированной шапки вместе со скроллом таблицы*/
     content[n].onscroll = function() {
         table_header[n].style.left = (-content[n].scrollLeft + vert_stub_left.getBoundingClientRect().width) + "px";

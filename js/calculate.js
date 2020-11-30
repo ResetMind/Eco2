@@ -87,7 +87,7 @@ function addChartDiv(type) {
         let trends_3d = document.createElement("div");
         trends_3d.className = "trends_3d";
         trends_3d.innerHTML = trends_3d_template.innerHTML;
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_3d, plotly_num, type);
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_3d, null, plotly_num, type);
     }
 
 }
