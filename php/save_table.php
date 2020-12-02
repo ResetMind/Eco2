@@ -24,6 +24,7 @@ echoJSON();
 function saveTable()
 {
     global $link, $bd_e, $info, $email;
+    mysqli_query($link, "SET NAMES 'utf8mb4'");
     $data = file_get_contents('php://input');
     $data = json_decode($data, true);
     $info[] = $data;
