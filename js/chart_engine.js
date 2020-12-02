@@ -164,10 +164,12 @@ function deleteChartRestangle(chart_div, chart_restangle, data, name, type) {
     }
     chart_restangle.remove();
     let data_index = dataIndex(data, name);
-    let color = data[data_index]["line"]["color"];
-    let color_index = arrayIndex(colors, color);
-    colors.push(...colors.splice(color_index, 1));
-    console.log(colors);
+    if(type == "0") {
+        let color = data[data_index]["line"]["color"];
+        let color_index = arrayIndex(colors, color);
+        colors.push(...colors.splice(color_index, 1));
+        //console.log(colors);
+    }
     if (data_index != -1) {
         data.splice(dataIndex(data, name), 1);
     }

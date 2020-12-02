@@ -94,6 +94,7 @@ header a:hover {
 .chart_container {
     height: auto;
     overflow: auto;
+
 }
 
 .add_chart_button {
@@ -128,8 +129,10 @@ header a:hover {
 
 .plotly_div {
     background: rgba(110, 173, 58, 0.1);
-    margin: 0 0 0.5vh 0;
-    height: 40vh;
+    margin: 0 auto;
+    margin-bottom: 0.5vh;
+    width: 1000px;
+    height: 500px;
     overflow: auto;
 }
 
@@ -211,8 +214,8 @@ header a:hover {
     display: flex;
     flex-direction: column;
     /*background: #005eac;*/
-    flex-basis: auto;
-    max-height: 40vh;
+    width: auto;
+    height: 300px;
     overflow: auto;
     margin: 0.5vh 0 0.5vh 0.5vh;
 }
@@ -220,8 +223,9 @@ header a:hover {
 .chart_stuff {
     display: flex;
     flex-direction: column;
+    flex: auto;
     /*background: #00ac87;*/
-    max-height: 40vh;
+    height: 300px;
     overflow: auto;
     margin: 0.5vh;
 }
