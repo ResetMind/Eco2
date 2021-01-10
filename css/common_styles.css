@@ -1,0 +1,49 @@
+@font-face {
+    font-family: "OpenSans-Regular";
+    src: url("fonts/OpenSans-Regular.ttf") format("truetype");
+}
+
+:root {
+    --color-primary: #222022;
+}
+
+@media (min-width: 1920px) {
+    html {
+        font-size: calc(16px + (32 - 16) * ((100vw - 1920px) / (3840 - 1920)));
+    }
+}
+
+@media (max-width: 1920px) {
+    html {
+        font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+    }
+}
+
+body {
+    background: var(--color-primary);
+    height: 100%;
+    margin: 0;
+    font-family: "OpenSans-Regular";
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    background: #63ad3a;
+    font-size: 1rem;
+    
+}
+
+.wrapper {
+    background: #ada53a;
+    flex: 1;
+    overflow: auto;
+}
+
+footer {
+    
+}
