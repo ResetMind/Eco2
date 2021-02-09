@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Регистрация - Экопрогноз</title>
     <link rel="stylesheet" href="css/common_styles.css" />
+    <link rel="stylesheet" href="css/auth_styles.css" />
+    <link rel="stylesheet" href="css/registration_styles.css" />
     <!--<link rel="stylesheet" href="css/styles_auth.css" />-->
 </head>
 
@@ -13,67 +15,42 @@
     <div class="preloader"></div>
     <div class="container">
         <header>
-            <a href="login.html">Вход</a>
-            <span>Экопрогноз</span>
+            <ul class="navigation">
+                <li><a class="link" href="login.html">Вход</a>
+                <li><a class="link" href="login.html">Вsход</a>
+            </ul>
+            <span class="app_name">Экопрогноз</span>
         </header>
         <div class="wrapper registration">
-            <!--<div class="registration_content">
-                <div class="loader"></div>
-                <span class="auth_span">Регистрация</span>
-                <form name="registration_form" class="registration_form" action="php/reg.php" method="POST" novalidate>
-                    <span class="bd_e">Qwerty</span>
-                    <span class="send_email_e">Qwerty</span>
-                    <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                    <span class="email_e">Qwerty</span>
-                    <input type="text" name="name" class="name" placeholder="Имя Фамилия">
-                    <span class="name_e">Qwerty</span>
-                    <input type="password" name="password1" class="password1" placeholder="Придумайте пароль">
-                    <span class="password1_e">Qwerty</span>
-                    <input type="password" name="password2" class="password2" placeholder="Повторите пароль">
-                    <span class="password2_e">Qwerty</span>
+            <div></div>
+            <div class="registration_content auth_content">
+                <span class="reg_label auth_label">Регистрация</span>
+                <form name="registration_form" class="registration_form auth_form" action="php/reg.php" method="POST" novalidate>
+                    <span class="bd_e send_email_e auth_error">bd_e send_email_e</span>
+                    <input type="email" name="email" class="email" placeholder="Ваш e-mail" size="35">
+                    <span class="email_e auth_error">email_e</span>
+                    <input type="text" name="name" class="name" placeholder="Имя Фамилия" size="35">
+                    <span class="name_e auth_error">name_e</span>
+                    <input type="password" name="password1" class="password1" placeholder="Придумайте пароль" size="35">
+                    <span class="password1_e auth_error">password1_e</span>
+                    <input type="password" name="password2" class="password2" placeholder="Повторите пароль" size="35">
+                    <span class="password2_e auth_error">password2_e</span>
                     <input type="submit" name="reg_button" class="reg_button" value="Зарегистрироваться">
                 </form>
-            </div>-->
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-            989898
-            989898
-            989898
-            989898
-            989898
-            989898989898
-
+            </div>
+            <div></div>
         </div>
         <footer>
-            989898
+            <!--<ul class="tabs">
+                <li><input type="radio" name="rad" value="1" id="tab_1" checked>
+                    <label for="tab_1">Факторы погоды</label>
+                <li><input type="radio" name="rad" value="2" id="tab_2">
+                    <label for="tab_2">Поля</label>
+                <li><input type="radio" name="rad" value="3" id="tab_3">
+                    <label for="tab_3">Культуры</label>
+            </ul>-->
+            <span class="app_info">© Андрей Макаров, 2021</span>
+            <span class="app_info"></span>
         </footer>
     </div>
     <script src="js/styles.js" defer></script>

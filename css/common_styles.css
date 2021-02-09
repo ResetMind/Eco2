@@ -1,10 +1,23 @@
 @font-face {
-    font-family: "OpenSans-Regular";
+    font-family: "OpenSans_Regular";
     src: url("fonts/OpenSans-Regular.ttf") format("truetype");
 }
 
+@font-face {
+    font-family: "OpenSans_SemiBold";
+    src: url("fonts/OpenSans-SemiBold.ttf") format("truetype");
+}
+
 :root {
-    --color-primary: #222022;
+    --color_primary: #43a047;
+    --color_primary_dark: #37853a;
+    --color_bg: #f2f2f2;
+    --color_secondary: #ffffff;
+    --color_secondary_dark: #e4e6e8;
+    --color_text_dark_on_secondary: #0a0a0a;
+    --color_text_light_on_secondary: #838b96;
+    --color_text_light_on_secondary_dark: #71787d;
+    --color_error: #ff0000;
 }
 
 @media (min-width: 1920px) {
@@ -20,10 +33,9 @@
 }
 
 body {
-    background: var(--color-primary);
     height: 100%;
     margin: 0;
-    font-family: "OpenSans-Regular";
+    font-family: "OpenSans_Regular";
 }
 
 .container {
@@ -32,18 +44,105 @@ body {
     height: 100vh;
 }
 
-header {
-    background: #63ad3a;
+header,
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: 1rem;
-    
+    font-family: "OpenSans_Regular";
+    height: 2rem;
+    background: var(--color_primary);
+}
+
+header span.app_name {
+    font-family: "OpenSans_SemiBold";
+    color: var(--color_secondary);
+}
+
+header span.app_name,
+footer span.app_info {
+    padding-left: 0.5rem;
+}
+
+header span:last-child, footer span:last-child {
+    padding-right: 0.5rem;
+}
+
+header ul.navigation,
+footer ul.tabs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+header ul.navigation li,
+footer ul.tabs li {
+    display: inline-block;
+    margin: 0;
+}
+
+header ul.navigation li>*,
+footer ul.tabs li>* {
+    padding-left: 0.5rem;
+}
+
+footer ul.tabs {
+    height: inherit;
+}
+
+footer ul.tabs li {
+    height: inherit;
+}
+
+footer ul.tabs li>*:not(:first-child) {
+    padding-right: 0.5rem;
+}
+
+footer ul.tabs li>input {
+    display: none;
+}
+
+footer ul.tabs li>label {
+    display: flex;
+    height: inherit;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color_secondary);
+    transition-duration: 0.3s;
+}
+
+footer li>input:checked+label {
+    background: var(--color_primary_dark);
+    transition-duration: 0.3s;
+}
+
+footer span.app_info {
+    color: var(--color_secondary);
+    font-family: "OpenSans_Regular";
+    opacity: 0.85;
+    font-size: 0.75rem;
+}
+
+a {
+    color: var(--color_secondary);
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+a:hover {
+    cursor: pointer;
+    opacity: 0.85;
+    transition: 0.3s;
 }
 
 .wrapper {
-    background: #ada53a;
+    background: var(--color_bg);
     flex: 1;
     overflow: auto;
+    color: var(--color_text_dark_on_secondary);
 }
 
-footer {
-    
+input::placeholder {
+    color: var(--color_text_light_on_secondary);
 }
