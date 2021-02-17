@@ -5,30 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Экопрогноз</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/styles_home.css" />
+    <link rel="stylesheet" href="css/common_styles.css" />
 </head>
 
-<header>
-    <ul>
-        <li><a>Файл</a>
-            <ul>
-                <li><a class="save_button">Сохранить</a></li>
-                <li><a>HZ</a></li>
-                <li><a>HZ</a></li>
-            </ul>
-        </li>
-        <li><a href="calculate.html">Расчет</a></li>
-        <li><a href="settings.html">Настройки</a></li>
-        <span>Экопрогноз</span>
-    </ul>
-</header>
-
 <body>
-    <div class="preloader">
-        <span class="bd_e_preloader">Qwerty</span>
+    <!--<div class="preloader">
+        <span class="bd_e">bd_e</span>
+    </div>-->
+    <div class="container">
+        <header>
+            <ul class="navigation">
+                <li><a class="dropdown_button">Файл</a>
+                    <ul class="dropdown_content">
+                        <li><a>Сохранить</a></li>
+                        <li><a>Экспорт</a></li>
+                        <li><a>Импорт</a></li>
+                    </ul>
+                <li><a href="calculate.html">Расчет</a>
+                <li><a href="settings.html">Настройки</a>
+            </ul>
+            <span class="app_name">Экопрогноз</span>
+        </header>
+        <div class="wrapper home">
+
+        </div>
+        <footer>
+            <ul class="tabs">
+                <li><input type="radio" name="rad" value="1" id="tab_1" checked>
+                    <label for="tab_1">Факторы погоды</label>
+                <li><input type="radio" name="rad" value="2" id="tab_2">
+                    <label for="tab_2">Поля</label>
+                <li><input type="radio" name="rad" value="3" id="tab_3">
+                    <label for="tab_3">Культуры</label>
+            </ul>
+        </footer>
     </div>
-    <div class="fast"></div>
+    <!--<div class="fast"></div>
     <div class="slow"></div>
     <div class="horiz_stub_up"></div>
     <div class="horiz_stub_bottom"></div>
@@ -147,18 +159,18 @@
         <label for="tab_3">Культуры</label>
         <span class="span_footer">888</span>
     </div>
-</footer>
+</footer>-->
 
-<script src="js/ajax.js" defer></script>
-<script src="js/animation.js" defer></script>
-<script src="js/form_checkers.js" defer></script>
-<script src="js/home.js" defer></script>
-<script src="js/clipboard.min.js"></script>
-<script src="js/table_engine.js" defer></script>
-<script src="js/clipboard_engine.js" defer></script>
-<script src="js/context_engine.js" defer></script>
-<script src="js/input_engine.js" defer></script>
-<script src="js/history_engine.js" defer></script>
-<script src="js/map.js" defer></script>
+    <script src="js/ajax.js" defer></script>
+    <script src="js/animation.js" defer></script>
+    <script src="js/form_checkers.js" defer></script>
+    <script src="js/home.js" defer></script>
+    <script src="js/clipboard.min.js"></script>
+    <script src="js/table_engine.js" defer></script>
+    <script src="js/clipboard_engine.js" defer></script>
+    <script src="js/context_engine.js" defer></script>
+    <script src="js/input_engine.js" defer></script>
+    <script src="js/history_engine.js" defer></script>
+    <script src="js/map.js" defer></script>
 
 </html>

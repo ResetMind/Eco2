@@ -18,7 +18,7 @@
     --color_text_dark_on_secondary: #0a0a0a;
     --color_text_light_on_secondary: #838b96;
     --color_text_light_on_secondary_dark: #72797f;
-    --color_error: #ff0000;
+    --color_error: #db4139;
 }
 
 @media (min-width: 1920px) {
@@ -39,6 +39,27 @@ body {
     font-family: "OpenSans_Regular";
 }
 
+.preloader {
+    background: var(--color_bg);
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99999;
+}
+
+.preloader .bd_e {
+    color: var(--color_error);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 0;
+    opacity: 0;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -48,12 +69,15 @@ body {
 header,
 footer {
     display: flex;
+    position: relative;
     justify-content: space-between;
     align-items: center;
     font-size: 1rem;
     font-family: "OpenSans_Regular";
     height: 2rem;
+    line-height: 2rem;
     background: var(--color_primary);
+    z-index: 2;
 }
 
 header span.app_name {
@@ -70,37 +94,34 @@ header span:last-child, footer span:last-child {
     padding-right: 0.5rem;
 }
 
-header ul.navigation,
-footer ul.tabs {
+ul {
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
-header ul.navigation li,
-footer ul.tabs li {
+header ul.navigation > li,
+footer ul.tabs > li {
     display: inline-block;
-    margin: 0;
 }
 
-header ul.navigation li>*,
-footer ul.tabs li>* {
+header ul.navigation > li > *,
+footer ul.tabs > li > * {
     padding-left: 0.5rem;
 }
 
-footer ul.tabs {
-    height: inherit;
-}
-
-footer ul.tabs li {
-    height: inherit;
-}
-
-footer ul.tabs li>*:not(:first-child) {
+header ul.navigation ul {
+    display: none;
+    position: absolute;
+    background: var(--color_primary);
     padding-right: 0.5rem;
 }
 
-footer ul.tabs li>input {
+footer ul.tabs li > *:not(:first-child) {
+    padding-right: 0.5rem;
+}
+
+footer ul.tabs li > input {
     display: none;
 }
 
