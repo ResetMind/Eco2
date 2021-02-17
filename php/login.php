@@ -71,7 +71,7 @@ function findUser()
             $bd_e[] = "Ошибка выполнения запроса к БД";
             return false;
         } else {
-            setcookie("token", $token, time() + (60/* * 60 * 24 * 7*/));
+            setcookie("token", $token, time() + (60 * 60 * 24 * 7));
         }
     } else {
         $sqlreq = "UPDATE users SET token=null WHERE email='$email'";

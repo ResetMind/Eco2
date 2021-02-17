@@ -12,25 +12,31 @@
     padding: 0.5rem 0;
 }
 
+.info_span {
+    text-align: center;
+    margin-bottom: 1rem;
+    display: none;
+}
+
 .auth_form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.auth_form input {
-    background: var(--color_secondary);
-    color: var(--color_text_dark_on_secondary);
+.auth_form label, .auth_form a {
     margin-top: 0.25rem;
-    padding: 0.25rem;
-    font-family: "OpenSans_Regular";
-    font-size: 1rem;
-    border: 0.05rem solid var(--color_secondary_dark);
-    border-radius: 0px;
-    outline: none;
 }
 
-span.auth_label {
+.auth_form label {
+    align-self: flex-start;
+}
+
+.auth_form a:hover {
+    color: var(--color_text_light_on_secondary_dark);
+}
+
+span.auth_span {
     font-family: "OpenSans_Regular";
     font-size: 1.25rem;
     margin-bottom: 1rem;

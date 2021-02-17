@@ -7,7 +7,6 @@
     <title>Регистрация - Экопрогноз</title>
     <link rel="stylesheet" href="css/common_styles.css" />
     <link rel="stylesheet" href="css/auth_styles.css" />
-    <link rel="stylesheet" href="css/registration_styles.css" />
     <!--<link rel="stylesheet" href="css/styles_auth.css" />-->
 </head>
 
@@ -17,19 +16,18 @@
         <header>
             <ul class="navigation">
                 <li><a class="link" href="login.html">Вход</a>
-                <li><a class="link" href="login.html">Вsход</a>
             </ul>
             <span class="app_name">Экопрогноз</span>
         </header>
         <div class="wrapper registration">
             <div></div>
             <div class="registration_content auth_content">
-                <span class="reg_label auth_label">Регистрация</span>
+                <span class="reg_span auth_span">Регистрация</span>
                 <form name="registration_form" class="registration_form auth_form" action="php/reg.php" method="POST" novalidate>
                     <span class="bd_e send_email_e auth_error">bd_e send_email_e</span>
-                    <input type="email" name="email" class="email" placeholder="Ваш e-mail" size="35">
+                    <input type="email" name="email" class="email" placeholder="Ваш e-mail" size="35" spellcheck="false">
                     <span class="email_e auth_error">email_e</span>
-                    <input type="text" name="name" class="name" placeholder="Имя Фамилия" size="35">
+                    <input type="text" name="name" class="name" placeholder="Имя Фамилия" size="35" spellcheck="false">
                     <span class="name_e auth_error">name_e</span>
                     <input type="password" name="password1" class="password1" placeholder="Придумайте пароль" size="35">
                     <span class="password1_e auth_error">password1_e</span>

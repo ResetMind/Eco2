@@ -11,12 +11,13 @@
 :root {
     --color_primary: #43a047;
     --color_primary_dark: #37853a;
+    --color_primary_light: #43a04880;
     --color_bg: #f2f2f2;
     --color_secondary: #ffffff;
     --color_secondary_dark: #e4e6e8;
     --color_text_dark_on_secondary: #0a0a0a;
     --color_text_light_on_secondary: #838b96;
-    --color_text_light_on_secondary_dark: #71787d;
+    --color_text_light_on_secondary_dark: #72797f;
     --color_error: #ff0000;
 }
 
@@ -125,15 +126,21 @@ footer span.app_info {
 }
 
 a {
-    color: var(--color_secondary);
     text-decoration: none;
     transition: 0.3s;
 }
 
+header a, footer a {
+    color: var(--color_secondary);
+}
+
 a:hover {
     cursor: pointer;
-    opacity: 0.85;
     transition: 0.3s;
+}
+
+header a:hover, footer a:hover {
+    opacity: 0.85;
 }
 
 .wrapper {
@@ -143,6 +150,69 @@ a:hover {
     color: var(--color_text_dark_on_secondary);
 }
 
+input {
+    background: var(--color_secondary);
+    color: var(--color_text_dark_on_secondary);
+    margin-top: 0.25rem;
+    padding: 0.25rem;
+    font-family: "OpenSans_Regular";
+    font-size: 1rem;
+    border: 0.1rem solid var(--color_secondary_dark);
+    border-radius: 0px;
+    outline: none;
+    transition: 0.3s;
+}
+
 input::placeholder {
     color: var(--color_text_light_on_secondary);
+}
+
+input:hover, input[type="checkbox"]:not(:disabled):not(:checked)+label:hover::before {
+    border-color: var(--color_primary_light);
+    transition: 0.3s;
+}
+
+input:not([type="submit"]):focus, input:active {
+    border-color: var(--color_primary);
+    transition: 0.3s;
+}
+
+input[type="submit"]:hover, input[type="checkbox"]+label:hover {
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
+
+input[type="checkbox"]+label {
+    display: inline-flex;
+    align-items: center;
+    user-select: none;
+    line-height: 1rem;
+}
+
+input[type="checkbox"]+label::before {
+    content: "";
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 0.1rem solid var(--color_secondary_dark);
+    background: var(--color_secondary);
+    margin-right: 0.25rem;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 50%;
+    transition: 0.3s;
+}
+
+input[type="checkbox"]:checked+label::before {
+    border-color: var(--color_primary);
+    background-color: var(--color_primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26 2.974 7.25 8 2.193z'/%3e%3c/svg%3e");
+    transition: 0.3s;
 }

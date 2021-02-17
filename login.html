@@ -5,43 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход - Экопрогноз</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/styles_auth.css" />
+    <link rel="stylesheet" href="css/common_styles.css" />
+    <link rel="stylesheet" href="css/auth_styles.css" />
 </head>
-
-<header>
-    <a href="registration.html">Регистрация</a>
-    <span>Экопрогноз</span>
-</header>
 
 <body>
     <div class="preloader"></div>
-    <div class="login">
-        <div class="login_content">
-            <span class="forgot_span">Подтвердите смену пароля: на ваш e-mail отправлено письмо с инструкцией<br></span>
-            <span class="ver_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной
-                ссылкой<br></span>
-            <span class="access_span">Войдите для доступа к запрашиваемой странице<br></span>
-            <span class="auth_span">Вход</span>
-            <form name="login_form" class="login_form" action="php/login.php" method="POST" novalidate>
-                <span class="bd_e">Qwerty</span>
-                <span class="send_email_e">Qwerty</span>
-                <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                <span class="email_e">Qwerty</span>
-                <input type="password" name="password" class="password" placeholder="Ваш пароль">
-                <span class="password_e">Qwerty</span>
-                <div class="remember_me_div">
+    <div class="container">
+        <header>
+            <ul class="navigation">
+                <li><a class="link" href="registration.html">Регистрация</a>
+            </ul>
+            <span class="app_name">Экопрогноз</span>
+        </header>
+        <div class="wrapper login">
+            <div></div>
+            <div class="login_content auth_content">
+                <span class="forgot_span info_span">Подтвердите смену пароля: на ваш e-mail отправлено письмо с
+                    инструкцией</span>
+                <span class="ver_span info_span">Подтвердите регистрацию: на ваш e-mail отправлено письмо с регистрационной
+                    ссылкой</span>
+                <span class="access_span info_span">Войдите для доступа к запрашиваемой странице</span>
+                <span class="login_span auth_span">Вход</span>
+                <form name="login_form" class="login_form auth_form" action="php/login.php" method="POST" novalidate>
+                    <span class="bd_e send_email_e auth_error">bd_e send_email_e</span>
+                    <input type="email" name="email" class="email" placeholder="Ваш e-mail" size="35"
+                        spellcheck="false">
+                    <span class="email_e auth_error">email_e</span>
+                    <input type="password" name="password" class="password" placeholder="Ваш пароль" size="35">
+                    <span class="password_e auth_error">password_e</span>
                     <input type="checkbox" id="remember_me_checkbox" class="remember_me_checkbox"
                         name="remember_me_checkbox">
                     <label for="remember_me_checkbox">Запомнить меня</label>
-                </div>
-                <input type="submit" name="log_button" class="log_button" value="Войти">
-            </form>
-            <div class="forgot_div">
-                <a class="forgot">Забыли пароль?</a>
+                    <input type="submit" name="log_button" class="log_button" value="Войти">
+                    <a class="forgot">Забыли пароль?</a>
+                </form>
             </div>
+            <div></div>
         </div>
+        <footer>
+            <span class="app_info">© Андрей Макаров, 2021</span>
+            <span class="app_info"></span>
+        </footer>
     </div>
+
     <script src="js/ajax.js" defer></script>
     <script src="js/animation.js" defer></script>
     <script src="js/form_checkers.js" defer></script>
