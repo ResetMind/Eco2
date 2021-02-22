@@ -1,0 +1,38 @@
+div.home {
+    flex-direction: column;
+    display: none;
+}
+
+.home:first-of-type {
+    display: flex;
+}
+
+div.table_header, 
+div.table_body {
+}
+
+div.table_header {
+    margin: 0.25rem 0.25rem 0 0.25rem;
+}
+
+table.table_header {
+   position: fixed;
+}
+
+div.table_body {
+    margin: 0 0.25rem 0.25rem 0.25rem;
+    overflow: auto;
+    flex: 1;
+}
+
+table.table_body {
+
+}
+
+.empty_table {
+    opacity: 0;
+}
+
+.empty_table th {
+    border-bottom-style: none;
+}

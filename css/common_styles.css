@@ -240,16 +240,13 @@ input[type="checkbox"]:checked+label::before {
     transition: 0.3s;
 }
 
-div.table_header {
-    position: fixed;
-}
-
 table {
     table-layout: fixed;
     border-collapse: collapse;
     width: max-content;
     empty-cells: show;
     outline: none;
+    background-clip: padding-box;
 }
 
 th, td {
@@ -259,4 +256,8 @@ th, td {
     outline: none;
     overflow: hidden;
     text-overflow: clip;
+}
+
+th {
+    background: var(--color_bg);
 }
