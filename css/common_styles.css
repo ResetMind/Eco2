@@ -258,6 +258,7 @@ th, td {
     outline: none;
     overflow: hidden;
     text-overflow: clip;
+    white-space: nowrap;
 }
 
 th {

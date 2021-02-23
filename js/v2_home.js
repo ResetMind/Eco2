@@ -3,6 +3,8 @@ let radios = document.querySelectorAll(".tabs input[type=\"radio\"]");
 let table = document.querySelectorAll("div.table");
 
 setTableEngine(table[0]);
+setTableEngine(table[1])
+setTableEngine(table[2])
 onRadioChange();
 
 function onRadioChange() {
