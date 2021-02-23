@@ -167,6 +167,8 @@ header a:hover, footer a:hover {
 
 .wrapper {
     background: var(--color_bg);
+    display: flex;
+    flex-direction: column;
     flex: 1;
     overflow: auto;
     color: var(--color_text_dark_on_secondary);
@@ -259,5 +261,7 @@ th, td {
 }
 
 th {
-    background: var(--color_bg);
+    background: var(--color_secondary_dark);
+    border-bottom-style: none;
+    font-weight: normal;
 }
