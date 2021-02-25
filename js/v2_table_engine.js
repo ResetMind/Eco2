@@ -1,24 +1,18 @@
-function setTableEngine(table) { // div.table
+function setTableEngine(table, start_pos, end_pos) { // div.table
     let table_body_wrapper = table.querySelector("div.table_body_wrapper");
     let table_body = table_body_wrapper.querySelector("table.table_body");
     let table_header = table.querySelector("table.table_header");
     let cells = getCellsArray();
     let cell_selection = table.querySelector(".cell_selection");
-    let start_pos, end_pos;
     table_body_wrapper.onscroll = function() {
         table_header.style.left = -table_body_wrapper.scrollLeft + "px";
-        console.log(start_pos);
-        console.log(end_pos);
     }
 
-    window.onresize = function() {
-        console.log(start_pos);
-        console.log(end_pos);
-        if(start_pos != undefined  && end_pos != undefined ) {
-            drawCellsRect(start_pos, end_pos);
-            console.log("resize");
+    new ResizeSensor(table_body_wrapper, function() {
+        if(start_pos && end_pos) {
+            drawCellsRect();
         }
-    }
+    });
 
     onCellSelect();
 
@@ -28,8 +22,8 @@ function setTableEngine(table) { // div.table
                 return false;
             }
             start_pos = getTwoDimArrayIndex(cells, e.target);
-            end_pos = start_pos;
-            drawCellsRect(start_pos, end_pos);
+            end_pos = getTwoDimArrayIndex(cells, e.target);
+            drawCellsRect();
             document.onmousemove = function(e) {
                 if (e.which == 3) {
                     return;
@@ -53,7 +47,7 @@ function setTableEngine(table) { // div.table
     function getCellsArray() {
         let cells = [];
         let rows = table_body.querySelectorAll("tr");
-        for(let i = 0; i < rows.length; i++) {
+        for (let i = 0; i < rows.length; i++) {
             cells.push(rows[i].querySelectorAll("td"));
         }
         return cells;

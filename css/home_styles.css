@@ -36,6 +36,11 @@ div.table_body_wrapper {
     overflow: auto;
     flex: 1;
     position: relative;
+    
+}
+
+div.table_body_wrapper, div.table_body_wrapper * {
+    
 }
 
 table.table_body {
