@@ -23,6 +23,17 @@ function setTableEngine(table) { // div.table
                 drawCellsRect();
             }
         }
+        if (e.code == "Enter" || e.code == "Escape" || e.code == "NumpadEnter") {
+            e.preventDefault();
+            if (start_pos) {
+                cells[start_pos[0]][start_pos[1]].blur();
+                //removeErrorTDS(selected_tds);
+                start_pos, end_pos = undefined;
+                document.getSelection().removeAllRanges();
+            }
+            removeCellsRect();
+            //closeAllContext();
+        }
     }
 
     onCellSelect();
@@ -61,30 +72,35 @@ function setTableEngine(table) { // div.table
                 table_header.onmousedown = null;
             }
         }
-    }
 
-    function getBorder(c, x) {
-        for (let k = 1; k < c.length; k++) {
-            if (Math.abs(x - c[k]) <= 2) {
-                return k;
+        function getBorder(c, x) {
+            for (let k = 1; k < c.length; k++) {
+                if (Math.abs(x - c[k]) <= 2) {
+                    return k;
+                }
             }
+            return -1;
         }
-        return -1;
-    }
-
-    function getBordersCoordinates() {
-        let c = [];
-        for (let k = 0; k < ths.length; k++) {
-            c.push(ths[k].getBoundingClientRect().left + table_body_wrapper.scrollLeft); //5, 100, 195 вне зависимости от горизонтального скрол
+    
+        function getBordersCoordinates() {
+            let c = [];
+            for (let k = 0; k < ths.length; k++) {
+                c.push(ths[k].getBoundingClientRect().left + table_body_wrapper.scrollLeft); //5, 100, 195 вне зависимости от горизонтального скрол
+            }
+            c.push(ths[ths.length - 1].getBoundingClientRect().left + ths[ths.length - 1].getBoundingClientRect().width + table_body_wrapper.scrollLeft);
+            return c;
         }
-        c.push(ths[ths.length - 1].getBoundingClientRect().left + ths[ths.length - 1].getBoundingClientRect().width + table_body_wrapper.scrollLeft);
-        return c;
     }
 
     function onCellSelect() {
         table_body.onmousedown = function(e) {
             if (e.which == 2 || e.target.nodeName != "TD") {
                 return false;
+            }
+            if(start_pos && end_pos && (start_pos != end_pos)) {
+                if (e.which == 3) {
+                    return false;
+                }
             }
             start_pos = getTwoDimArrayIndex(cells, e.target);
             end_pos = start_pos;
@@ -326,6 +342,10 @@ function setTableEngine(table) { // div.table
             cell_selection.style.height = end.getBoundingClientRect().top - start.getBoundingClientRect().top + end.getBoundingClientRect().height + "px";
             cell_selection.classList.add("active");
         }
+    }
+
+    function removeCellsRect() {
+        cell_selection.classList.remove("active");
     }
 
     function getCellsArray() {

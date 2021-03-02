@@ -91,7 +91,8 @@ footer span.app_info {
     padding-left: 0.5rem;
 }
 
-header span:last-child, footer span:last-child {
+header span:last-child,
+footer span:last-child {
     padding-right: 0.5rem;
 }
 
@@ -101,13 +102,13 @@ ul {
     padding: 0;
 }
 
-header ul.navigation > li,
-footer ul.tabs > li {
+header ul.navigation>li,
+footer ul.tabs>li {
     display: inline-block;
 }
 
-header ul.navigation > li > *,
-footer ul.tabs > li > * {
+header ul.navigation>li>*,
+footer ul.tabs>li>* {
     padding-left: 0.5rem;
 }
 
@@ -118,11 +119,11 @@ header ul.navigation ul {
     padding-right: 0.5rem;
 }
 
-footer ul.tabs li > *:not(:first-child) {
+footer ul.tabs li>*:not(:first-child) {
     padding-right: 0.5rem;
 }
 
-footer ul.tabs li > input {
+footer ul.tabs li>input {
     display: none;
 }
 
@@ -152,7 +153,8 @@ a {
     transition: 0.3s;
 }
 
-header a, footer a {
+header a,
+footer a {
     color: var(--color_secondary);
 }
 
@@ -161,7 +163,8 @@ a:hover {
     transition: 0.3s;
 }
 
-header a:hover, footer a:hover {
+header a:hover,
+footer a:hover {
     opacity: 0.85;
 }
 
@@ -192,17 +195,20 @@ input::placeholder {
     color: var(--color_text_light_on_secondary);
 }
 
-input:hover, input[type="checkbox"]:not(:disabled):not(:checked)+label:hover::before {
+input:hover,
+input[type="checkbox"]:not(:disabled):not(:checked)+label:hover::before {
     border-color: var(--color_primary_light);
     transition: 0.3s;
 }
 
-input:not([type="submit"]):focus, input:active {
+input:not([type="submit"]):focus,
+input:active {
     border-color: var(--color_primary);
     transition: 0.3s;
 }
 
-input[type="submit"]:hover, input[type="checkbox"]+label:hover {
+input[type="submit"]:hover,
+input[type="checkbox"]+label:hover {
     cursor: pointer;
 }
 
@@ -251,7 +257,8 @@ table {
     background-clip: padding-box;
 }
 
-th, td {
+th,
+td {
     width: 6rem;
     border: 0.1rem solid #d4d4d4;
     padding: 2px 5px;
@@ -265,4 +272,29 @@ th {
     background: var(--color_secondary_dark);
     border-bottom-style: none;
     font-weight: normal;
+}
+
+.context_menu {
+    position: absolute;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    display: none;
+    z-index: 3;
+}
+
+.context_menu.active {
+    display: block;
+}
+
+.context_menu li {
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    background: var(--color_secondary_dark);
+    transition: 0.3s;
+}
+
+.context_menu li:hover {
+    background: var(--color_bg);
+    transition: 0.3s;
+    cursor: pointer;
 }
