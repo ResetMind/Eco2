@@ -3,6 +3,7 @@ function setTableEngine(table) { // div.table
     let table_body = table_body_wrapper.querySelector("table.table_body");
     let table_header = table.querySelector("table.table_header");
     let cells = getCellsArray();
+    let ths = table_header.querySelectorAll("th");
     let cell_selection = table.querySelector(".cell_selection");
     let start_pos, end_pos;
     table_body_wrapper.onscroll = function() {
@@ -10,9 +11,8 @@ function setTableEngine(table) { // div.table
     }
 
     new ResizeSensor(table_body_wrapper, function() {
-        if (start_pos && end_pos) {
-            drawCellsRect();
-        }
+        drawCellsRect();
+        onColumnResise();
     });
 
     table_body.onkeydown = function(e) { //!!!!
@@ -26,6 +26,60 @@ function setTableEngine(table) { // div.table
     }
 
     onCellSelect();
+    onColumnResise();
+
+    function onColumnResise() {
+        let c = getBordersCoordinates();
+        table_header.onmousemove = function(e) {
+            let index = getBorder(c, e.clientX + table_body_wrapper.scrollLeft);
+            if (index != -1) {
+                table_header.style.cursor = "col-resize";
+                table_header.onmousedown = function(e) {
+                    let font_size = (getComputedStyle(document.documentElement).fontSize).replace("px", "");
+                    table_header.onmousemove = null;
+                    let start_x = e.clientX;
+                    let col_width = ths[index - 1].getBoundingClientRect().width - parseInt(getComputedStyle(ths[index - 1]).paddingLeft) * 2;
+                    document.documentElement.onmousemove = function(e) {
+                        document.getSelection().removeAllRanges();
+                        document.body.style.cursor = "col-resize";
+                        let new_col_width = (col_width + e.clientX - start_x) / font_size;
+                        if (new_col_width > 1) {
+                            ths[index - 1].style.width = new_col_width + "rem";
+                            cells[0][index - 1].style.width = new_col_width + "rem";
+                            drawCellsRect();
+                        }
+                    }
+                    document.documentElement.onmouseup = function() {
+                        document.body.style.cursor = "default";
+                        document.documentElement.onmousemove = null;
+                        table_header.onmousedown = null;
+                        onColumnResise();
+                    }
+                }
+            } else {
+                table_header.style.cursor = "default";
+                table_header.onmousedown = null;
+            }
+        }
+    }
+
+    function getBorder(c, x) {
+        for (let k = 1; k < c.length; k++) {
+            if (Math.abs(x - c[k]) <= 2) {
+                return k;
+            }
+        }
+        return -1;
+    }
+
+    function getBordersCoordinates() {
+        let c = [];
+        for (let k = 0; k < ths.length; k++) {
+            c.push(ths[k].getBoundingClientRect().left + table_body_wrapper.scrollLeft); //5, 100, 195 вне зависимости от горизонтального скрол
+        }
+        c.push(ths[ths.length - 1].getBoundingClientRect().left + ths[ths.length - 1].getBoundingClientRect().width + table_body_wrapper.scrollLeft);
+        return c;
+    }
 
     function onCellSelect() {
         table_body.onmousedown = function(e) {
@@ -66,8 +120,8 @@ function setTableEngine(table) { // div.table
             let table_height = table_body.getBoundingClientRect().height > table_body_wrapper.clientHeight ? table_body_wrapper.clientHeight : table_body.getBoundingClientRect().height;
             let table_bottom = table_body_wrapper.getBoundingClientRect().top + table_height;
             let table_top = table_body_wrapper.getBoundingClientRect().top;
-            console.log(table_right + " - table_right; " + table_left + " - table_left");
-            console.log(table_top + " - table_top; " + table_bottom + " - table_bottom");
+            /*console.log(table_right + " - table_right; " + table_left + " - table_left");
+            console.log(table_top + " - table_top; " + table_bottom + " - table_bottom");*/
             document.onmousemove = function(e) {
                 if (e.which == 3) {
                     return;
@@ -259,17 +313,19 @@ function setTableEngine(table) { // div.table
     }
 
     function drawCellsRect() {
-        let min_row = Math.min(start_pos[0], end_pos[0]);
-        let min_col = Math.min(start_pos[1], end_pos[1]);
-        let max_row = Math.max(start_pos[0], end_pos[0]);
-        let max_col = Math.max(start_pos[1], end_pos[1]);
-        let start = cells[min_row][min_col];
-        let end = cells[max_row][max_col];
-        cell_selection.style.top = start.getBoundingClientRect().top + table_body_wrapper.scrollTop - table_body_wrapper.getBoundingClientRect().top + "px";
-        cell_selection.style.left = start.getBoundingClientRect().left + table_body_wrapper.scrollLeft - table_body_wrapper.getBoundingClientRect().left + "px";
-        cell_selection.style.width = end.getBoundingClientRect().left - start.getBoundingClientRect().left + end.getBoundingClientRect().width + "px";
-        cell_selection.style.height = end.getBoundingClientRect().top - start.getBoundingClientRect().top + end.getBoundingClientRect().height + "px";
-        cell_selection.classList.add("active");
+        if (start_pos && end_pos) {
+            let min_row = Math.min(start_pos[0], end_pos[0]);
+            let min_col = Math.min(start_pos[1], end_pos[1]);
+            let max_row = Math.max(start_pos[0], end_pos[0]);
+            let max_col = Math.max(start_pos[1], end_pos[1]);
+            let start = cells[min_row][min_col];
+            let end = cells[max_row][max_col];
+            cell_selection.style.top = start.getBoundingClientRect().top + table_body_wrapper.scrollTop - table_body_wrapper.getBoundingClientRect().top + "px";
+            cell_selection.style.left = start.getBoundingClientRect().left + table_body_wrapper.scrollLeft - table_body_wrapper.getBoundingClientRect().left + "px";
+            cell_selection.style.width = end.getBoundingClientRect().left - start.getBoundingClientRect().left + end.getBoundingClientRect().width + "px";
+            cell_selection.style.height = end.getBoundingClientRect().top - start.getBoundingClientRect().top + end.getBoundingClientRect().height + "px";
+            cell_selection.classList.add("active");
+        }
     }
 
     function getCellsArray() {
