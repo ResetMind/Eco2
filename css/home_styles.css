@@ -53,17 +53,3 @@ table.table_body {
 .map {
     background: #444;
 }
-
-.cell_selection {
-    position: absolute;
-    display: none;
-    border: 0.1rem solid var(--color_primary);
-    box-sizing: border-box;
-    pointer-events: none;
-    z-index: 2;
-    
-}
-
-.cell_selection.active {
-    display: block;
-}

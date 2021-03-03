@@ -6,6 +6,7 @@ function setTableEngine(table) { // div.table
     let ths = table_header.querySelectorAll("th");
     let cell_selection = table.querySelector(".cell_selection");
     let start_pos, end_pos;
+    removeCellsRect();
     table_body_wrapper.onscroll = function() {
         table_header.style.left = -table_body_wrapper.scrollLeft + "px";
     }
@@ -20,6 +21,7 @@ function setTableEngine(table) { // div.table
             if (document.activeElement.nextElementSibling.nodeName == "TD") {
                 start_pos = getTwoDimArrayIndex(cells, document.activeElement.nextElementSibling);
                 end_pos = start_pos;
+                saveSelectedCells();
                 drawCellsRect();
             }
         }
@@ -28,7 +30,6 @@ function setTableEngine(table) { // div.table
             if (start_pos) {
                 cells[start_pos[0]][start_pos[1]].blur();
                 //removeErrorTDS(selected_tds);
-                start_pos, end_pos = undefined;
                 document.getSelection().removeAllRanges();
             }
             removeCellsRect();
@@ -81,7 +82,7 @@ function setTableEngine(table) { // div.table
             }
             return -1;
         }
-    
+
         function getBordersCoordinates() {
             let c = [];
             for (let k = 0; k < ths.length; k++) {
@@ -97,13 +98,14 @@ function setTableEngine(table) { // div.table
             if (e.which == 2 || e.target.nodeName != "TD") {
                 return false;
             }
-            if(start_pos && end_pos && (start_pos != end_pos)) {
-                if (e.which == 3) {
+            if (window.selected_cells) {
+                if (e.which == 3 && getTwoDimArrayIndex(window.selected_cells, e.target) != -1) {
                     return false;
                 }
             }
             start_pos = getTwoDimArrayIndex(cells, e.target);
             end_pos = start_pos;
+            saveSelectedCells();
             drawCellsRect();
             let slow_width = table_body_wrapper.offsetWidth - table_body_wrapper.clientWidth;
             let slow_height = table_body_wrapper.offsetHeight - table_body_wrapper.clientHeight;
@@ -146,10 +148,8 @@ function setTableEngine(table) { // div.table
                 if (e.target.nodeName == "TD" && getTwoDimArrayIndex(cells, e.target) != -1 && end_pos) {
                     if (e.target !== cells[end_pos[0]][end_pos[1]]) {
                         end_pos = getTwoDimArrayIndex(cells, e.target);
+                        saveSelectedCells();
                         drawCellsRect();
-                        if (cells[start_pos[0]][start_pos[1]] === document.activeElement) { //чтоб при множественном выделении каретка не мигала ff g
-                            cells[start_pos[0]][start_pos[1]].blur();
-                        }
                     }
                 }
                 let directions_clone = {};
@@ -266,6 +266,7 @@ function setTableEngine(table) { // div.table
                     if (cell.nodeName == "TD") {
                         end_pos = getTwoDimArrayIndex(cells, cell);
                         if (end_pos != -1) {
+                            saveSelectedCells();
                             drawCellsRect();
                         }
                     }
@@ -298,6 +299,7 @@ function setTableEngine(table) { // div.table
                     end_pos[0] = end_pos[0] >= cells.length ? cells.length - 1 : end_pos[0];
                     end_pos[1] = end_pos[1] >= cells[0].length ? cells[0].length - 1 : end_pos[1];
                     left = step_col * cells[end_pos[0]][end_pos[1]].getBoundingClientRect().width; //если ширинв колонок разная
+                    saveSelectedCells();
                     drawCellsRect();
                     table_body_wrapper.scrollBy({
                         top: top,
@@ -341,11 +343,17 @@ function setTableEngine(table) { // div.table
             cell_selection.style.width = end.getBoundingClientRect().left - start.getBoundingClientRect().left + end.getBoundingClientRect().width + "px";
             cell_selection.style.height = end.getBoundingClientRect().top - start.getBoundingClientRect().top + end.getBoundingClientRect().height + "px";
             cell_selection.classList.add("active");
+            window.active_cell_selection = cell_selection;
+            window.active_table_body = table_body;
+            window.active_table = table;
+            window.active_cells = cells;
         }
     }
 
     function removeCellsRect() {
         cell_selection.classList.remove("active");
+        start_pos, end_pos = undefined;
+        window.selected_cells = undefined;
     }
 
     function getCellsArray() {
@@ -366,5 +374,20 @@ function setTableEngine(table) { // div.table
             }
         }
         return -1;
+    }
+
+    function saveSelectedCells() {
+        let min_row = Math.min(start_pos[0], end_pos[0]);
+        let min_col = Math.min(start_pos[1], end_pos[1]);
+        let max_row = Math.max(start_pos[0], end_pos[0]);
+        let max_col = Math.max(start_pos[1], end_pos[1]);
+        window.selected_cells = [];
+        for (let i = min_row; i <= max_row; i++) {
+            let row = [];
+            for (let j = min_col; j <= max_col; j++) {
+                row.push(cells[i][j]);
+            }
+            window.selected_cells.push(row);
+        }
     }
 }

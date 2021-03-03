@@ -6,7 +6,9 @@ setTableEngine(table[0]);
 setTableEngine(table[1]);
 setTableEngine(table[2]);
 onRadioChange();
-setRightContextMenu();
+setRightContextMenu(table[0]);
+setRightContextMenu(table[1]);
+setRightContextMenu(table[2]);
 
 function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {

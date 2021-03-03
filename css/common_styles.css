@@ -12,6 +12,7 @@
     --color_primary: #43a047;
     --color_primary_dark: #37853a;
     --color_primary_light: #43a04880;
+    --color_primary_ultra-light: #43a04825;
     --color_bg: #f2f2f2;
     --color_secondary: #ffffff;
     --color_secondary_dark: #e4e6e8;
@@ -20,6 +21,7 @@
     --color_text_light_on_secondary_dark: #72797f;
     --color_border: #d4d4d4;
     --color_error: #db4139;
+    --color_error_ultra-light: #db413925;
 }
 
 @media (min-width: 1920px) {
@@ -274,6 +276,32 @@ th {
     font-weight: normal;
 }
 
+.cell_selection {
+    position: absolute;
+    display: none;
+    border: 0.1rem solid var(--color_primary);
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 2;
+    
+}
+
+.cell_selection.active {
+    display: block;
+}
+
+.cell_selection.transition {
+    transition-duration: 0.2s;
+}
+
+.cell_selection.success {
+    background:  var(--color_primary_ultra-light);
+}
+
+.cell_selection.error {
+    background:  var(--color_error_ultra-light);
+}
+
 .context_menu {
     position: absolute;
     -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
@@ -285,6 +313,7 @@ th {
 
 .context_menu.active {
     display: block;
+    animation: show ease-out 0.2s forwards;
 }
 
 .context_menu li {
@@ -297,4 +326,13 @@ th {
     background: var(--color_bg);
     transition: 0.3s;
     cursor: pointer;
+}
+
+@keyframes show {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 100%;
+    }
 }
