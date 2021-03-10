@@ -53,7 +53,7 @@ body {
     z-index: 99999;
 }
 
-.preloader .bd_e {
+span.error {
     color: var(--color_error);
     transform: translate(-50%, -50%);
     position: absolute;
@@ -61,6 +61,10 @@ body {
     left: 50%;
     height: 0;
     opacity: 0;
+}
+
+span.error.show {
+    animation: show ease-out 0.3s forwards;
 }
 
 .container {
@@ -119,6 +123,14 @@ header ul.navigation ul {
     position: absolute;
     background: var(--color_primary);
     padding-right: 0.5rem;
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    z-index: 1;
+}
+
+header ul.navigation ul.active {
+    display: block;
 }
 
 footer ul.tabs li>*:not(:first-child) {
@@ -150,7 +162,7 @@ footer span.app_info {
     font-size: 0.75rem;
 }
 
-a {
+a, span.close_cross {
     text-decoration: none;
     transition: 0.3s;
 }
@@ -160,7 +172,7 @@ footer a {
     color: var(--color_secondary);
 }
 
-a:hover {
+a:hover, span.close_cross:hover {
     cursor: pointer;
     transition: 0.3s;
 }
@@ -332,8 +344,59 @@ th {
 @keyframes show {
     from {
         opacity: 0;
+        z-index: -1;
+    }
+    1% {
+        z-index: 4;
     }
     to {
         opacity: 100%;
+        z-index: 4;
     }
+}
+
+@keyframes close {
+    from {
+        opacity: 100%;
+        z-index: 4;
+    }
+    1% {
+        z-index: 4;
+    }
+    to {
+        opacity: 0;
+        z-index: -1;
+    }
+}
+
+div.popup {
+    z-index: -1;
+    opacity: 0;
+    position: fixed;
+    display: flex;
+    background: var(--color_secondary_dark);
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
+    padding: 0.25rem;
+    text-align: center;
+    max-width: 24rem;
+    animation: close ease-out 0.2s forwards;
+}
+
+div.popup span.close_cross {
+    align-self: flex-start;
+    margin-left: 0.25rem;
+}
+
+div.popup span.close_cross:hover {
+    color: var(--color_primary);
+}
+
+div.popup.active {
+    animation: show ease-out 0.2s forwards;
+}
+
+div.popup.error {
+    color: var(--color_error);
 }

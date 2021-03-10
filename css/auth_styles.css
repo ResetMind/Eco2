@@ -18,6 +18,10 @@
     display: none;
 }
 
+.info_span.active {
+    display: block;
+}
+
 .auth_form {
     display: flex;
     flex-direction: column;

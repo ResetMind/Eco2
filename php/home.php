@@ -30,26 +30,33 @@ if (!$factors_rows = loadTable($factors_name)) {
     echoJSON();
     exit();
 } else {
-    $factors_rows_temp = [];
-    foreach ($factors_rows as $row){
-        $info[] = $row["id"];
-        unset($row["id"]);
-        $factors_rows_temp[] = $row;
-    }
-    $factors_rows = $factors_rows_temp;
+    $factors_rows = removeId($factors_rows);
 }
 $fields_name = $email . "_fields";
 if (!$fields_rows = loadTable($fields_name)) {
     echoJSON();
     exit();
+} else {
+    $fields_rows = removeId($fields_rows);;
 }
 $cultures_name = $email . "_cultures";
 if (!$cultures_rows = loadTable($cultures_name)) {
     echoJSON();
     exit();
+} else {
+    $cultures_rows = removeId($cultures_rows);
 }
 
 echoJSON();
+
+function removeId($rows) {
+    $rows_temp = [];
+    foreach ($rows as $row){
+        unset($row["id"]);
+        $rows_temp[] = $row;
+    }
+    return $rows_temp;
+}
 
 function echoJSON()
 {

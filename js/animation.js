@@ -6,8 +6,9 @@ function fadeOut(el) {
 			el.style.display = "none";
 		}
 		el.style.opacity = opacity;
+		el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
 		opacity -= opacity * 0.1;
-	}, 10);
+	}, 5);
 }
 
 function fadeIn(el) {
@@ -15,10 +16,11 @@ function fadeIn(el) {
 	el.style.opacity = opacity;
 	el.style.display = "block";
 	let timer = setInterval(function() {
-		if(opacity >= 0.5) {
+		if(opacity >= 1) {
 			clearInterval(timer);
 		}
 		el.style.opacity = opacity;
+		el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
 		opacity += opacity * 0.1;
-	}, 10);
+	}, 5);
 }
