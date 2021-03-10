@@ -283,7 +283,6 @@ th {
     box-sizing: border-box;
     pointer-events: none;
     z-index: 2;
-    
 }
 
 .cell_selection.active {
@@ -295,15 +294,17 @@ th {
 }
 
 .cell_selection.success {
-    background:  var(--color_primary_ultra-light);
+    background: var(--color_primary_ultra-light);
 }
 
 .cell_selection.error {
-    background:  var(--color_error_ultra-light);
+    background: var(--color_error_ultra-light);
 }
 
 .context_menu {
     position: absolute;
+    max-height: 12rem;
+    overflow: auto;
     -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
     -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);

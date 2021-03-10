@@ -9,6 +9,7 @@ onRadioChange();
 setRightContextMenu(table[0]);
 setRightContextMenu(table[1]);
 setRightContextMenu(table[2]);
+setLeftContextMenu(table[0]);
 
 function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {

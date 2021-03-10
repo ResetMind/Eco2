@@ -6,10 +6,10 @@ let r_row_up = document.querySelector("li.r_row_up");
 let r_row_down = document.querySelector("li.r_row_down");
 let r_delete_row = document.querySelector("li.r_delete_row");
 let right_context_menu = document.querySelector("ul.right_context_menu");
+let left_context_menu = document.querySelector("ul.left_context_menu");
 let context_menu = document.querySelectorAll("ul.context_menu");
 let copy_cut_array;
 let ctrl = false;
-let new_rows_inner = ["<td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td>"];
 
 window.onresize = function() {
     closeAllContext();
@@ -90,7 +90,7 @@ r_delete_row.onmousedown = function() {
         for (let j = 0; j < window.selected_cells[i].length; j++) {
             let row = getTwoDimArrayIndex(window.active_cells, window.selected_cells[i][j])[0];
             let rows_num = window.active_table_body.querySelectorAll("tr").length;
-            if(rows_num == 1) {
+            if (rows_num == 1) {
                 let cells = rows[row].querySelectorAll("td");
                 for (let i = 0; i < cells.length; i++) {
                     cells[i].innerHTML = null;
@@ -103,13 +103,13 @@ r_delete_row.onmousedown = function() {
     setTableEngine(window.active_table);
 }
 
-function setRightContextMenu(table) {
+function setRightContextMenu(table) { //div.table
     let table_body = table.querySelector("table.table_body");
     table_body.oncontextmenu = function(e) {
         if (e.target.nodeName == "TD") {
             e.preventDefault();
             closeAllContext();
-            if(window.selected_cells.length > 1) {
+            if (window.selected_cells.length > 1) {
                 r_delete_row.innerHTML = "Удалить строки";
             } else {
                 r_delete_row.innerHTML = "Удалить строку";
@@ -143,7 +143,57 @@ function setRightContextMenu(table) {
         }
         ctrl = e.code == "ControlLeft";
     }
+}
 
+function setLeftContextMenu(table) { //div.table
+    document.documentElement.onclick = function(e) {
+        closeAllContext();
+        let cell = e.target;
+        if (e.target.nodeName != "TD" || !table.contains(cell)) {
+            return;
+        } 
+        let col = getTwoDimArrayIndex(window.active_cells, cell)[1];
+        if (col == 1) {
+            createFieldsContext(cell);
+            showContextMenu(e.clientX, e.clientY, left_context_menu);
+        } else if (col == 2) {
+            createCulturesContext(cell)
+            showContextMenu(e.clientX, e.clientY, left_context_menu);
+        } else {
+            closeAllContext();
+        }
+    }
+
+    function createCulturesContext(cell) {
+        left_context_menu.innerHTML = "";
+        let cultures_body_cells = document.querySelectorAll("table.cultures td");
+        let cell_cultures = cell.innerHTML.split(", ");
+        for (let i = 0; i < cultures_body_cells.length; i++) {
+            let li = document.createElement("li");
+            li.innerHTML = cultures_body_cells[i].innerHTML;
+            if (!left_context_menu.innerHTML.includes(li.innerHTML) && getArrayIndex(cell_cultures, li.innerHTML) == -1) {
+                left_context_menu.append(li);
+                li.onmousedown = function() {
+                    cell.innerHTML = cell.innerHTML == "" ? li.innerHTML : cell.innerHTML + ", " + li.innerHTML;
+                }
+            }
+        }
+    }
+
+    function createFieldsContext(cell) {
+        left_context_menu.innerHTML = "";
+        let fields_body_cells = document.querySelectorAll("table.fields td");
+        for (let i = 0; i < fields_body_cells.length; i++) {
+            let li = document.createElement("li");
+            li.innerHTML = fields_body_cells[i].innerHTML;
+            if (!left_context_menu.innerHTML.includes(li.innerHTML)) {
+                left_context_menu.append(li);
+                li.onmousedown = function() {
+                    cell.innerHTML = li.innerHTML;
+                }
+            }
+        }
+    }
 }
 
 function showContextMenu(x, y, menu) {

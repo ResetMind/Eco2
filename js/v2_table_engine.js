@@ -58,6 +58,8 @@ function setTableEngine(table) { // div.table
                         if (new_col_width > 1) {
                             ths[index - 1].style.width = new_col_width + "rem";
                             cells[0][index - 1].style.width = new_col_width + "rem";
+                            ths[index - 1].style.maxWidth = new_col_width + "rem";
+                            cells[0][index - 1].style.maxWidth = new_col_width + "rem";
                             drawCellsRect();
                         }
                     }
@@ -363,17 +365,6 @@ function setTableEngine(table) { // div.table
             cells.push(rows[i].querySelectorAll("td"));
         }
         return cells;
-    }
-
-    function getTwoDimArrayIndex(arr, el) {
-        for (let i = 0; i < arr.length; i++) {
-            for (let j = 0; j < arr[i].length; j++) {
-                if (arr[i][j] == el) {
-                    return [i, j];
-                }
-            }
-        }
-        return -1;
     }
 
     function saveSelectedCells() {
