@@ -10,9 +10,12 @@ let left_context_menu = document.querySelector("ul.left_context_menu");
 let context_menu = document.querySelectorAll("ul.context_menu");
 let copy_cut_array;
 let ctrl = false;
+<<<<<<< HEAD
 
+=======
 let new_rows_inner = ["<td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td>"];
 /*sat*/
+>>>>>>> 9eb7a4effaf30a98c44ad7d57b8585e1d2ebe524
 window.onresize = function() {
     closeAllContext();
 }

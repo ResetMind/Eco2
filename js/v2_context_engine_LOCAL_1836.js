@@ -11,8 +11,6 @@ let context_menu = document.querySelectorAll("ul.context_menu");
 let copy_cut_array;
 let ctrl = false;
 
-let new_rows_inner = ["<td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td><td contenteditable></td><td contenteditable></td>", "<td contenteditable></td>"];
-/*sat*/
 window.onresize = function() {
     closeAllContext();
 }
