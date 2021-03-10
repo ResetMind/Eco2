@@ -301,7 +301,7 @@ th {
     display: block;
 }
 
-.cell_selection.transition {
+.cell_selection.transition, td.transition {
     transition-duration: 0.2s;
 }
 
@@ -309,7 +309,7 @@ th {
     background: var(--color_primary_ultra-light);
 }
 
-.cell_selection.error {
+.cell_selection.error, td.error {
     background: var(--color_error_ultra-light);
 }
 

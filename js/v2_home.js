@@ -54,7 +54,9 @@ function doRequest() { // +
             setRightContextMenu(table[1]);
             setRightContextMenu(table[2]);
             setLeftContextMenu(table[0]);
-            //checkTablesServer(xhr, span_footer);
+            setInputEngine(table[0]);
+            setInputEngine(table[1]);
+            setInputEngine(table[2]);
         }
     }
 

@@ -36,7 +36,8 @@ r_paste.onmousedown = function() {
                 break;
             }
             window.selected_cells[k][j].innerHTML = copy_cut_array[k][j];
-            //selected_tds[k][j].dispatchEvent(new Event("input", { bubbles: true })); // чтобы срабатывало инпут при изменении содержимого
+            window.selected_cells[k][j].dispatchEvent(new Event("beforeinput", { bubbles: true }));
+            window.selected_cells[k][j].dispatchEvent(new Event("input", { bubbles: true })); // чтобы срабатывало инпут при изменении содержимого
         }
     }
 }
