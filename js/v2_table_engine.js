@@ -97,6 +97,7 @@ function setTableEngine(table) { // div.table
 
     function onCellSelect() {
         table_body.onmousedown = function(e) {
+            cell_selection.classList.remove("transition");
             if (e.which == 2 || e.target.nodeName != "TD") {
                 return false;
             }

@@ -265,7 +265,7 @@ input[type="checkbox"]:checked+label::before {
 table {
     table-layout: fixed;
     border-collapse: collapse;
-    width: max-content;
+    width: fit-content;
     empty-cells: show;
     outline: none;
     background-clip: padding-box;
