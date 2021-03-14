@@ -1,12 +1,12 @@
+document.body.addEventListener("mousedown", function() {
+    removeErrorCells();
+});
+
 function setInputEngine(table) {
     let table_body = table.querySelector("table.table_body");
     table_body.oninput = checkValue.bind(null, table);
     
-    /*table_body.addEventListener("beforeinput", function(e) {
-        console.log("before " + e.target.innerHTML);
-    });*/
 }
-
 function checkValue(table) {
     let e = window.event;
     let cell = e.target;
@@ -20,10 +20,8 @@ function checkValue(table) {
     if (type == "field") {
         let fields_body_cells = document.querySelectorAll("table.fields td");
         let cells_inners = getCellsInners(fields_body_cells);
-        console.log(cells_inners);
         if (getArrayIndex(cells_inners, cell.innerHTML) == -1) {
-            onInputError(cell, true);
-            cell.innerHTML = "";
+            onInputError(cell);
         }
     } else if (type == "culture") {
         let cultures_body_cells = document.querySelectorAll("table.cultures td");
@@ -31,8 +29,7 @@ function checkValue(table) {
         let cultures = cell.innerHTML.split(", ");
         for (let k = 0; k < cultures.length; k++) {
             if (getArrayIndex(cells_inners, cultures[k]) == -1) {
-                onInputError(cell, true);
-                cell.innerHTML = "";
+                onInputError(cell);
             }
         }
     } else if(type == "int") {
@@ -50,18 +47,16 @@ function checkValue(table) {
     }
 }
 
-function onInputError(cell, remove) {
+function onInputError(cell) {
     cell.classList.add("transition");
     cell.classList.add("error");
-    if(remove) {
-        setTimeout(function() {
-            cell.classList.remove("error");
-        }, 200);
-    }
 }
 
 function removeError(cell) {
-    cell.classList.remove("error");
+    if(cell.classList.contains("error")) {
+        cell.classList.remove("error");
+        return true;
+    }
 }
 
 function getCellsInners(cells) {
@@ -70,4 +65,17 @@ function getCellsInners(cells) {
         array.push(cells[k].innerHTML);
     }
     return array;
+}
+
+function removeErrorCells() {
+    if (!window.active_cells) {
+        return;
+    }
+    for (let k = 0; k < window.active_cells.length; k++) {
+        for (let j = 0; j < window.active_cells[k].length; j++) {
+            if (removeError(window.active_cells[k][j])) {
+                window.active_cells[k][j].innerHTML = "";
+            }
+        }
+    }
 }

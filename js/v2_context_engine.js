@@ -15,9 +15,9 @@ window.onresize = function() {
     closeAllContext();
 }
 
-document.body.onmousedown = function() {
+document.body.addEventListener("mousedown", function() {
     closeAllContext();
-}
+});
 
 r_copy.onmousedown = function() {
     console.log("r_copy.onmousedown");

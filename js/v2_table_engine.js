@@ -335,6 +335,7 @@ function setTableEngine(table) { // div.table
 
     function drawCellsRect() {
         if (start_pos && end_pos) {
+            cell_selection.style.width = "0px"
             let min_row = Math.min(start_pos[0], end_pos[0]);
             let min_col = Math.min(start_pos[1], end_pos[1]);
             let max_row = Math.max(start_pos[0], end_pos[0]);
