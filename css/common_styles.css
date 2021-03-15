@@ -162,7 +162,8 @@ footer span.app_info {
     font-size: 0.75rem;
 }
 
-a, span.close_cross {
+a,
+span.span_button {
     text-decoration: none;
     transition: 0.3s;
 }
@@ -172,7 +173,8 @@ footer a {
     color: var(--color_secondary);
 }
 
-a:hover, span.close_cross:hover {
+a:hover,
+span.span_button:hover {
     cursor: pointer;
     transition: 0.3s;
 }
@@ -192,7 +194,7 @@ footer a:hover {
     font-size: 1rem;
 }
 
-input {
+input, select{
     background: var(--color_secondary);
     color: var(--color_text_dark_on_secondary);
     padding: 0.25rem;
@@ -209,13 +211,16 @@ input::placeholder {
 }
 
 input:hover,
+select:hover,
 input[type="checkbox"]:not(:disabled):not(:checked)+label:hover::before {
     border-color: var(--color_primary_light);
     transition: 0.3s;
 }
 
 input:not([type="submit"]):focus,
-input:active {
+select:focus,
+input:active,
+select:active {
     border-color: var(--color_primary);
     transition: 0.3s;
 }
@@ -301,7 +306,8 @@ th {
     display: block;
 }
 
-.cell_selection.transition, td.transition {
+.cell_selection.transition,
+td.transition {
     transition-duration: 0.2s;
 }
 
@@ -309,7 +315,8 @@ th {
     background: var(--color_primary_ultra-light);
 }
 
-.cell_selection.error, td.error {
+.cell_selection.error,
+td.error {
     background: var(--color_error_ultra-light);
 }
 
@@ -389,7 +396,7 @@ div.popup span.close_cross {
     margin-left: 0.25rem;
 }
 
-div.popup span.close_cross:hover {
+span.span_button:hover {
     color: var(--color_primary);
 }
 

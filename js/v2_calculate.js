@@ -8,8 +8,13 @@ let popup = document.querySelector("div.popup");
 let charts_container = document.querySelectorAll("div.charts_container");
 let chart_2d_div = document.querySelector("div.chart_2d_div");
 let chart_2d_div_template = chart_2d_div.innerHTML;
+let select_culture_template = document.querySelector(".select_culture_template");
+let select_field_template = document.querySelector(".select_field_template");
+let select_param_template = document.querySelector(".select_param_template");
 let add_2d_button = document.querySelector(".add_2d_button");
 let add_3d_button = document.querySelector(".add_3d_button");
+let cultures_list = [];
+let fields_list = [];
 
 doRequest();
 wrapper[0].style.display = "none";
@@ -42,6 +47,8 @@ function doRequest() {
                 fadeOut(document.querySelector(".preloader"));
                 onRadioChange();
                 find();
+                getFieldsCulturesList(xhr);
+                addSelects(chart_2d_div);
                 search.year1.onkeyup = find;
                 search.year1.onclick = find;
                 search.year2.onkeyup = find;
@@ -62,7 +69,6 @@ function doRequest() {
                 }
 
             }
-            //getFieldsCulturesList(xhr);
         }
     }
 }
@@ -73,7 +79,52 @@ function addChartDiv(type) {
         chart_div.innerHTML = chart_2d_div_template;
     }
     chart_div.className = "chart_div";
-    charts_container[type].querySelector("div.new_chart_form_div").before(chart_div);
+    charts_container[type].querySelector("form.new_chart_form").before(chart_div);
+    addSelects(chart_div);
+
+}
+
+function addSelects(chart_div, type) {
+    let param_form = chart_div.querySelector(".param_form");
+    addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
+    let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_y_span"));
+    addOptions(x_select_field, fields_list, "cadastral");
+    let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_y_span"));
+    addOptions(x_select_culture, cultures_list, "name");
+
+    addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
+    let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
+    addOptions(y_select_field, fields_list, "cadastral");
+    let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
+    addOptions(y_select_culture, cultures_list, "name");
+
+
+    if (type == 1) {
+        addSelect(param_form, select_param_template, "z_select_param", chart_div.querySelector("span.axis_z_span"));
+        let z_select_field = addSelect(param_form, select_field_template, "z_select_field", null, chart_div.querySelector("span.axis_z_span"));
+        addOptions(y_select_field, fields_list, "cadastral");
+        let z_select_culture = addSelect(param_form, select_culture_template, "z_select_culture", null, chart_div.querySelector("span.axis_z_span"));
+        addOptions(y_select_culture, cultures_list, "name");
+    }
+
+    function addSelect(form, select_template, name, before, after) {
+        let sel = document.createElement("select");
+        sel.className = name;
+        sel.name = name;
+        sel.innerHTML = select_template.innerHTML;
+        if (before) form.insertBefore(sel, before);
+        else if (after) form.insertBefore(sel, after.nextSibling);
+        return sel;
+    }
+
+    function addOptions(select, data, key) {
+        for (let k = 0; k < data.length; k++) {
+            let option = document.createElement("option");
+            option.value = k;
+            option.innerHTML = data[k][key];
+            select.append(option);
+        }
+    }
 }
 
 function onPlotlyResise(wrapper) {
@@ -154,6 +205,15 @@ function onPlotlyResise(wrapper) {
             }
         }
         return false;
+    }
+}
+
+function getFieldsCulturesList(xhr) {
+    if (xhr.response.fields_rows.length > 0) {
+        fields_list = xhr.response.fields_rows;
+    }
+    if (xhr.response.cultures_rows.length > 0) {
+        cultures_list = xhr.response.cultures_rows;
     }
 }
 

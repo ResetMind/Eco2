@@ -1,5 +1,5 @@
-.wrapper {
-    
+.template {
+    display: none;
 }
 
 /*tab0*/
@@ -24,6 +24,7 @@
 .chart_div  {
     display: flex;
     flex-direction: column;
+    margin-bottom: 0.25rem;
 }
 
 .plotly_div {
@@ -31,4 +32,55 @@
     height: 20rem;
     width: 20rem;
     align-self: center;
+}
+
+.param_form_div {
+    margin-top: 0.25rem;
+    overflow: auto;
+}
+
+.param_form {
+    display: flex;
+    align-items: center;
+}
+
+.param_form span:not(:first-child) {
+    margin-left: 0.5rem;
+}
+
+.param_form select {
+    margin-left: 0.25rem;
+}
+
+
+.chart_rectangles {
+    display: flex;
+    white-space: nowrap;
+    margin-top: 0.25rem;
+}
+
+.chart_rectangle {
+    background: var(--color_secondary);
+    color: var(--color_text_dark_on_secondary);
+    padding: 0.25rem;
+    border: 0.1rem solid var(--color_border);
+    transition: 0.3s;
+    outline: none;
+}
+
+.chart_rectangle:hover {
+    border-color: var(--color_primary_light);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.chart_rectangle:focus,
+.chart_rectangle:active {
+    border-color: var(--color_primary);
+    transition: 0.3s;
+}
+
+.chart_settings {
+    display: none;
+    margin-top: 0.25rem;
 }
