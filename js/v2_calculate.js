@@ -1,0 +1,337 @@
+let wrapper = document.querySelectorAll(".wrapper");
+let radios = document.querySelectorAll(".tabs input[type=\"radio\"]");
+let table = document.querySelectorAll("div.table");
+let main_table_header = document.querySelector("table.main_table_header")
+let main_table_body = document.querySelector("table.main_table_body");
+let bd_e_preloader = document.querySelector(".preloader span.bd_e");
+let popup = document.querySelector("div.popup");
+
+doRequest();
+
+function onRadioChange() {
+    for (let i = 0; i < radios.length; i++) {
+        radios[i].addEventListener("change", function() {
+            wrapper.forEach(elem => { elem.style.display = "none"; });
+            wrapper[i].style.display = "flex";
+        });
+    }
+}
+
+function doRequest() {
+    let xhr = request("php/calculate.php", null);
+    xhr.onload = function() {
+        if (xhr.status != 200) {
+            console.log(xhr.status);
+        } else {
+            console.log(xhr.response);
+            if (xhr.response == null) return;
+            if (!checkBdServer(xhr, bd_e_preloader)) {
+                return;
+            }
+            if (!checkAccessServer(xhr)) {
+                window.location.href = "login.html?access=false";
+                return;
+            } else {
+                fadeOut(document.querySelector(".preloader"));
+                onRadioChange();
+                find();
+                search.year1.onkeyup = find;
+                search.year1.onclick = find;
+                search.year2.onkeyup = find;
+                search.year2.onclick = find;
+                search.culture.onkeyup = find;
+                search.field.onkeyup = find;
+                search.onsubmit = function (e) {
+                    e.preventDefault();
+                }
+                search.calculate.onclick = calc.bind(null, main_table_body, main_table_header);
+            }
+            //getFieldsCulturesList(xhr);
+        }
+    }
+}
+
+function find() {
+    let xhr = request("php/find.php", new FormData(search));
+    xhr.onload = function() {
+        if (xhr.status != 200) {
+            console.log(xhr.status);
+        } else {
+            console.log(xhr.response);
+            if (xhr.response == null) return;
+            if (!checkBdServerHome(xhr)) {
+                showPopup(popup, "Ошибка сохранения таблиц");
+                return;
+            }
+            if (!checkInfoServer(xhr)) {
+                showPopup(popup, xhr.response.info[0]);
+            }
+            if (xhr.response.factors_result.length > 0) {
+                fillTable(main_table_body, xhr.response.factors_result[0]);
+            } else {
+                clearTable(main_table_body);
+            }
+            setTableEngine(table[0]);
+        }
+    }
+
+    function fillTable(body, data) {
+        body.innerHTML = data;
+    }
+
+    function clearTable(body) {
+        body.innerHTML = "";
+    }
+}
+
+function calc(body, header) {
+    let cells = body.querySelectorAll("td");
+    for (let i = 0; i < cells.length; i++) {
+        let col = i % header.querySelectorAll("th").length;
+        if (col > 4) {
+            if (cells[i - 2].innerHTML == "" || cells[i - 1].innerHTML == "") {
+                continue;
+            }
+            let a = parseFloat(+(cells[i - 2].innerHTML));
+            let b = parseFloat(+(cells[i - 1].innerHTML));
+            if (isNaN(a) || isNaN(b)) {
+                continue;
+            }
+            if (col == 5) {
+                cells[i].innerHTML = x1(a, b).toFixed(3);
+            } else if (col == 8) {
+                cells[i].innerHTML = x2(a, b).toFixed(3);
+            } else if (col == 11) {
+                cells[i].innerHTML = x3(a, b).toFixed(3);
+            } else if (col == 14) {
+                cells[i].innerHTML = x4(a, b).toFixed(3);
+            } else if (col == 17) {
+                cells[i].innerHTML = x5(a, b).toFixed(3);
+            } else if (col == 20) {
+                cells[i].innerHTML = x6(a, b).toFixed(3);
+            } else if (col == 23) {
+                cells[i].innerHTML = x7(a, b).toFixed(3);
+            } else if (col == 26) {
+                cells[i].innerHTML = x8(a, b).toFixed(3);
+            } else if (col == 29) {
+                cells[i].innerHTML = x9(a, b).toFixed(3);
+            } else if (col == 32) {
+                cells[i].innerHTML = x10(a, b).toFixed(3);
+            } else if (col == 35) {
+                cells[i].innerHTML = x11(a, b).toFixed(3);
+            } else if (col == 38) {
+                cells[i].innerHTML = x12(a, b).toFixed(3);
+            } else if (col == 41) {
+                cells[i].innerHTML = x13(a, b).toFixed(3);
+            } else if (col == 44) {
+                cells[i].innerHTML = x14(a, b).toFixed(3);
+            } else if (col == 47) {
+                cells[i].innerHTML = x15(a, b).toFixed(3);
+            } else if (col == 50) {
+                cells[i].innerHTML = x16(a, b).toFixed(3);
+            } else if (col == 53) {
+                cells[i].innerHTML = x17(a, b).toFixed(3);
+            } else if (col == 56) {
+                cells[i].innerHTML = x18(a, b).toFixed(3);
+            } else if (col == 59) {
+                cells[i].innerHTML = x19(a, b).toFixed(3);
+            } else if (col == 62) {
+                cells[i].innerHTML = x20(a, b).toFixed(3);
+            } else if (col == 65) {
+                cells[i].innerHTML = x21(a, b).toFixed(3);
+            } else if (col == 68) {
+                cells[i].innerHTML = x22(a, b).toFixed(3);
+            } else if (col == 71) {
+                cells[i].innerHTML = x23(a, b).toFixed(3);
+            } else if (col == 74) {
+                cells[i].innerHTML = x24(a, b).toFixed(3);
+            } else if (col == 77) {
+                cells[i].innerHTML = x25(a, b).toFixed(3);
+            } else if (col == 80) {
+                cells[i].innerHTML = x26(a, b).toFixed(3);
+            } else if (col == 83) {
+                cells[i].innerHTML = x27(a, b).toFixed(3);
+            } else if (col == 86) {
+                cells[i].innerHTML = x28(a, b).toFixed(3);
+            } else if (col == 89) {
+                cells[i].innerHTML = x29(a, b).toFixed(3);
+            } else if (col == 92) {
+                cells[i].innerHTML = x30(a, b).toFixed(3);
+            } else if (col == 95) {
+                cells[i].innerHTML = x31(a, b).toFixed(3);
+            } else if (col == 98) {
+                cells[i].innerHTML = x32(a, b).toFixed(3);
+            } else if (col == 101) {
+                cells[i].innerHTML = x33(a, b).toFixed(3);
+            } else if (col == 104) {
+                cells[i].innerHTML = x34(a, b).toFixed(3);
+            } else if (col == 107) {
+                cells[i].innerHTML = x35(a, b).toFixed(3);
+            } else if (col == 110) {
+                cells[i].innerHTML = x36(a, b).toFixed(3);
+            } else if (col == 113) {
+                cells[i].innerHTML = x37(a, b).toFixed(3);
+            } else if (col == 116) {
+                cells[i].innerHTML = x38(a, b).toFixed(3);
+            } else if (col == 119) {
+                cells[i].innerHTML = x39(a, b).toFixed(3);
+            }
+        }
+    }
+}
+
+function x1(so, st) {
+    return so * 10 / st;
+}
+
+function x2(so, st10) {
+    return so * 10 / st10;
+}
+
+function x3(so, st15) {
+    return so * 10 / st15;
+}
+
+function x4(so, st20) {
+    return so * 10 / (st20 + 20);
+}
+
+function x5(so2, st) {
+    return so2 * 10 / st;
+}
+
+function x6(so2, st10) {
+    return so2 * 10 / st10;
+}
+
+function x7(so2, st15) {
+    return so2 * 10 / st15;
+}
+
+function x8(so2, st20) {
+    return so2 * 10 / (st20 + 20);
+}
+
+function x9(sv, st) {
+    return sv / st;
+}
+
+function x10(sv, st10) {
+    return sv / st10;
+}
+
+function x11(sv, st15) {
+    return sv / st15;
+}
+
+function x12(sv, st20) {
+    return sv / (st20 + 20);
+}
+
+function x13(sv40, st) {
+    return sv40 / st;
+}
+
+function x14(sv45, st) {
+    return sv45 / st;
+}
+
+function x15(sv50, st) {
+    return sv50 / st;
+}
+
+function x16(sv40, st10) {
+    return sv40 / st10;
+}
+
+function x17(sv40, st15) {
+    return sv40 / st15;
+}
+
+function x18(sv40, st20) {
+    return sv40 / (st20 + 20);
+}
+
+function x19(sv45, st10) {
+    return sv45 / st10;
+}
+
+function x20(sv45, st15) {
+    return sv45 / st15;
+}
+
+function x21(sv45, st20) {
+    return sv45 / (st20 + 20);
+}
+
+function x22(sv50, st10) {
+    return sv50 / st10;
+}
+
+function x23(sv50, st15) {
+    return sv50 / st15;
+}
+
+function x24(sv50, st20) {
+    return sv50 / (st20 + 20);
+}
+
+function x25(chdo, chdt10) {
+    return chdo / chdt10;
+}
+
+function x26(chdo, chdt15) {
+    return chdo / chdt15;
+}
+
+function x27(chdo, chdt20) {
+    return chdo / (chdt20 + 1);
+}
+
+function x28(chdo2, chdt10) {
+    return chdo2 / chdt10;
+}
+
+function x29(chdo2, chdt15) {
+    return chdo2 / chdt15;
+}
+
+function x30(chdo2, chdt20) {
+    return chdo2 / (chdt20 + 1);
+}
+
+function x31(chdv40, chdt10) {
+    return chdv40 / chdt10;
+}
+
+function x32(chdv40, chdt15) {
+    return chdv40 / chdt15;
+}
+
+function x33(chdv40, chdt20) {
+    return chdv40 / (chdt20 + 1);
+}
+
+function x34(chdv45, chdt10) {
+    return chdv45 / chdt10;
+}
+
+function x35(chdv45, chdt15) {
+    return chdv45 / chdt15;
+}
+
+function x36(chdv45, chdt20) {
+    return chdv45 / (chdt20 + 1);
+}
+
+function x37(chdv50, chdt10) {
+    return chdv50 / chdt10;
+}
+
+function x38(chdv50, chdt15) {
+    return chdv50 / chdt15;
+}
+
+function x39(chdv50, chdt20) {
+    return chdv50 / (chdt20 + 1);
+}

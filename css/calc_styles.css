@@ -1,0 +1,10 @@
+.selection_inputs_wrapper {
+    overflow: auto;
+    margin: 0.25rem 0.25rem 0.25rem 0.25rem;
+    white-space: nowrap;
+}
+
+.selection_inputs_wrapper li {
+    display: inline-block;
+    margin-right: 0.25rem;
+}

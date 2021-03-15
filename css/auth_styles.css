@@ -54,6 +54,10 @@ span.auth_error {
     align-self: start;
 }
 
+input {
+    margin-top: 0.25rem;
+}
+
 @keyframes show {
     from {
         line-height: 0;

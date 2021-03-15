@@ -37,7 +37,7 @@ function saveTable()
     }
     if ($data["name"] == "factors") {
         $sqlreq = "CREATE TABLE IF NOT EXISTS `$name`(id int not null primary key AUTO_INCREMENT, 
-    year int, culture varchar(100), square varchar(100), sumO float, sumT int, 
+    year int, field varchar(100), culture varchar(100), sumO float, sumT int, 
     sumT10 int, sumT15 int, sumT20 int, sumO2 float, sumB int, sumB40 int, 
     sumB45 int, sumB50 int, chdO int, chdT10 int, chdT15 int, chdT20 int, 
     chdO2 int, chdB40 int, chdB45 int, chdB50 int);";

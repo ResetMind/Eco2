@@ -39,13 +39,6 @@ div.table_body_wrapper {
     
 }
 
-div.table_body_wrapper, div.table_body_wrapper * {
-    
-}
-
-table.table_body {
-}
-
 .wrapper div.table_wrapper:nth-of-type(2) div.table_header_wrapper {
     margin-top: 0;
 }

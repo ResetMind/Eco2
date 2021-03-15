@@ -22,6 +22,13 @@ function checkBdServerHome(xhr) {
     return true;
 }
 
+function checkInfoServer(xhr) {
+    if (xhr.response.info.length > 0) {
+        return false;
+    }
+    return true;
+}
+
 function showError(span, input, text) {
     span.classList.add("show");
     if (input) {

@@ -39,10 +39,23 @@ function setTableEngine(table) { // div.table
 
     onCellSelect();
     onColumnResise();
+    setColumsWidth();
+
+    function setColumsWidth() {
+        if(cells.length == 0 || !cells) {
+            return;
+        }
+        for(let i = 0; i < ths.length; i++) {
+            cells[0][i].style.width = ths[i].style.width;
+        }
+    }
 
     function onColumnResise() {
         let c = getBordersCoordinates();
         table_header.onmousemove = function(e) {
+            if(cells.length == 0 || !cells) {
+                return;
+            }
             let index = getBorder(c, e.clientX + table_body_wrapper.scrollLeft);
             if (index != -1) {
                 table_header.style.cursor = "col-resize";
@@ -58,8 +71,6 @@ function setTableEngine(table) { // div.table
                         if (new_col_width > 1) {
                             ths[index - 1].style.width = new_col_width + "rem";
                             cells[0][index - 1].style.width = new_col_width + "rem";
-                            ths[index - 1].style.maxWidth = new_col_width + "rem";
-                            cells[0][index - 1].style.maxWidth = new_col_width + "rem";
                             drawCellsRect();
                         }
                     }

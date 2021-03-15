@@ -4,13 +4,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Расчет - Экопрогноз</title>
-    <link rel="stylesheet" href="css/styles_calc.css" />
+    <title>Экопрогноз</title>
+    <link rel="stylesheet" href="css/common_styles.css" />
+    <link rel="stylesheet" href="css/home_styles.css" />
+    <link rel="stylesheet" href="css/calc_styles.css" />
 </head>
 
 <body>
     <div class="preloader">
-        <span class="bd_e_preloader">Qwerty</span>
+        <span class="bd_e error">bd_e</span>
+    </div>
+    <div class="container">
+        <header>
+            <ul class="navigation">
+                <li><a href="home.html">Главная</a>
+                <li><a href="settings.html">Настройки</a>
+            </ul>
+            <span class="app_name">Экопрогноз</span>
+        </header>
+        <div class="wrapper calculate_x">
+            <div class="selection_inputs_wrapper">
+                <form name="search" class="search_form">
+                    <ul>
+                        <li>
+                            <input type="number" name="year1" placeholder="Начальный год">
+                        <li>
+                            <input type="number" name="year2" placeholder="Конечный год">
+                        <li>
+                            <input type="text" name="culture" placeholder="Культура">
+                        <li>
+                            <input type="text" name="field" placeholder="Поле">
+                        <li>
+                            <input type="submit" name="calculate" value="Расчет">
+                    </ul>
+                </form>
+            </div>
+            <div class="table_wrapper">
+                <div class="table">
+                    <div class="table_header_wrapper">
+                        <table class="table_header main_table_header">
+                            <tr>
+                                <th>Год</th>
+                                <th>Поле</th>
+                                <th>Культура</th>        
+    
+                                <th>∑О,мм</th>
+                                <th>∑t,°C</th>
+                                <th>X1</th>
+    
+                                <th>∑О,мм</th>
+                                <th>∑t≥10°C</th>
+                                <th>X2</th>
+    
+                                <th>∑О,мм</th>
+                                <th>∑t≥15°C</th>
+                                <th>X3</th>
+    
+                                <th>∑О,мм</th>
+                                <th>∑t≥20°C</th>
+                                <th>X4</th>
+    
+                                <th>∑О≥2мм</th>
+                                <th>∑t,°C</th>
+                                <th>X5</th>
+    
+                                <th>∑О≥2мм</th>
+                                <th>∑t≥10°C</th>
+                                <th>X6</th>
+    
+                                <th>∑О≥2мм</th>
+                                <th>∑t≥15°C</th>
+                                <th>X7</th>
+    
+                                <th>∑О≥2мм</th>
+                                <th>∑t≥20°C</th>
+                                <th>X8</th>
+    
+                                <th>∑В,%</th>
+                                <th>∑t,°C</th>
+                                <th>X9</th>
+    
+                                <th>∑В,%</th>
+                                <th>∑t≥10°C</th>
+                                <th>X10</th>
+    
+                                <th>∑В,%</th>
+                                <th>∑t≥15°C</th>
+                                <th>X11</th>
+    
+                                <th>∑В,%</th>
+                                <th>∑t≥20°C</th>
+                                <th>X12</th>
+    
+                                <th>∑В≥40%</th>
+                                <th>∑t,°C</th>
+                                <th>X13</th>
+    
+                                <th>∑В≥45%</th>
+                                <th>∑t,°C</th>
+                                <th>X14</th>
+    
+                                <th>∑В≥50%</th>
+                                <th>∑t,°C</th>
+                                <th>X15</th>
+    
+                                <th>∑В≥40%</th>
+                                <th>∑t≥10°C</th>
+                                <th>X16</th>
+    
+                                <th>∑В≥40%</th>
+                                <th>∑t≥15°C</th>
+                                <th>X17</th>
+    
+                                <th>∑В≥40%</th>
+                                <th>∑t≥20°C</th>
+                                <th>X18</th>
+    
+                                <th>∑В≥45%</th>
+                                <th>∑t≥10°C</th>
+                                <th>X19</th>
+    
+                                <th>∑В≥45%</th>
+                                <th>∑t≥15°C</th>
+                                <th>X20</th>
+    
+                                <th>∑В≥45%</th>
+                                <th>∑t≥20°C</th>
+                                <th>X21</th>
+    
+                                <th>∑В≥50%</th>
+                                <th>∑t≥10°C</th>
+                                <th>X22</th>
+    
+                                <th>∑В≥50%</th>
+                                <th>∑t≥15°C</th>
+                                <th>X23</th>
+    
+                                <th>∑В≥50%</th>
+                                <th>∑t≥20°C</th>
+                                <th>X24</th>
+    
+                                <th>ЧД(О)</th>
+                                <th>ЧД(t≥10°C)</th>
+                                <th>X25</th>
+    
+                                <th>ЧД(О)</th>
+                                <th>ЧД(t≥15°C)</th>
+                                <th>X26</th>
+    
+                                <th>ЧД(О)</th>
+                                <th>ЧД(t≥20°C)</th>
+                                <th>X27</th>
+    
+                                <th>ЧД(О≥2мм)</th>
+                                <th>ЧД(t≥10°C)</th>
+                                <th>X28</th>
+    
+                                <th>ЧД(О≥2мм)</th>
+                                <th>ЧД(t≥15°C)</th>
+                                <th>X29</th>
+    
+                                <th>ЧД(О≥2мм)</th>
+                                <th>ЧД(t≥20°C)</th>
+                                <th>X30</th>
+    
+                                <th>ЧД(В≥40%)</th>
+                                <th>ЧД(t≥10°C)</th>
+                                <th>X31</th>
+    
+                                <th>ЧД(В≥40%)</th>
+                                <th>ЧД(t≥15°C)</th>
+                                <th>X32</th>
+    
+                                <th>ЧД(В≥40%)</th>
+                                <th>ЧД(t≥20°C)</th>
+                                <th>X33</th>
+    
+                                <th>ЧД(В≥45%)</th>
+                                <th>ЧД(t≥10°C)</th>
+                                <th>X34</th>
+    
+                                <th>ЧД(В≥45%)</th>
+                                <th>ЧД(t≥15°C)</th>
+                                <th>X35</th>
+    
+                                <th>ЧД(В≥45%)</th>
+                                <th>ЧД(t≥20°C)</th>
+                                <th>X36</th>
+    
+                                <th>ЧД(В≥50%)</th>
+                                <th>ЧД(t≥10°C)</th>
+                                <th>X37</th>
+    
+                                <th>ЧД(В≥50%)</th>
+                                <th>ЧД(t≥15°C)</th>
+                                <th>X38</th>
+    
+                                <th>ЧД(В≥50%)</th>
+                                <th>ЧД(t≥20°C)</th>
+                                <th>X39</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table_body_wrapper">
+                        <div class="cell_selection"></div>
+                        <table class="table_body main_table_body" tabindex="0">
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wrapper 2d_chart">
+
+        </div>
+        <div class="wrapper 3d_chart">
+
+        </div>
+        <footer>
+            <ul class="tabs">
+                <li><input type="radio" name="rad" value="1" id="tab_1" checked>
+                    <label for="tab_1">Расчет Х</label>
+                <li><input type="radio" name="rad" value="2" id="tab_2">
+                    <label for="tab_2">2D графики</label>
+                <li><input type="radio" name="rad" value="3" id="tab_3">
+                    <label for="tab_3">3D графики</label>
+            </ul>
+        </footer>
+        <div class="popup"><span class="popup_text"></span><span class="close_cross">&times;</span></div>
+    </div>
+    <script src="css-element-queries-1.2.1/src/ResizeSensor.js"></script>
+    <script src="js/ajax.js" defer></script>
+    <script src="js/animation.js" defer></script>
+    <script src="js/v2_checkers.js" defer></script>
+    <script src="js/v2_common.js" defer></script>
+    <script src="js/v2_table_engine.js" defer></script>
+    <script src="js/v2_input_engine.js" defer></script>
+    <script src="js/v2_calculate.js" defer></script>
+
+    <!--<div class="preloader">
+        <span class="bd_e error">bd_e</span>
     </div>
     <header>
         <a href="home.html">Главная</a>
@@ -23,23 +256,15 @@
                 <div>
                     <input type="number" name="year1" placeholder="Начальный год">
                 </div>
-                <!--
-                -->
                 <div>
                     <input type="number" name="year2" placeholder="Конечный год">
                 </div>
-                <!--
-                -->
                 <div>
                     <input type="text" name="culture" placeholder="Культура">
                 </div>
-                <!--
-                -->
                 <div>
                     <input type="text" name="field" placeholder="Поле">
                 </div>
-                <!--
-                -->
                 <div>
                     <input type="submit" name="calculate" value="Расчет">
                 </div>
@@ -453,6 +678,6 @@
 <script src="js/interpolation.js" defer></script>
 <script src="js/chart_engine.js" defer></script>
 <script src="js/calculate.js" defer></script>
-<script src="js/common_table_engine.js" defer></script>
+<script src="js/common_table_engine.js" defer></script>-->
 
 </html>

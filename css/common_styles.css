@@ -195,7 +195,6 @@ footer a:hover {
 input {
     background: var(--color_secondary);
     color: var(--color_text_dark_on_secondary);
-    margin-top: 0.25rem;
     padding: 0.25rem;
     font-family: "OpenSans_Regular";
     font-size: 1rem;

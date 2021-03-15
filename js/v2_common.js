@@ -33,7 +33,7 @@ function showPopup(popup, text, error) {
     popup.style.left = (f_width - p_width) + "px";
     popup.style.top = (f_top - p_height) + "px";
     popup.classList.add("active");
-    setTimeout(function() { closePopup(popup)}, 10000);
+    setTimeout(function() { closePopup(popup)}, 3000);
     popup.querySelector("span.close_cross").onclick = function() {
         closePopup(popup);
     }
