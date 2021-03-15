@@ -5,8 +5,13 @@ let main_table_header = document.querySelector("table.main_table_header")
 let main_table_body = document.querySelector("table.main_table_body");
 let bd_e_preloader = document.querySelector(".preloader span.bd_e");
 let popup = document.querySelector("div.popup");
+let chart_div = document.querySelector("div.chart_div");
+let chart_div_inner = chart_div.innerHTML;
+let plotly_div = chart_div.querySelector("div.plotly_div");
 
 doRequest();
+wrapper[0].style.display = "none";
+wrapper[1].style.display = "flex";
 
 function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {
@@ -48,6 +53,14 @@ function doRequest() {
             }
             //getFieldsCulturesList(xhr);
         }
+    }
+}
+
+function addChartDiv2D
+
+function onPlotlyResise(plotly_div) {
+    function getPlotlyCoordinates(plotly_div) {
+
     }
 }
 

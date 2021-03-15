@@ -221,6 +221,7 @@ input:active {
 }
 
 input[type="submit"]:hover,
+input[type="button"]:hover,
 input[type="checkbox"]+label:hover {
     cursor: pointer;
 }
