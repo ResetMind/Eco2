@@ -1,13 +1,15 @@
-let wrapper = document.querySelectorAll(".wrapper");
+let wrapper = document.querySelectorAll("div.wrapper");
 let radios = document.querySelectorAll(".tabs input[type=\"radio\"]");
 let table = document.querySelectorAll("div.table");
 let main_table_header = document.querySelector("table.main_table_header")
 let main_table_body = document.querySelector("table.main_table_body");
 let bd_e_preloader = document.querySelector(".preloader span.bd_e");
 let popup = document.querySelector("div.popup");
-let chart_div = document.querySelector("div.chart_div");
-let chart_div_inner = chart_div.innerHTML;
-let plotly_div = chart_div.querySelector("div.plotly_div");
+let charts_container = document.querySelectorAll("div.charts_container");
+let chart_2d_div = document.querySelector("div.chart_2d_div");
+let chart_2d_div_template = chart_2d_div.innerHTML;
+let add_2d_button = document.querySelector(".add_2d_button");
+let add_3d_button = document.querySelector(".add_3d_button");
 
 doRequest();
 wrapper[0].style.display = "none";
@@ -46,21 +48,112 @@ function doRequest() {
                 search.year2.onclick = find;
                 search.culture.onkeyup = find;
                 search.field.onkeyup = find;
-                search.onsubmit = function (e) {
+                search.onsubmit = function(e) {
                     e.preventDefault();
                 }
                 search.calculate.onclick = calc.bind(null, main_table_body, main_table_header);
+                add_2d_button.onclick = addChartDiv.bind(null, 0);
+
+                new ResizeSensor(wrapper[1].querySelector("div.charts_container"), function() {
+                    onPlotlyResise(wrapper[1]);
+                })
+                wrapper[1].onscroll = function() {
+                    onPlotlyResise(wrapper[1]);
+                }
+
             }
             //getFieldsCulturesList(xhr);
         }
     }
 }
 
-function addChartDiv2D
+function addChartDiv(type) {
+    let chart_div = document.createElement("div");
+    if (type == 0) {
+        chart_div.innerHTML = chart_2d_div_template;
+    }
+    chart_div.className = "chart_div";
+    charts_container[type].querySelector("div.new_chart_form_div").before(chart_div);
+}
 
-function onPlotlyResise(plotly_div) {
-    function getPlotlyCoordinates(plotly_div) {
+function onPlotlyResise(wrapper) {
+    let plotly_div = wrapper.querySelectorAll("div.plotly_div");
+    let font_size = (getComputedStyle(document.documentElement).fontSize).replace("px", "");
+    for (let i = 0; i < plotly_div.length; i++) {
+        let left_right = getPlotlyLRCoordinates(plotly_div[i]);
+        let top_bottom = getPlotlyTBCoordinates(plotly_div[i]);
+        plotly_div[i].onmousemove = function(e) {
+            let lr = isBorder(left_right, e.clientX, font_size);
+            let tb = isBorder(top_bottom, e.clientY, font_size);
+            if (lr && !tb) {
+                plotly_div[i].style.cursor = "col-resize";
+                plotly_div[i].onmousedown = function(e) {
+                    removeMouseMoveListeners();
+                    let start_x = e.clientX;
+                    let width = plotly_div[i].getBoundingClientRect().width;
+                    document.documentElement.onmousemove = function(e) {
+                        document.getSelection().removeAllRanges();
+                        document.body.style.cursor = "col-resize";
+                        let new_width = (width + e.clientX - start_x) / font_size;
+                        if (new_width > 20) {
+                            plotly_div[i].style.width = new_width + "rem";
+                        }
+                    }
+                    document.documentElement.onmouseup = function() {
+                        document.body.style.cursor = "default";
+                        document.documentElement.onmousemove = null;
+                        plotly_div[i].onmousedown = null;
+                        onPlotlyResise(wrapper);
+                    }
+                }
+            } else if (!lr && tb) {
+                plotly_div[i].style.cursor = "row-resize";
+                plotly_div[i].onmousedown = function(e) {
+                    removeMouseMoveListeners();
+                    let start_y = e.clientY;
+                    let height = plotly_div[i].getBoundingClientRect().height;
+                    document.documentElement.onmousemove = function(e) {
+                        document.getSelection().removeAllRanges();
+                        plotly_div[i].style.cursor = "row-resize";
+                        let new_height = (height + e.clientY - start_y) / font_size;
+                        if (new_height > 10) {
+                            plotly_div[i].style.height = new_height + "rem";
+                        }
+                    }
+                    document.documentElement.onmouseup = function() {
+                        document.body.style.cursor = "default";
+                        document.documentElement.onmousemove = null;
+                        plotly_div[i].onmousedown = null;
+                        onPlotlyResise(wrapper);
+                    }
+                }
+            } else {
+                plotly_div[i].style.cursor = "default";
+            }
+        }
+    }
 
+    function removeMouseMoveListeners() {
+        for (let i = 0; i < plotly_div.length; i++) {
+            plotly_div[i].onmousemove = null;
+        }
+    }
+
+    function getPlotlyLRCoordinates(plotly_div) {
+        return [plotly_div.getBoundingClientRect().left, plotly_div.getBoundingClientRect().left + plotly_div.getBoundingClientRect().width];
+    }
+
+    function getPlotlyTBCoordinates(plotly_div) {
+        return [plotly_div.getBoundingClientRect().top, plotly_div.getBoundingClientRect().top + plotly_div.getBoundingClientRect().height];
+    }
+
+    function isBorder(b, x, font_size) {
+        for (let k = 0; k < b.length; k++) {
+            if (Math.abs(x - b[k]) / font_size <= 0.25) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

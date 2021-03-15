@@ -1,3 +1,7 @@
+.wrapper {
+    
+}
+
 /*tab0*/
 
 .selection_inputs_wrapper {
@@ -14,11 +18,17 @@
 /*tab1*/
 
 .charts_container {
-    overflow: auto;
     margin: 0.25rem;
+}
+
+.chart_div  {
+    display: flex;
+    flex-direction: column;
 }
 
 .plotly_div {
     background: #989898;
     height: 20rem;
+    width: 20rem;
+    align-self: center;
 }
