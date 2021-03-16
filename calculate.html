@@ -218,6 +218,7 @@
         <div class="wrapper chart_2d">
             <div class="charts_container">
                 <div class="chart_div chart_2d_div">
+                    <hr>
                     <div class="plotly_div"></div>
                     <div class="param_form_div">
                         <form name="param_form" class="param_form">
@@ -226,15 +227,10 @@
                             <span class="add_chart span_button">+</span>
                         </form>
                     </div>
-                    <div class="chart_rectangles">
-                            <div class="chart_rectangle" tabindex="0">
-                                <span class="chart_rectangle_name">1234</span>
-                                <span class="delete_chart span_button">&#215;</span>
-                            </div>
-                    </div>
+                    <div class="chart_rectangles"></div>
                     <div class="chart_settings">
-                        <div class="chart_data"></div>
-                        <div class="chart_stuff"></div>
+                        <div class="chart_data">chart_data</div>
+                        <div class="chart_stuff">chart_stuff</div>
                     </div>
                 </div>
                 <form name="new_chart_form" class="new_chart_form" onsubmit="event.preventDefault();">
@@ -254,16 +250,12 @@
                             <span class="add_chart span_button">+</span>
                         </form>
                     </div>
-                    <div class="chart_rectangles">
-                        <div class="chart_rectangle">
-                            <span class="chart_rectangle_name">1234</span>
-                            <span class="delete_chart span_button">&#215;</span>
-                        </div>
-                    </div>
+                    <div class="chart_rectangles"></div>
                     <div class="chart_settings">
                         <div class="chart_data"></div>
                         <div class="chart_stuff"></div>
                     </div>
+                    <hr>
                 </div>
                 <form name="new_chart_form" class="new_chart_form" onsubmit="event.preventDefault();">
                     <input type="button" class="add_3d_button" name="add_2d_button" value="Новый 3D график">
@@ -280,7 +272,11 @@
                     <label for="tab_3">3D графики</label>
             </ul>
         </footer>
-        <div class="popup"><span class="popup_text"></span><span class="close_cross">&times;</span></div>
+        <div class="popup"><span class="popup_text"></span><span class="close_cross span_button">&times;</span></div>
+        <div class="chart_rectangle_template template">
+            <span class="chart_rectangle_name"></span>
+            <span class="delete_chart span_button">&#215;</span>
+        </div>
         <select class="select_culture_template template" name="select_culture_template">
             <option value="any" selected>Культура</option>
         </select>
@@ -288,10 +284,10 @@
             <option value="any" selected>Поле</option>
         </select>
         <select class="select_param_template template" name="select_param_template">
-            <option value="" disabled selected>Параметр</option>
+            <option value="" disabled>Параметр</option>
             <option value="0">Год</option>
             <option value="3">∑О,мм</option>
-            <option value="4">∑t,°C</option>
+            <option value="4" selected>∑t,°C</option>
             <option value="7">∑t≥10°C</option>
             <option value="10">∑t≥15°C</option>
             <option value="13">∑t≥20°C</option>
@@ -350,12 +346,14 @@
         </select>
     </div>
     <script src="css-element-queries-1.2.1/src/ResizeSensor.js"></script>
+    <script src="js/plotly-latest.js" defer></script>
     <script src="js/ajax.js" defer></script>
     <script src="js/animation.js" defer></script>
     <script src="js/v2_checkers.js" defer></script>
     <script src="js/v2_common.js" defer></script>
     <script src="js/v2_table_engine.js" defer></script>
     <script src="js/v2_input_engine.js" defer></script>
+    <script src="js/v2_chart_engine.js" defer></script>
     <script src="js/v2_calculate.js" defer></script>
 
     <!--

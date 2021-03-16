@@ -48,7 +48,8 @@ function doRequest() {
                 onRadioChange();
                 find();
                 getFieldsCulturesList(xhr);
-                addSelects(chart_2d_div);
+                addSelects(chart_2d_div, 0);
+                addOtherStuff(chart_2d_div, 0);
                 search.year1.onkeyup = find;
                 search.year1.onclick = find;
                 search.year2.onkeyup = find;
@@ -80,8 +81,20 @@ function addChartDiv(type) {
     }
     chart_div.className = "chart_div";
     charts_container[type].querySelector("form.new_chart_form").before(chart_div);
-    addSelects(chart_div);
+    chart_div.querySelector("hr").classList.add("active");
+    addSelects(chart_div, type);
+    addOtherStuff(chart_div, type);
 
+}
+
+function addOtherStuff(chart_div, type) {
+    let add_chart_button = chart_div.querySelector("span.add_chart");
+    let data = [];
+    let plotly_num = document.querySelectorAll(".plotly_div").length;
+    if (type == 0) {
+        console.log("onclick")
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, type, plotly_num);
+    }
 }
 
 function addSelects(chart_div, type) {
@@ -98,13 +111,12 @@ function addSelects(chart_div, type) {
     let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
     addOptions(y_select_culture, cultures_list, "name");
 
-
     if (type == 1) {
         addSelect(param_form, select_param_template, "z_select_param", chart_div.querySelector("span.axis_z_span"));
         let z_select_field = addSelect(param_form, select_field_template, "z_select_field", null, chart_div.querySelector("span.axis_z_span"));
-        addOptions(y_select_field, fields_list, "cadastral");
+        addOptions(z_select_field, fields_list, "cadastral");
         let z_select_culture = addSelect(param_form, select_culture_template, "z_select_culture", null, chart_div.querySelector("span.axis_z_span"));
-        addOptions(y_select_culture, cultures_list, "name");
+        addOptions(z_select_culture, cultures_list, "name");
     }
 
     function addSelect(form, select_template, name, before, after) {
@@ -131,6 +143,7 @@ function onPlotlyResise(wrapper) {
     let plotly_div = wrapper.querySelectorAll("div.plotly_div");
     let font_size = (getComputedStyle(document.documentElement).fontSize).replace("px", "");
     for (let i = 0; i < plotly_div.length; i++) {
+        updateLayout(plotly_div[i]);
         let left_right = getPlotlyLRCoordinates(plotly_div[i]);
         let top_bottom = getPlotlyTBCoordinates(plotly_div[i]);
         plotly_div[i].onmousemove = function(e) {
@@ -141,12 +154,14 @@ function onPlotlyResise(wrapper) {
                 plotly_div[i].onmousedown = function(e) {
                     removeMouseMoveListeners();
                     let start_x = e.clientX;
+                    let height = plotly_div[i].getBoundingClientRect().height;
                     let width = plotly_div[i].getBoundingClientRect().width;
                     document.documentElement.onmousemove = function(e) {
                         document.getSelection().removeAllRanges();
                         document.body.style.cursor = "col-resize";
+                        removePlotlyOpacity(plotly_div[i]);
                         let new_width = (width + e.clientX - start_x) / font_size;
-                        if (new_width > 20) {
+                        if (new_width > 10) {
                             plotly_div[i].style.width = new_width + "rem";
                         }
                     }
@@ -154,6 +169,8 @@ function onPlotlyResise(wrapper) {
                         document.body.style.cursor = "default";
                         document.documentElement.onmousemove = null;
                         plotly_div[i].onmousedown = null;
+                        updateLayout(plotly_div[i]);
+                        addPlotlyOpacity(plotly_div[i]);
                         onPlotlyResise(wrapper);
                     }
                 }
@@ -166,6 +183,7 @@ function onPlotlyResise(wrapper) {
                     document.documentElement.onmousemove = function(e) {
                         document.getSelection().removeAllRanges();
                         plotly_div[i].style.cursor = "row-resize";
+                        removePlotlyOpacity(plotly_div[i]);
                         let new_height = (height + e.clientY - start_y) / font_size;
                         if (new_height > 10) {
                             plotly_div[i].style.height = new_height + "rem";
@@ -175,12 +193,28 @@ function onPlotlyResise(wrapper) {
                         document.body.style.cursor = "default";
                         document.documentElement.onmousemove = null;
                         plotly_div[i].onmousedown = null;
+                        updateLayout(plotly_div[i]);
+                        addPlotlyOpacity(plotly_div[i]);
                         onPlotlyResise(wrapper);
                     }
                 }
             } else {
                 plotly_div[i].style.cursor = "default";
             }
+        }
+    }
+
+    function removePlotlyOpacity(plotly_div) {
+        let plotly = plotly_div.querySelector(".plotly");
+        if(plotly) {
+            plotly.classList.add("resizing");
+        }
+    }
+
+    function addPlotlyOpacity(plotly_div) {
+        let plotly = plotly_div.querySelector(".plotly");
+        if(plotly) {
+            plotly.classList.remove("resizing");
         }
     }
 
