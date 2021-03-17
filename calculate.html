@@ -42,7 +42,7 @@
             <div class="table_wrapper">
                 <div class="table">
                     <div class="table_header_wrapper">
-                        <table class="table_header main_table_header">
+                        <table class="table_header main_table_header main_table">
                             <tr>
                                 <th>Год</th>
                                 <th>Поле</th>
@@ -208,7 +208,7 @@
                     </div>
                     <div class="table_body_wrapper">
                         <div class="cell_selection"></div>
-                        <table class="table_body main_table_body" tabindex="0">
+                        <table class="table_body main_table_body main_table" tabindex="0">
 
                         </table>
                     </div>
@@ -220,7 +220,7 @@
                 <div class="chart_div chart_2d_div">
                     <hr>
                     <div class="plotly_div"></div>
-                    <div class="param_form_div">
+                    <div class="form_div">
                         <form name="param_form" class="param_form">
                             <span class="axis_x_span">x:</span>
                             <span class="axis_y_span">y:</span>
@@ -229,8 +229,97 @@
                     </div>
                     <div class="chart_rectangles"></div>
                     <div class="chart_settings">
-                        <div class="chart_data">chart_data</div>
-                        <div class="chart_stuff">chart_stuff</div>
+                        <div class="chart_data"></div>
+                        <div class="chart_stuff">
+                            <div class="stuff_2d">
+                                <div class="trends_2d stuff_2d_part">
+                                    <div class="header">
+                                        <span class="header">Линии тренда</span>
+                                    </div>
+                                    <div class="form_div">
+                                        <form name="trend_2d_form" class="trend_2d_form">
+                                            <select class="select_2d_trend_type" name="select_2d_trend_type">
+                                                <option value="none">Отсутствует</option>
+                                                <option value="0">Линейная</option>
+                                                <option value="1">Гиперболическая</option>
+                                                <option value="2">Параболическая</option>
+                                                <option value="3">Экспоненциальная</option>
+                                                <option value="4">Степенная</option>
+                                            </select>
+                                            <label for="number_2d_trend_level">порядок:</label>
+                                            <input type="number" class="number_2d_trend_level"
+                                                name="number_2d_trend_level" id="number_2d_trend_level" min="2" max="6"
+                                                step="1" value="2" disabled>
+                                            <label for="number_2d_trend_back">назад:</label>
+                                            <input type="number" class="number_2d_trend_back"
+                                                name="number_2d_trend_back" id="number_2d_trend_back" min="0" max="99"
+                                                step="1" value="0" disabled>
+                                            <label for="number_2d_trend_forward">вперед:</label>
+                                            <input type="number" class="number_2d_trend_forward"
+                                                name="number_2d_trend_forward" id="number_2d_trend_forward" min="0"
+                                                max="99" step="1" value="0" disabled>
+                                            <label for="number_2d_trend_step">шаг:</label>
+                                            <input type="number" class="number_2d_trend_step"
+                                                name="number_2d_trend_step" id="number_2d_trend_step" min="0.1"
+                                                max="100" step="0.1" value="1" disabled>
+                                            <input type="checkbox" id="a_error_checkbox"
+                                                class="a_error_checkbox standart_checkbox">
+                                            <label for="a_error_checkbox" class="a_error_checkbox_label">Ошибка</label>
+                                        </form>
+                                    </div>
+                                    <div class="results trends_2d_results">
+                                        <span class="r results">1</span>
+                                        <span class="a results">2</span>
+                                        <span class="trend_function results">3</span>
+                                    </div>
+                                </div>
+                                <div class="optimisation_2d stuff_2d_part">
+                                    <div class="header">
+                                        <span class="header">Оптимизация</span>
+                                    </div>
+                                    <div class="form_div">
+                                        <form name="optimisation_2d_form" class="optimisation_2d_form">
+                                            <select class="select_2d_optimisation_method"
+                                                name="select_2d_optimisation_method">
+                                                <option value="none">Отсутствует</option>
+                                                <option value="0">Дихотомия</option>
+                                                <option value="1">Золотое сечение</option>
+                                                <option value="2">Фибоначчи</option>
+                                            </select>
+                                            <select class="select_2d_optimisation_type"
+                                                name="select_2d_optimisation_type">
+                                                <option value="0">Минимум</option>
+                                                <option value="1">Максимум</option>
+                                            </select>
+                                            <input type="number" class="number_2d_optimisation_left"
+                                                name="number_2d_optimisation_left" id="number_2d_optimisation_left "
+                                                placeholder="a" min="-9999" max="9999">
+                                            <input type="number" class="number_2d_optimisation_right"
+                                                name="number_2d_optimisation_right" id="number_2d_optimisation_right"
+                                                placeholder="b" min="-9999" max="9999">
+                                            <input type="button" class="button_2d_optimisation"
+                                                name="button_2d_optimisation" value="Найти">
+                                        </form>
+                                    </div>
+                                    <div class="results optimisation">
+                                        <span class="x_opt results"></span>
+                                        <span class="y_opt results"></span>
+                                    </div>
+                                </div>
+                                <div class="imitation_2d stuff_2d_part">
+                                    <div class="header">
+                                        <span class="header">Имитационное моделирование</span>
+                                    </div>
+                                    <div class="imitation_div">
+                                        <table class="imitation_table"></table>
+                                        <!--<ul class="right_context_menu">
+                                            <li class="r_col">Вставить столбец</li>
+                                            <li class="r_delete_col">Удалить столбец</li>
+                                        </ul>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <form name="new_chart_form" class="new_chart_form" onsubmit="event.preventDefault();">
@@ -353,6 +442,7 @@
     <script src="js/v2_common.js" defer></script>
     <script src="js/v2_table_engine.js" defer></script>
     <script src="js/v2_input_engine.js" defer></script>
+    <script src="js/trends.js" defer></script>
     <script src="js/v2_chart_engine.js" defer></script>
     <script src="js/v2_calculate.js" defer></script>
 

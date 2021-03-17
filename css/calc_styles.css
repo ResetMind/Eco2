@@ -27,7 +27,9 @@ hr {
     margin: 0 0 0.25rem 0;
 }
 
-
+.charts_container .chart_div:not(:first-of-type) hr {
+    display: block;
+}
 
 hr.active {
     display: block;
@@ -57,25 +59,23 @@ hr.active {
     opacity: 0;
 }
 
-.param_form_div {
+.form_div {
     margin-top: 0.25rem;
     overflow: auto;
 }
 
-.param_form {
+form {
     display: flex;
     align-items: center;
 }
 
-.param_form span:not(:first-child) {
+form span:not(:first-child) {
     margin-left: 0.5rem;
 }
 
 .param_form select {
     margin-left: 0.25rem;
 }
-
-.chart_rectangles {}
 
 .chart_rectangle {
     display: inline-block;
@@ -105,6 +105,8 @@ hr.active {
     margin-top: 0.25rem;
     width: 100%;
     border: 0.1rem solid var(--color_border);
+    overflow: hidden;
+    background: var(--color_secondary);
 }
 
 .chart_settings.active {
@@ -112,12 +114,106 @@ hr.active {
 }
 
 .chart_settings .chart_data {
-    background: #989899;
-    padding: 0.25rem;
+    overflow-y: auto;
+    max-height: 30rem;
 }
 
 .chart_settings .chart_stuff {
-    background: #7e7ea8;
-    padding: 0.25rem;
+    margin-left: 0.25rem;
+    max-height: 30rem;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.chart_settings .stuff_2d_part>div:not(:first-of-type) {
+    margin-top: 0.25rem;
+}
+
+.chart_stuff form label {
+    margin-left: 0.25rem;
+}
+
+.chart_stuff form * {
+    margin-right: 0.25rem;
+}
+
+.chart_settings input[type="checkbox"].chart_checkbox+label::before {
+    width: 0.6rem;
+    height: 0.6rem;
+}
+
+.chart_settings table.checkbox_table th {
+    border-top: 0;
+}
+
+.chart_settings table.checkbox_table tr td:first-of-type,
+.chart_settings table.checkbox_table th:first-of-type {
+    border-left: 0;
+}
+
+.chart_settings table.checkbox_table tr:last-of-type td {
+    border-bottom: 0;
+}
+
+
+/*@media only screen and (max-device-width: 480px) {
+    .chart_settings.active {
+        flex-direction: column;
+    }
+
+    .chart_settings .chart_stuff {
+        margin-left: 0;
+        margin-top: 0.25rem;
+    }
+
+    .chart_settings table.checkbox_table tr:last-of-type td {
+        border-bottom: 0.1rem;
+    }
+
+    .chart_settings table.checkbox_table tr td:last-of-type {
+        border-right: 0;
+    }
+
+}*/
+
+.chart_stuff div.header {
+    background: var(--color_secondary_dark);
+    flex: 1;
+    padding: 0.15rem 0.25rem;
+    border: 0.1rem solid var(--color_border);
+    border-right: 0;
+}
+
+.chart_stuff .stuff_2d_part:not(:first-of-type) {
+    margin-top: 0.25rem;
+}
+
+.chart_stuff .stuff_2d_part:first-of-type div.header {
+    border-top: 0;
+}
+
+.chart_stuff div.results {
+    display: none;
+}
+
+.chart_stuff div.results.active {
+    display: block;
+}
+
+.chart_stuff div.results span {
+    margin-right: 0.5rem;
+}
+
+.chart_stuff .optimisation_2d,
+.chart_stuff .imitation_2d {
+    opacity: 50%;
+    transition: 0.2s;
+}
+
+.chart_stuff .optimisation_2d.active,
+.chart_stuff .imitation_2d.active {
+    opacity: 100%;
+    transition: 0.2s;
 }

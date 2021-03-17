@@ -186,6 +186,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
         if (data_index != -1) {
             data.splice(getDataIndex(data, name), 1);
         }
+        newPlot(chart_div.querySelector(".plotly_div"), data, type);
         while (getDataIndex(data, name + " тренд") != -1) {
             data.splice(getDataIndex(data, name + " тренд"), 1);
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
@@ -209,7 +210,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-            chart_stuff.innerHTML = "";
+            //chart_stuff.innerHTML = "";
             removeOptLine(data, name);
         } else {
             for (let k = 0; k < rectangles.length; k++) {
@@ -219,7 +220,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                 if (k == 0) {
                     chart_settings.classList.remove("active");
                     chart_data.innerHTML = "";
-                    chart_stuff.innerHTML = "";
+                    //chart_stuff.innerHTML = "";
                 }
             }
             rectangle.classList.add("active");
@@ -227,12 +228,74 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
             //if (trends != null) chart_stuff.append(trends);
             //chart_stuff.append(interpolation);
             chart_settings.classList.add("active");
-            //addOnCheckboxChangeListeners(chart_div, chart_data.querySelectorAll("input[type='checkbox']"), data, name, type);
+            addOnCheckboxChangeListeners();
             if (type == 0) {
-                /*addOn2DOptimisationParamsListeners(chart_div, data, name);
+                //addOn2DOptimisationParamsListeners(chart_div, data, name);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, name);
-                addOn2DImitationListeners(chart_div, data, name);
-                addOn2DInterpolationListeners(chart_div, data, name);*/
+                //addOn2DImitationListeners(chart_div, data, name);
+                //addOn2DInterpolationListeners(chart_div, data, name);
+            }
+        }
+
+        function addOnCheckboxChangeListeners() {
+            let checkboxes = chart_data.querySelectorAll("input[type='checkbox']")
+            let data_index = getDataIndex(data, name);
+            let checked_count = 1;
+            for (let k = 0; k < data[data_index]["x"].length; k++) {
+                if ((data[data_index]["x"][k] + "").indexOf("<label>") == -1) {
+                    checkboxes[k + 1].checked = true;
+                    checked_count++;
+                }
+            }
+            if (checked_count == checkboxes.length) checkboxes[0].checked = true;
+            for (let k = 0; k < checkboxes.length; k++) {
+                checkboxes[k].onchange = onCheckboxChange.bind(null, k);
+            }
+        
+            function onCheckboxChange(index) {
+                let data_index = getDataIndex(data, name);
+                if (index == 0) {
+                    let all_checked = checkboxes[index].checked == true;
+                    for (let k = 1; k < checkboxes.length; k++) {
+                        checkboxes[k].checked = all_checked;
+                        if (all_checked) {
+                            data[data_index]["x"][k - 1] = removeLabel(data[data_index]["x"][k - 1] + "");
+                        } else {
+                            data[data_index]["x"][k - 1] = addLabel(data[data_index]["x"][k - 1] + "");
+                        }
+                    }
+                } else {
+                    if (checkboxes[index].checked) {
+                        data[data_index]["x"][index - 1] = removeLabel(data[data_index]["x"][index - 1] + "");
+                    } else {
+                        data[data_index]["x"][index - 1] = addLabel(data[data_index]["x"][index - 1] + "");
+                    }
+                }
+                let checked_count = 1;
+                for (let k = 1; k < checkboxes.length; k++) {
+                    checked_count = checkboxes[k].checked == true ? checked_count + 1 : checked_count;
+                }
+                if (checked_count == checkboxes.length) {
+                    checkboxes[0].checked = true;
+                } else {
+                    checkboxes[0].checked = false;
+                }
+        
+                //if (type == 0) chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+                //else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
+        
+                function addLabel(x) {
+                    if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
+                        return "<label>" + x + "</label>";
+                    }
+                    return x;
+                }
+        
+                function removeLabel(x) {
+                    x = x.replace("<label>", "");
+                    x = x.replace("</label>", "");
+                    return x;
+                }
             }
         }
 
@@ -242,6 +305,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                 return;
             }
             let table = document.createElement("table");
+            table.classList.add("checkbox_table");
             let tr = newTr();
             let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
             //add th
@@ -285,6 +349,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                 input.type = "checkbox";
                 input.id = "chart_checkbox" + num;
                 input.className = "chart_checkbox" + num;
+                input.classList.add("chart_checkbox");
                 let label = document.createElement("label");
                 label.htmlFor = "chart_checkbox" + num;
                 td.append(input, label);
@@ -310,6 +375,319 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
     }
 }
 
+function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
+    let trends_2d = chart_div.querySelector(".trends_2d");
+    let r_span = trends_2d.querySelector(".r");
+    let a_span = trends_2d.querySelector(".a");
+    let trend_function_span = trends_2d.querySelector(".trend_function");
+    let results_div = document.querySelector(".trends_2d_results");
+    let a_error_checkbox = trends_2d.querySelector(".a_error_checkbox");
+    let a_error_checkbox_label = trends_2d.querySelector(".a_error_checkbox_label");
+    let trend_2d_form = trends_2d.querySelector(".trend_2d_form");
+    let plotly_div = chart_div.querySelector(".plotly_div");
+    let optimisation_2d = chart_div.querySelector(".optimisation_2d");
+    let imitation_2d = chart_div.querySelector(".imitation_2d");
+
+    trend_2d_form.select_2d_trend_type.onchange = function () {
+        setDisabled();
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_level.onchange = function () {
+        //console.log("number_2d_trend_level");
+        validateNumberInput(trend_2d_form.number_2d_trend_level);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_back.onchange = function () {
+        //console.log("number_2d_trend_back");
+        validateNumberInput(trend_2d_form.number_2d_trend_back);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_forward.onchange = function () {
+        //console.log("number_2d_trend_forward");
+        validateNumberInput(trend_2d_form.number_2d_trend_forward);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    trend_2d_form.number_2d_trend_step.onchange = function () {
+        //console.log("number_2d_trend_step");
+        validateNumberInput(trend_2d_form.number_2d_trend_step);
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    a_error_checkbox.onchange = function () {
+        addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
+    }
+    let trend_params = getTrendParams(data, name);
+    //console.log(trend_params);
+    if (!trend_params) {
+        trend_2d_form.select_2d_trend_type.value = "none";
+        trend_2d_form.number_2d_trend_level.value = "2";
+        trend_2d_form.number_2d_trend_back.value = "0";
+        trend_2d_form.number_2d_trend_forward.value = "0";
+        trend_2d_form.number_2d_trend_step.value = "1";
+        removeResults();
+        removeStuffParts();
+    } else {
+        trend_2d_form.select_2d_trend_type.value = trend_params.trend_type;
+        trend_2d_form.number_2d_trend_level.value = trend_params.level;
+        trend_2d_form.number_2d_trend_back.value = trend_params.back;
+        trend_2d_form.number_2d_trend_forward.value = trend_params.forward;
+        trend_2d_form.number_2d_trend_step.value = trend_params.step;
+        a_error_checkbox.checked = trend_params.error_bar;
+        showErrors(trend_params.r, trend_params.a);
+        showFunction(trend_params.trend_type, trend_params.coef, trend_params.level);
+        showStuffParts();
+    }
+    setDisabled();
+
+    function setDisabled() {
+        let select_2d_trend_type_value = trend_2d_form.select_2d_trend_type.value;
+        trend_2d_form.number_2d_trend_level.disabled = select_2d_trend_type_value != "2"
+        trend_2d_form.number_2d_trend_back.disabled = select_2d_trend_type_value == "none"
+        trend_2d_form.number_2d_trend_forward.disabled = select_2d_trend_type_value == "none"
+        trend_2d_form.number_2d_trend_step.disabled = select_2d_trend_type_value == "none"
+    }
+
+    function addTrend(type, data, name) {
+        let data_index = getDataIndex(data, name);
+        let color = data[data_index]["line"]["color"];
+        let back = trend_2d_form.number_2d_trend_back.value;
+        let forward = trend_2d_form.number_2d_trend_forward.value;
+        let step = trend_2d_form.number_2d_trend_step.value;
+        let level = trend_2d_form.number_2d_trend_level.value;
+        let data_v = validateDataForCalculations(data, name, "0");
+        if (type == "0") {
+            let xy = linear(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "1") {
+            let xy = hyperbole(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "2") {
+            let xy = null;
+            let level = trend_2d_form.number_2d_trend_level.value;
+            if (level == "2") {
+                xy = parabole2(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if (level == "3") {
+                xy = parabole3(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if (level == "4") {
+                xy = parabole4(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if (level == "5") {
+                xy = parabole5(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            } else if (level == "6") {
+                xy = parabole6(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            }
+            showTrend(xy);
+            showFunction(type, xy.coef, level);
+        } else if (type == "3") {
+            let xy = exponent(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "4") {
+            let xy = stepennaya(data_v[data_index]["x"], data_v[data_index]["y"], parseFloat(back), parseFloat(forward), parseFloat(step));
+            showTrend(xy);
+            showFunction(type, xy.coef);
+        } else if (type == "none") {
+            removeTrend();
+        }
+
+        function showTrend(xy) {
+            //replaceIfExist(data, name);
+            replaceIfExist(data, name, "error_bar");
+            replaceIfExist(data, name, "trendt");
+            let a_error_checkbox_status = a_error_checkbox.checked;
+            let trend = {
+                trend_type: type,
+                level: level,
+                back: back,
+                forward: forward,
+                step: step,
+                r: xy.r,
+                a: xy.a,
+                coef: xy.coef,
+                error_bar: a_error_checkbox_status
+            }
+            //addTo2DData(false, data, xy.x_tr, xy.y_tr, null, name + " тренд", "", "", color, "dash", "trendt", trend);
+            data[data_index]["trend"] = trend;
+            addToTrendData(data, xy.x_tr, xy.y_tr, name + " тренд", color, "trendt");
+            if (a_error_checkbox_status) {
+                let error_bars = getErrorBars(xy);
+                //console.log(error_bars);
+                let error_bar_color = color.replace("1)", "0.3)");
+                addToErrorBarData(data, error_bars.x_e_up, error_bars.y_e_up, name + " тренд", "", "", error_bar_color, "error_bar");
+                addToErrorBarData(data, error_bars.x_e_down, error_bars.y_e_down, name + " тренд", "tonexty", error_bar_color, error_bar_color, "error_bar");
+            }
+            newPlot(plotly_div, data, 0);
+            showErrors(xy.r, xy.a);
+            showStuffParts();
+        }
+
+        function addToTrendData(data, x_arr, y_arr, name, color, which) {
+            let trace = {
+                x: x_arr,
+                y: y_arr,
+                type: "scatter",
+                name: name,
+                connectgaps: true,
+                line: {
+                    dash: "dash",
+                    color: color
+                },
+                which: which
+            };
+            data.push(trace);
+        }
+
+        function addToErrorBarData(data, x_arr, y_arr, name, fill, fillcolor, marker_color, which) {
+            let trace = {
+                x: x_arr,
+                y: y_arr,
+                fill: fill,
+                fillcolor: fillcolor,
+                marker: { color: marker_color },
+                line: { width: 0 },
+                mode: "lines",
+                name: name,
+                type: "scatter",
+                showlegend: false,
+                which: which
+            };
+            data.push(trace);
+        }
+
+        function removeTrend() {
+            replaceIfExist(data, name);
+            newPlot(plotly_div, data, 0);
+            removeResults();
+            removeStuffParts();
+        }
+
+        function getErrorBars(xy) {
+            /*console.log(xy.x_tr);
+            console.log(xy.y_tr);*/
+            let x_e_up = [],
+                y_e_up = [],
+                x_e_down = [],
+                y_e_down = [];
+            for (let k = 0; k < xy.x_tr.length; k++) {
+                x_e_up.push(xy.x_tr[k]);
+                x_e_down.push(xy.x_tr[k]);
+                y_e_up.push(xy.y_tr[k] + xy.y_tr[k] * xy.a / 100);
+                y_e_down.push(xy.y_tr[k] - xy.y_tr[k] * xy.a / 100);
+            }
+            return {
+                x_e_up: x_e_up,
+                y_e_up: y_e_up,
+                x_e_down: x_e_down,
+                y_e_down: y_e_down
+            }
+        }
+    }
+
+    function getTrendParams(data, name) {
+        let data_index = getDataIndex(data, name, "normal");
+        if (data_index == -1) return false;
+        if (data[data_index]["trend"] == null) return false;
+        return data[data_index]["trend"];
+        //console.log(data[data_index]["trend"]["trend_type"]);
+    }
+
+    function showFunction(type, coef, level = null) {
+        //console.log(coef);
+        if (type == "0") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + "x";
+        } else if (type == "1") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + " * 1 / x";
+        } else if (type == "2") {
+            trend_function_span.innerHTML = getParaboleFunction();
+        } else if (type == "3") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + "e<sup>" + coef[1].toFixed(4) + "x</sup>";
+        } else if (type == "4") {
+            trend_function_span.innerHTML = "y = " + coef[0].toFixed(4) + "x<sup>" + coef[1].toFixed(4) + "</sup>";
+        }
+        trend_function_span.classList.add("active");
+
+        function getSign(num) {
+            if (num >= 0) {
+                return " + " + num;
+            } else {
+                return " - " + (num * -1);
+            }
+        }
+
+        function getParaboleFunction() {
+            level = parseFloat(level);
+            let res = "y = " + coef[0].toFixed(4) + getSign(coef[1].toFixed(4)) + "x";
+            for (let k = 2; k <= level; k++) {
+                res += getSign(coef[k].toFixed(4)) + "x<sup>" + k + "</sup>";
+            }
+            return res;
+        }
+    }
+
+    function showErrors(r, a) {
+        r_span.innerHTML = "R<sup>2</sup> = " + r;
+        a_span.innerHTML = "A = " + a;
+        results_div.classList.add("active");
+        //a_error_checkbox_label.classList.add("active");
+        a_error_checkbox.disabled = false;
+    }
+
+    function removeResults() {
+        //a_error_checkbox_label.classList.remove("active");
+        a_error_checkbox.disabled = true;
+        a_error_checkbox.checked = false;
+        results_div.classList.remove("active");
+    }
+
+    function showStuffParts() {
+        optimisation_2d.classList.add("active");
+        imitation_2d.classList.add("active");
+        setDisabledInputs(optimisation_2d, false);
+        setDisabledInputs(imitation_2d, false);
+    }
+
+    function removeStuffParts() {
+        optimisation_2d.classList.remove("active");
+        imitation_2d.classList.remove("active");
+        setDisabledInputs(optimisation_2d, true);
+        setDisabledInputs(imitation_2d, true);
+    }
+
+    function setDisabledInputs(stuff_2d_part, disabled) {
+        let inputs = stuff_2d_part.querySelectorAll("input");
+        let selects = stuff_2d_part.querySelectorAll("select");
+        for(let i = 0; i < inputs.length; i++) {
+            inputs[i].disabled = disabled;
+        }
+        for(let i = 0; i < selects.length; i++) {
+            selects[i].disabled = disabled;
+        }
+    }
+}
+
+function validateNumberInput(number_input) {
+    let value = number_input.value;
+    if (value > parseFloat(number_input.max)) {
+        number_input.value = number_input.max;
+    } else if (value < parseFloat(number_input.min) || isNaN(parseFloat(value))) {
+        number_input.value = number_input.min;
+    }
+}
+
+function validateDataForCalculations(data, name, type) {
+    let data_index = getDataIndex(data, name);
+    let data_v = getValidatedData(data, type);
+    for (let k = 0; k < data_v[data_index]["x"].length; k++) {
+        if (data_v[data_index]["x"][k] == null) {
+            data_v[data_index]["x"].splice(k, 1);
+            data_v[data_index]["y"].splice(k, 1);
+            k--;
+        } else {
+            data_v[data_index]["x"][k] = parseFloat(data_v[data_index]["x"][k]);
+        }
+    }
+    return data_v;
+}
 
 function setChartLayout(plotly_div) {
     return {

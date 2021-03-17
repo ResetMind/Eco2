@@ -81,7 +81,7 @@ function addChartDiv(type) {
     }
     chart_div.className = "chart_div";
     charts_container[type].querySelector("form.new_chart_form").before(chart_div);
-    chart_div.querySelector("hr").classList.add("active");
+    //chart_div.querySelector("hr").classList.add("active");
     addSelects(chart_div, type);
     addOtherStuff(chart_div, type);
 
@@ -95,6 +95,10 @@ function addOtherStuff(chart_div, type) {
         console.log("onclick")
         add_chart_button.onclick = addChart.bind(null, chart_div, data, type, plotly_num);
     }
+    let a_error_checkbox = chart_div.querySelector(".a_error_checkbox");
+    a_error_checkbox.id += "_" + plotly_num;
+    let a_error_checkbox_label = chart_div.querySelector(".a_error_checkbox_label");
+    a_error_checkbox_label.setAttribute("for", a_error_checkbox.id);
 }
 
 function addSelects(chart_div, type) {
@@ -105,11 +109,11 @@ function addSelects(chart_div, type) {
     let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_y_span"));
     addOptions(x_select_culture, cultures_list, "name");
 
-    addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
-    let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
-    addOptions(y_select_field, fields_list, "cadastral");
     let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
     addOptions(y_select_culture, cultures_list, "name");
+    let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
+    addOptions(y_select_field, fields_list, "cadastral");
+    addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
 
     if (type == 1) {
         addSelect(param_form, select_param_template, "z_select_param", chart_div.querySelector("span.axis_z_span"));
