@@ -15,7 +15,7 @@ $send_email_e = [];
 $link = null;
 $activation_code = null;
 
-$base_url = "http://s74588.hostru11.fornex.host/ecoprognoz.org/php";
+$base_url = "http://s83034.hostru08.fornex.host//ecoprognoz.com/php";
 
 require_once __DIR__ . "/connect.php";
 if (!connect()) {

@@ -136,7 +136,7 @@ function changeEmail($old_email, $new_email)
         return false;
     } else {
         require_once __DIR__ . "/send_email.php";
-        $base_url = "http://s74588.hostru11.fornex.host/ecoprognoz.org/php";
+        $base_url = "http://s83034.hostru08.fornex.host//ecoprognoz.com/php";
         $subject = "Смена email на ecoprognoz.org";
         $verify_link = "$base_url/email_change.php?code=$activation_code";
         $name = $_SESSION["name"];
