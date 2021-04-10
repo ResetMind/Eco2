@@ -281,8 +281,8 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                     checkboxes[0].checked = false;
                 }
         
-                //if (type == 0) chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
-                //else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
+                if (type == 0) chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
+                else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
         
                 function addLabel(x) {
                     if (x.indexOf("<label>") == -1 && x.indexOf("</label>") == -1) {
@@ -385,7 +385,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     let a_error_checkbox_label = trends_2d.querySelector(".a_error_checkbox_label");
     let trend_2d_form = trends_2d.querySelector(".trend_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
-    let optimisation_2d = chart_div.querySelector(".optimisation_2d");
+    //let optimisation_2d = chart_div.querySelector(".optimisation_2d");
     let imitation_2d = chart_div.querySelector(".imitation_2d");
 
     trend_2d_form.select_2d_trend_type.onchange = function () {
@@ -640,16 +640,16 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     }
 
     function showStuffParts() {
-        optimisation_2d.classList.add("active");
+        //optimisation_2d.classList.add("active");
         imitation_2d.classList.add("active");
-        setDisabledInputs(optimisation_2d, false);
+        //setDisabledInputs(optimisation_2d, false);
         setDisabledInputs(imitation_2d, false);
     }
 
     function removeStuffParts() {
-        optimisation_2d.classList.remove("active");
+        //optimisation_2d.classList.remove("active");
         imitation_2d.classList.remove("active");
-        setDisabledInputs(optimisation_2d, true);
+        //setDisabledInputs(optimisation_2d, true);
         setDisabledInputs(imitation_2d, true);
     }
 

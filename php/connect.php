@@ -2,8 +2,8 @@
 function connect()
 {
     global $link, $bd_e;
-    //$link = mysqli_connect("localhost", "root", "root", "s74588_db");
-    $link = mysqli_connect("localhost", "s83034_dbuser", "HXVO<x76*lS?<7>I", "s83034_db");
+    $link = mysqli_connect("localhost", "root", "root", "s74588_db");
+    //$link = mysqli_connect("localhost", "s83034_dbuser", "HXVO<x76*lS?<7>I", "s83034_db");
     if (!$link) {
         $bd_e[] = "Ошибка соединения с базой данных";
         return false;
