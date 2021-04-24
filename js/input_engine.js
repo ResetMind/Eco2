@@ -1,111 +1,81 @@
-let isPaste = false;
+document.body.addEventListener("mousedown", function() {
+    removeErrorCells();
+});
 
-function checkValue(e) {
-    let col = getColRow(arrayIndex(tds, e.target), ths.length)[0];
-    console.log(e.target.innerHTML + " changed " + col);
-    if (isPaste) {
-        console.log("validatePaste");
-        let pre = document.createElement("pre");
-        pre.innerHTML = e.target.innerText;
-        e.target.innerHTML = pre.innerText;
-        e.target.selectionStart = e.target.innerHTML.length;
-        document.getSelection().removeAllRanges();
-        isPaste = false;
-    }
-    if (selected_content_i == 0) {
-        if (col == 1) {
-            closeAllContext();
-            let tds = table_body[2].querySelectorAll("td");
-            tds = getTdsInners(tds);
-            let cultures = e.target.innerHTML.split(", ");
-            for (let k = 0; k < cultures.length; k++) {
-                if (arrayIndex(tds, cultures[k]) == -1) {
-                    //console.log("culture error");
-                    showErrorBorder();
-                    showErrorTD(e.target);
-                    return;
-                }
-            }
-        } else if (col == 2) {
-            closeAllContext();
-            let tds = table_body[2].querySelectorAll("td");
-            tds = getTdsInners(tds);
-            if (arrayIndex(tds, e.target.innerHTML) == -1) {
-                //console.log("field error");
-                showErrorBorder();
-                showErrorTD(e.target);
-                return;
-            }
-        } else if (col == 3 || col == 8) {
-            if (isNaN(parseFloat(+e.target.innerHTML))) {
-                showErrorBorder();
-                showErrorTD(e.target);
-                return;
-            }
-        } else {
-            if (isNaN(parseInt(+e.target.innerHTML)) || e.target.innerHTML.split(".").length > 1) {
-                showErrorBorder();
-                showErrorTD(e.target);
-                return;
-            }
-        }
-        removeErrorBorder();
-        removeErrorTD(e.target);
-    } else {
-        if (col == 1) {
-            
-        }
-    }
+function setInputEngine(table) {
+    let table_body = table.querySelector("table.table_body");
+    table_body.oninput = checkValue.bind(null, table);
+    
 }
-
-function validatePaste() {
-    isPaste = true;
-}
-
-function showErrorBorder() {
-    if (!td_selection[selected_content_i].classList.contains("error")) {
-        td_selection[selected_content_i].classList.add("error");
-    }
-}
-
-function removeErrorBorder() {
-    if (td_selection[selected_content_i].classList.contains("error")) {
-        td_selection[selected_content_i].classList.remove("error");
-    }
-}
-
-function showErrorTD(td) {
-    if (!td.classList.contains("error")) {
-        td.classList.add("error");
-    }
-}
-
-function removeErrorTD(td) {
-    if (td.classList.contains("error")) {
-        td.classList.remove("error");
-        return true;
-    }
-    return false;
-}
-
-function removeErrorTDS(selected_tds) {
-    if (selected_tds == null) {
+function checkValue(table) {
+    let e = window.event;
+    let cell = e.target;
+    if (cell.nodeName != "TD") {
         return;
     }
-    for (let k = 0; k < selected_tds.length; k++) {
-        for (let j = 0; j < selected_tds[k].length; j++) {
-            if (removeErrorTD(selected_tds[k][j])) {
-                selected_tds[k][j].innerHTML = "";
+    //console.log(cell.innerHTML + " changed ");
+    let table_header = table.querySelectorAll("table.table_header th");
+    let col = getTwoDimArrayIndex(window.active_cells, cell)[1];
+    let type = table_header[col].className;
+    if (type == "field") {
+        let fields_body_cells = document.querySelectorAll("table.fields td");
+        let cells_inners = getCellsInners(fields_body_cells);
+        if (getArrayIndex(cells_inners, cell.innerHTML) == -1) {
+            onInputError(cell);
+        }
+    } else if (type == "culture") {
+        let cultures_body_cells = document.querySelectorAll("table.cultures td");
+        let cells_inners = getCellsInners(cultures_body_cells);
+        let cultures = cell.innerHTML.split(", ");
+        for (let k = 0; k < cultures.length; k++) {
+            if (getArrayIndex(cells_inners, cultures[k]) == -1) {
+                onInputError(cell);
+            }
+        }
+    } else if(type == "int") {
+        if (isNaN(parseInt(+cell.innerHTML)) || cell.innerHTML.split(".").length > 1) {
+            onInputError(cell);
+        } else {
+            removeError(cell);
+        }
+    } else if(type == "double") {
+        if (isNaN(parseFloat(+e.target.innerHTML))) {
+            onInputError(cell);
+        } else {
+            removeError(cell);
+        }
+    }
+}
+
+function onInputError(cell) {
+    cell.classList.add("transition");
+    cell.classList.add("error");
+}
+
+function removeError(cell) {
+    if(cell.classList.contains("error")) {
+        cell.classList.remove("error");
+        return true;
+    }
+}
+
+function getCellsInners(cells) {
+    let array = [];
+    for (let k = 0; k < cells.length; k++) {
+        array.push(cells[k].innerHTML);
+    }
+    return array;
+}
+
+function removeErrorCells() {
+    if (!window.active_cells) {
+        return;
+    }
+    for (let k = 0; k < window.active_cells.length; k++) {
+        for (let j = 0; j < window.active_cells[k].length; j++) {
+            if (removeError(window.active_cells[k][j])) {
+                window.active_cells[k][j].innerHTML = "";
             }
         }
     }
-    removeErrorBorder();
-}
-
-function getTdsInners(tds) {
-    let array = [];
-    for (let k = 0; k < tds.length; k++) {
-        array.push(tds[k].innerHTML);
-    }
-    return array;
 }

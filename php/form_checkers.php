@@ -44,7 +44,7 @@ function findEmail() {
         return false;
     } else {
         if (!$row = mysqli_fetch_assoc($result)) {
-            $email_e[] = "Пользователя с таким email не существует";
+            $bd_e[] = "Проверьте правильность введенных данных";
             return false;
         } else {
             $name = $row["name"];
@@ -62,7 +62,7 @@ function findPassword($email) {
     } else {
         if ($row = mysqli_fetch_assoc($result)) {
             if (!password_verify($password, $row["password"])) {
-                $password_e[] = "Неправильный пароль";
+                $bd_e[] = "Проверьте правильность введенных данных";
                 return false;
             }
         } else {
@@ -82,7 +82,7 @@ function findStatus() {
     } else {
         if ($row = mysqli_fetch_assoc($result)) {
             if ($row["status"] != "1") {
-                $email_e[] = "Ваш аккаунт не подтвержден";
+                $bd_e[] = "Аккаунт не подтвержден";
                 return false;
             }
         } else {
@@ -115,7 +115,7 @@ function checkEmail()
             return false;
         } else {
             if (mysqli_fetch_assoc($result)) {
-                $email_e[] = "Пользователь с таким email уже существует";
+                $email_e[] = "Адрес уже занят";
                 return false;
             }
         }

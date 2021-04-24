@@ -1,133 +1,37 @@
-let bd_e_preloader = document.querySelector(".bd_e_preloader");
-let contents = document.querySelectorAll(".content");
-let radios = document.querySelectorAll("input[type=\"radio\"]");
-let span_footer = document.querySelector(".span_footer");
-let table_body_main = contents[0].querySelector(".table_body");
-let table_header_main = contents[0].querySelector(".table_header");
-let chart_div_template = document.querySelector(".chart_div");
-let checkbox_td = document.querySelector(".checkbox_td");
-let new_chart_form_div = document.querySelectorAll(".new_chart_form_div");
+let wrapper = document.querySelectorAll("div.wrapper");
+let radios = document.querySelectorAll(".tabs input[type=\"radio\"]");
+let table = document.querySelectorAll("div.table");
+let main_table_header = document.querySelector("table.main_table_header")
+let main_table_body = document.querySelector("table.main_table_body");
+let bd_e_preloader = document.querySelector(".preloader span.bd_e");
+let popup = document.querySelector("div.popup");
+let charts_container = document.querySelectorAll("div.charts_container");
+let chart_2d_div = document.querySelector("div.chart_2d_div");
+let chart_2d_div_template = chart_2d_div.innerHTML;
+let select_culture_template = document.querySelector(".select_culture_template");
+let select_field_template = document.querySelector(".select_field_template");
+let select_param_template = document.querySelector(".select_param_template");
 let add_2d_button = document.querySelector(".add_2d_button");
 let add_3d_button = document.querySelector(".add_3d_button");
-let add_drm_button = document.querySelector(".add_drm_button");
-let select_culture = document.querySelector(".select_culture");
-let select_field = document.querySelector(".select_field");
-let select_param = document.querySelector(".select_param");
-let trends_2d_template = document.querySelector(".trends_2d");
-let interpolation_2d_template = document.querySelector(".interpolation_2d");
-let trends_3d_template = document.querySelector(".trends_3d");
-let right_context_menu_template = document.querySelector(".right_context_menu");
 let cultures_list = [];
 let fields_list = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-    search.onsubmit = function (e) {
-        e.preventDefault();
-    }
-    doRequest();
-    find();
-    search.year1.onkeyup = find;
-    search.year1.onclick = find;
-    search.year2.onkeyup = find;
-    search.year2.onclick = find;
-    search.culture.onkeyup = find;
-    search.field.onkeyup = find;
-    search.calculate.onclick = calc.bind(null, table_body_main, table_header_main);
-    contents[0].style.display = "flex";
-    add_2d_button.onclick = addChartDiv.bind(null, 0);
-    add_3d_button.onclick = addChartDiv.bind(null, 1);;
-    //add_drm_button.onclick = addChartDiv(content[3]);
-    onRadioChange();
-});
+doRequest();
+wrapper[0].style.display = "none";
+wrapper[1].style.display = "flex";
 
-function addChartDiv(type) {
-    let plotly_num = document.querySelectorAll(".plotly_div").length;
-    let chart_div = document.createElement("div");
-    chart_div.className = "chart_div";
-    chart_div.innerHTML = chart_div_template.innerHTML;
-    new_chart_form_div[type].before(chart_div); // type 0 = 2d
-    let param_form = chart_div.querySelector(".param_form");
-
-    addSpan(param_form, "Ось Х:");
-    addSelect(param_form, select_param, "x_select_param");
-    let x_select_culture = addSelect(param_form, select_culture, "x_select_culture");
-    addOptions(x_select_culture, cultures_list, "name");
-    let x_select_field = addSelect(param_form, select_field, "x_select_field");
-    addOptions(x_select_field, fields_list, "cadastral");
-
-    addSpan(param_form, "Ось Y:");
-    addSelect(param_form, select_param, "y_select_param");
-    let y_select_culture = addSelect(param_form, select_culture, "y_select_culture");
-    y_select_culture.innerHTML = x_select_culture.innerHTML;
-    let y_select_field = addSelect(param_form, select_field, "y_select_field");
-    y_select_field.innerHTML = x_select_field.innerHTML;
-
-    if (type == 1) {
-        addSpan(param_form, "Ось Z:");
-        addSelect(param_form, select_param, "z_select_param");
-        let z_select_culture = addSelect(param_form, select_culture, "z_select_culture");
-        z_select_culture.innerHTML = x_select_culture.innerHTML;
-        let z_select_field = addSelect(param_form, select_field, "z_select_field");
-        z_select_field.innerHTML = x_select_field.innerHTML;
-    }
-
-    let data = [];
-    let add_chart_button = chart_div.querySelector(".add_chart_button");
-    if (type == 0) {
-        let trends_2d = document.createElement("div");
-        trends_2d.className = "trends_2d";
-        trends_2d_template.querySelector(".a_error_checkbox").setAttribute("id", "a_error_checkbox_" + plotly_num);
-        trends_2d_template.querySelector(".a_error_checkbox_label").setAttribute("for", "a_error_checkbox_" + plotly_num);
-        trends_2d.innerHTML = trends_2d_template.innerHTML;
-        let interpolation_2d = document.createElement("div");
-        interpolation_2d.className = "interpolation_2d";
-        interpolation_2d.innerHTML = interpolation_2d_template.innerHTML;
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_2d, interpolation_2d, plotly_num, type);
-    } else if(type == 1) {
-        let trends_3d = document.createElement("div");
-        trends_3d.className = "trends_3d";
-        trends_3d.innerHTML = trends_3d_template.innerHTML;
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, trends_3d, null, plotly_num, type);
-    }
-
-}
-
-function addSelect(form, select, name) {
-    let sel = document.createElement("select");
-    sel.className = name;
-    sel.name = name;
-    sel.innerHTML = select.innerHTML;
-    form.insertBefore(sel, form.querySelector(".add_chart_button"));
-    return sel;
-}
-
-function addOptions(select, data, key) {
-    for (let k = 0; k < data.length; k++) {
-        let option = document.createElement("option");
-        option.value = k;
-        option.innerHTML = data[k][key];
-        select.append(option);
-    }
-}
-
-function addSpan(form, text) {
-    let span = document.createElement("span");
-    span.innerHTML = text;
-    form.insertBefore(span, form.querySelector(".add_chart_button"));
-}
-
-function getFieldsCulturesList(xhr) {
-    if (xhr.response.fields_rows.length > 0) {
-        fields_list = xhr.response.fields_rows;
-    }
-    if (xhr.response.cultures_rows.length > 0) {
-        cultures_list = xhr.response.cultures_rows;
+function onRadioChange() {
+    for (let i = 0; i < radios.length; i++) {
+        radios[i].addEventListener("change", function() {
+            wrapper.forEach(elem => { elem.style.display = "none"; });
+            wrapper[i].style.display = "flex";
+        });
     }
 }
 
 function doRequest() {
     let xhr = request("php/calculate.php", null);
-    xhr.onload = function () {
+    xhr.onload = function() {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
@@ -141,68 +45,253 @@ function doRequest() {
                 return;
             } else {
                 fadeOut(document.querySelector(".preloader"));
+                onRadioChange();
+                find();
+                getFieldsCulturesList(xhr);
+                addSelects(chart_2d_div, 0);
+                addOtherStuff(chart_2d_div, 0);
+                search.year1.onkeyup = find;
+                search.year1.onclick = find;
+                search.year2.onkeyup = find;
+                search.year2.onclick = find;
+                search.culture.onkeyup = find;
+                search.field.onkeyup = find;
+                search.onsubmit = function(e) {
+                    e.preventDefault();
+                }
+                search.calculate.onclick = calc.bind(null, main_table_body, main_table_header);
+                add_2d_button.onclick = addChartDiv.bind(null, 0);
+
+                new ResizeSensor(wrapper[1].querySelector("div.charts_container"), function() {
+                    onPlotlyResise(wrapper[1]);
+                })
+                wrapper[1].onscroll = function() {
+                    onPlotlyResise(wrapper[1]);
+                }
+
             }
-            getFieldsCulturesList(xhr);
         }
     }
 }
 
-function onRadioChange() {
-    console.log(contents);
-    for (let i = 0; i < radios.length; i++) {
-        console.log(i);
-        radios[i].addEventListener("change", function () {
-            for (let k = 0; k < contents.length; k++) {
-                contents[k].style.display = "none";
+function addChartDiv(type) {
+    let chart_div = document.createElement("div");
+    if (type == 0) {
+        chart_div.innerHTML = chart_2d_div_template;
+    }
+    chart_div.className = "chart_div";
+    charts_container[type].querySelector("form.new_chart_form").before(chart_div);
+    //chart_div.querySelector("hr").classList.add("active");
+    addSelects(chart_div, type);
+    addOtherStuff(chart_div, type);
+
+}
+
+function addOtherStuff(chart_div, type) {
+    let add_chart_button = chart_div.querySelector("span.add_chart");
+    let data = [];
+    let plotly_num = document.querySelectorAll(".plotly_div").length;
+    if (type == 0) {
+        console.log("onclick")
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, type, plotly_num);
+    }
+    let a_error_checkbox = chart_div.querySelector(".a_error_checkbox");
+    a_error_checkbox.id += "_" + plotly_num;
+    let a_error_checkbox_label = chart_div.querySelector(".a_error_checkbox_label");
+    a_error_checkbox_label.setAttribute("for", a_error_checkbox.id);
+}
+
+function addSelects(chart_div, type) {
+    let param_form = chart_div.querySelector(".param_form");
+    addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
+    let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_y_span"));
+    addOptions(x_select_field, fields_list, "cadastral");
+    let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_y_span"));
+    addOptions(x_select_culture, cultures_list, "name");
+
+    let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
+    addOptions(y_select_culture, cultures_list, "name");
+    let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
+    addOptions(y_select_field, fields_list, "cadastral");
+    addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
+
+    if (type == 1) {
+        addSelect(param_form, select_param_template, "z_select_param", chart_div.querySelector("span.axis_z_span"));
+        let z_select_field = addSelect(param_form, select_field_template, "z_select_field", null, chart_div.querySelector("span.axis_z_span"));
+        addOptions(z_select_field, fields_list, "cadastral");
+        let z_select_culture = addSelect(param_form, select_culture_template, "z_select_culture", null, chart_div.querySelector("span.axis_z_span"));
+        addOptions(z_select_culture, cultures_list, "name");
+    }
+
+    function addSelect(form, select_template, name, before, after) {
+        let sel = document.createElement("select");
+        sel.className = name;
+        sel.name = name;
+        sel.innerHTML = select_template.innerHTML;
+        if (before) form.insertBefore(sel, before);
+        else if (after) form.insertBefore(sel, after.nextSibling);
+        return sel;
+    }
+
+    function addOptions(select, data, key) {
+        for (let k = 0; k < data.length; k++) {
+            let option = document.createElement("option");
+            option.value = k;
+            option.innerHTML = data[k][key];
+            select.append(option);
+        }
+    }
+}
+
+function onPlotlyResise(wrapper) {
+    let plotly_div = wrapper.querySelectorAll("div.plotly_div");
+    let font_size = (getComputedStyle(document.documentElement).fontSize).replace("px", "");
+    for (let i = 0; i < plotly_div.length; i++) {
+        updateLayout(plotly_div[i]);
+        let left_right = getPlotlyLRCoordinates(plotly_div[i]);
+        let top_bottom = getPlotlyTBCoordinates(plotly_div[i]);
+        plotly_div[i].onmousemove = function(e) {
+            let lr = isBorder(left_right, e.clientX, font_size);
+            let tb = isBorder(top_bottom, e.clientY, font_size);
+            if (lr && !tb) {
+                plotly_div[i].style.cursor = "col-resize";
+                plotly_div[i].onmousedown = function(e) {
+                    removeMouseMoveListeners();
+                    let start_x = e.clientX;
+                    let height = plotly_div[i].getBoundingClientRect().height;
+                    let width = plotly_div[i].getBoundingClientRect().width;
+                    document.documentElement.onmousemove = function(e) {
+                        document.getSelection().removeAllRanges();
+                        document.body.style.cursor = "col-resize";
+                        removePlotlyOpacity(plotly_div[i]);
+                        let new_width = (width + e.clientX - start_x) / font_size;
+                        if (new_width > 10) {
+                            plotly_div[i].style.width = new_width + "rem";
+                        }
+                    }
+                    document.documentElement.onmouseup = function() {
+                        document.body.style.cursor = "default";
+                        document.documentElement.onmousemove = null;
+                        plotly_div[i].onmousedown = null;
+                        updateLayout(plotly_div[i]);
+                        addPlotlyOpacity(plotly_div[i]);
+                        onPlotlyResise(wrapper);
+                    }
+                }
+            } else if (!lr && tb) {
+                plotly_div[i].style.cursor = "row-resize";
+                plotly_div[i].onmousedown = function(e) {
+                    removeMouseMoveListeners();
+                    let start_y = e.clientY;
+                    let height = plotly_div[i].getBoundingClientRect().height;
+                    document.documentElement.onmousemove = function(e) {
+                        document.getSelection().removeAllRanges();
+                        plotly_div[i].style.cursor = "row-resize";
+                        removePlotlyOpacity(plotly_div[i]);
+                        let new_height = (height + e.clientY - start_y) / font_size;
+                        if (new_height > 10) {
+                            plotly_div[i].style.height = new_height + "rem";
+                        }
+                    }
+                    document.documentElement.onmouseup = function() {
+                        document.body.style.cursor = "default";
+                        document.documentElement.onmousemove = null;
+                        plotly_div[i].onmousedown = null;
+                        updateLayout(plotly_div[i]);
+                        addPlotlyOpacity(plotly_div[i]);
+                        onPlotlyResise(wrapper);
+                    }
+                }
+            } else {
+                plotly_div[i].style.cursor = "default";
             }
-            contents[i].style.display = "flex";
-            //removeCellRect(selected_content_i);
-            //setTableEngine(i);
-        });
+        }
+    }
+
+    function removePlotlyOpacity(plotly_div) {
+        let plotly = plotly_div.querySelector(".plotly");
+        if(plotly) {
+            plotly.classList.add("resizing");
+        }
+    }
+
+    function addPlotlyOpacity(plotly_div) {
+        let plotly = plotly_div.querySelector(".plotly");
+        if(plotly) {
+            plotly.classList.remove("resizing");
+        }
+    }
+
+    function removeMouseMoveListeners() {
+        for (let i = 0; i < plotly_div.length; i++) {
+            plotly_div[i].onmousemove = null;
+        }
+    }
+
+    function getPlotlyLRCoordinates(plotly_div) {
+        return [plotly_div.getBoundingClientRect().left, plotly_div.getBoundingClientRect().left + plotly_div.getBoundingClientRect().width];
+    }
+
+    function getPlotlyTBCoordinates(plotly_div) {
+        return [plotly_div.getBoundingClientRect().top, plotly_div.getBoundingClientRect().top + plotly_div.getBoundingClientRect().height];
+    }
+
+    function isBorder(b, x, font_size) {
+        for (let k = 0; k < b.length; k++) {
+            if (Math.abs(x - b[k]) / font_size <= 0.25) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+function getFieldsCulturesList(xhr) {
+    if (xhr.response.fields_rows.length > 0) {
+        fields_list = xhr.response.fields_rows;
+    }
+    if (xhr.response.cultures_rows.length > 0) {
+        cultures_list = xhr.response.cultures_rows;
     }
 }
 
 function find() {
     let xhr = request("php/find.php", new FormData(search));
-    xhr.onload = function () {
+    xhr.onload = function() {
         if (xhr.status != 200) {
             console.log(xhr.status);
         } else {
             console.log(xhr.response);
             if (xhr.response == null) return;
-            if (!checkBdServerHome(xhr)) {
-                showText(span_footer, xhr.response.bd_e[0], true);
-            } else {
-                showText(span_footer, "", false);
+            if (!checkBdServer(xhr, null)) {
+                showPopup(popup, "Ошибка сохранения таблиц");
+                return;
             }
-            if (!checkInfoServerHome(xhr)) {
-                showText(span_footer, xhr.response.info[0], false);
-            } else {
-                showText(span_footer, "", false);
+            if (!checkInfoServer(xhr)) {
+                showPopup(popup, xhr.response.info[0]);
             }
             if (xhr.response.factors_result.length > 0) {
-                fillTable(table_body_main, xhr.response.factors_result[0]);
+                fillTable(main_table_body, xhr.response.factors_result[0]);
             } else {
-                clearTable(table_body_main);
+                clearTable(main_table_body);
             }
-            setTableEngine(contents[0].querySelector(".table_body_div"), 0, table_body_main, table_header_main);
+            setTableEngine(table[0]);
         }
     }
-}
 
-function fillTable(body, data) {
-    body.innerHTML = data;
-}
+    function fillTable(body, data) {
+        body.innerHTML = data;
+    }
 
-function clearTable(body) {
-    body.innerHTML = "";
+    function clearTable(body) {
+        body.innerHTML = "";
+    }
 }
 
 function calc(body, header) {
     let cells = body.querySelectorAll("td");
-    let ths = header.querySelectorAll("th");
     for (let i = 0; i < cells.length; i++) {
-        let col = i % ths.length;
+        let col = i % header.querySelectorAll("th").length;
         if (col > 4) {
             if (cells[i - 2].innerHTML == "" || cells[i - 1].innerHTML == "") {
                 continue;

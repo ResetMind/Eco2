@@ -3,7 +3,6 @@ let log_button = document.querySelector(".login_form .log_button");
 let email = document.querySelector(".login_form .email");
 let password = document.querySelector(".login_form .password");
 let email_e = document.querySelector(".login_form .email_e");
-let password_e = document.querySelector(".login_form .password_e");
 let bd_e = document.querySelector(".login_form .bd_e");
 let ver_span = document.querySelector(".login_content .ver_span");
 let access_span = document.querySelector(".login_content .access_span");
@@ -28,11 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
     }
     log_button.onclick = function() {
-        let res1 = checkEmail(email, email_e);
-        let res2 = checkPassword0(password, password_e);
-        if (!res1 || !res2) {
-            return;
-        }
         let xhr = request(login_form.getAttribute("action"), new FormData(login_form));
         xhr.onload = function() {
             if (xhr.status != 200) {
@@ -40,10 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 console.log(xhr.response);
                 if (xhr.response == null) return;
-                res1 = checkEmailServer(xhr, email, email_e);
-                res2 = checkPassword0Server(xhr, password, password_e);
-                let res3 = checkBdServer(xhr, bd_e);
-                if (res1 && res2 && res3) {
+                if (checkBdServer(xhr, bd_e)) {
                     window.location.href = "home.html";
                 }
             }
@@ -70,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     email.oninput = checkEmail.bind(null, email, email_e);
-    password.oninput = checkPassword0.bind(null, password, password_e);
     fadeOut(document.querySelector(".preloader"));
 });
 
