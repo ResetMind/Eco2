@@ -16,10 +16,17 @@
         let table = document.querySelector(".table");
         button.onclick = function () {
             let y = [1.282, 0.958, 11.22, 0.431, 2.029, 1.699, 6.46, 0.401, 12.03, 5.233, 1.254, 3.051, 8.626, 3.693, 5.616, 0.906, 8.833, 2.236, 12.255, 1.273, 6.913, 4.737, 0.848, 13.418, 2.337, 7.242];
-            let order = [1, 2, 1];
-            let prlen = 10;
-            let xhr = JSONRequest("cgi/arima.cgi", JSON.stringify({ "y": y, "order": order, "prlen": prlen }));
-            console.log(JSON.stringify({ "y": y, "order": order, "prlen": prlen }));
+            let order = [26, 1, 1];
+            let path = "a@gmail.com/" + getYSum(y) + "_yst_[" + order + "].pickle";
+            let json = {
+                "y": y,
+                "order": order,
+                "prlen": 2,
+                "auto": 0,
+                "path": path
+            }
+            let xhr = JSONRequest("cgi/arima.cgi", JSON.stringify(json));
+            console.log(json);
             xhr.onload = function () {
                 if (xhr.status != 200) {
                     console.log(xhr.status);
@@ -30,7 +37,17 @@
                 }
             }
         }
+
+        function getYSum(y_arr) {
+            let sum = "";
+            for (let i = 0; i < y_arr.length; i++) {
+                sum += y_arr[i]
+            }
+            let md5 = CryptoJS.MD5(sum).toString();
+            return md5;
+        }
     </script>
+    <script src="js/crypto-js.min.js" defer></script>
     <script src="js/common.js" defer></script>
 </body>
 
