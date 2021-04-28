@@ -95,10 +95,10 @@ function addOtherStuff(chart_div, type) {
         console.log("onclick")
         add_chart_button.onclick = addChart.bind(null, chart_div, data, type, plotly_num);
     }
-    let a_error_checkbox = chart_div.querySelector(".a_error_checkbox");
-    a_error_checkbox.id += "_" + plotly_num;
-    let a_error_checkbox_label = chart_div.querySelector(".a_error_checkbox_label");
-    a_error_checkbox_label.setAttribute("for", a_error_checkbox.id);
+    let auto_arima_checkbox = chart_div.querySelector(".auto_arima_checkbox");
+    auto_arima_checkbox.id += "_" + plotly_num;
+    let auto_arima_checkbox_label = chart_div.querySelector(".auto_arima_checkbox_label");
+    auto_arima_checkbox_label.setAttribute("for", auto_arima_checkbox.id);
 }
 
 function addSelects(chart_div, type) {

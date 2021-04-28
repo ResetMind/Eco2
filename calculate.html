@@ -232,6 +232,40 @@
                         <div class="chart_data"></div>
                         <div class="chart_stuff">
                             <div class="stuff_2d">
+                                <div class="forecast_2d stuff_2d_part">
+                                    <div class="header">
+                                        <span class="header">Прогнозирование</span>
+                                    </div>
+                                    <div class="form_div">
+                                        <form name="forecast_2d_form" class="forecast_2d_form" onsubmit="event.preventDefault();">
+                                            <label for="arima_p">p:</label>
+                                            <input type="number" class="arima_p"
+                                                name="arima_p" id="arima_p" min="0" max="99"
+                                                step="1" value="1">
+                                            <label for="arima_d">d:</label>
+                                            <input type="number" class="arima_d"
+                                                name="arima_d" id="arima_d" min="0" max="99"
+                                                step="1" value="1">
+                                            <label for="arima_q">q:</label>
+                                            <input type="number" class="arima_q"
+                                                name="arima_q" id="arima_q" min="0" max="99"
+                                                step="1" value="1">
+                                            <label for="arima_train_number">n:</label>
+                                            <input type="number" class="arima_train_number"
+                                                name="arima_train_number" id="arima_train_number" min="0" max="99"
+                                                step="1" value="1">
+                                            <input type="checkbox" id="auto_arima_checkbox"
+                                                class="auto_arima_checkbox standart_checkbox">
+                                            <label for="auto_arima_checkbox" class="auto_arima_checkbox_label">Автоподбор</label>
+                                            <input type="submit" class="arima_button" name="arima_button" value="Arima">
+                                        </form>
+                                    </div>
+                                    <div class="results forecast_2d_results">
+                                        <span class="mse results">mse</span>
+                                        <span class="llf results">llf</span>
+                                    </div>
+                                </div>
+
                                 <div class="trends_2d stuff_2d_part">
                                     <div class="header">
                                         <span class="header">Линии тренда</span>
@@ -262,9 +296,6 @@
                                             <input type="number" class="number_2d_trend_step"
                                                 name="number_2d_trend_step" id="number_2d_trend_step" min="0.1"
                                                 max="100" step="0.1" value="1" disabled>
-                                            <input type="checkbox" id="a_error_checkbox"
-                                                class="a_error_checkbox standart_checkbox">
-                                            <label for="a_error_checkbox" class="a_error_checkbox_label">Ошибка</label>
                                         </form>
                                     </div>
                                     <div class="results trends_2d_results">
@@ -272,40 +303,7 @@
                                         <span class="a results">2</span>
                                         <span class="trend_function results">3</span>
                                     </div>
-                                </div>
-                                <!--<div class="optimisation_2d stuff_2d_part">
-                                    <div class="header">
-                                        <span class="header">Оптимизация</span>
-                                    </div>
-                                    <div class="form_div">
-                                        <form name="optimisation_2d_form" class="optimisation_2d_form">
-                                            <select class="select_2d_optimisation_method"
-                                                name="select_2d_optimisation_method">
-                                                <option value="none">Отсутствует</option>
-                                                <option value="0">Дихотомия</option>
-                                                <option value="1">Золотое сечение</option>
-                                                <option value="2">Фибоначчи</option>
-                                            </select>
-                                            <select class="select_2d_optimisation_type"
-                                                name="select_2d_optimisation_type">
-                                                <option value="0">Минимум</option>
-                                                <option value="1">Максимум</option>
-                                            </select>
-                                            <input type="number" class="number_2d_optimisation_left"
-                                                name="number_2d_optimisation_left" id="number_2d_optimisation_left "
-                                                placeholder="a" min="-9999" max="9999">
-                                            <input type="number" class="number_2d_optimisation_right"
-                                                name="number_2d_optimisation_right" id="number_2d_optimisation_right"
-                                                placeholder="b" min="-9999" max="9999">
-                                            <input type="button" class="button_2d_optimisation"
-                                                name="button_2d_optimisation" value="Найти">
-                                        </form>
-                                    </div>
-                                    <div class="results optimisation">
-                                        <span class="x_opt results"></span>
-                                        <span class="y_opt results"></span>
-                                    </div>
-                                </div>-->
+                                </div>    
                                 <div class="imitation_2d stuff_2d_part">
                                     <div class="header">
                                         <span class="header">Имитационное моделирование</span>

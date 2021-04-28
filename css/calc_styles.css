@@ -131,12 +131,17 @@ form span:not(:first-child) {
     margin-top: 0.25rem;
 }
 
-.chart_stuff form label {
+.chart_stuff form label,
+.chart_stuff form input[type="submit"] {
     margin-left: 0.25rem;
 }
 
 .chart_stuff form * {
     margin-right: 0.25rem;
+}
+
+.chart_stuff form :last-child {
+    padding-right: 0.25rem;
 }
 
 .chart_settings input[type="checkbox"].chart_checkbox+label::before {
@@ -206,13 +211,13 @@ form span:not(:first-child) {
     margin-right: 0.5rem;
 }
 
-.chart_stuff .optimisation_2d,
+/*.chart_stuff .forecast_2d,*/
 .chart_stuff .imitation_2d {
     opacity: 50%;
     transition: 0.2s;
 }
 
-.chart_stuff .optimisation_2d.active,
+.chart_stuff .forecast_2d.active,
 .chart_stuff .imitation_2d.active {
     opacity: 100%;
     transition: 0.2s;
