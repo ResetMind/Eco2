@@ -1,3 +1,4 @@
+let email = null;
 let wrapper = document.querySelectorAll("div.wrapper");
 let radios = document.querySelectorAll(".tabs input[type=\"radio\"]");
 let table = document.querySelectorAll("div.table");
@@ -48,6 +49,7 @@ function doRequest() {
                 onRadioChange();
                 find();
                 getFieldsCulturesList(xhr);
+                email = getEmail(xhr);
                 addSelects(chart_2d_div, 0);
                 addOtherStuff(chart_2d_div, 0);
                 search.year1.onkeyup = find;
@@ -68,7 +70,6 @@ function doRequest() {
                 wrapper[1].onscroll = function() {
                     onPlotlyResise(wrapper[1]);
                 }
-
             }
         }
     }

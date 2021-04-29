@@ -14,6 +14,7 @@
     <div class="preloader">
         <span class="bd_e error">bd_e</span>
     </div>
+    <div class="loader"></div>
     <div class="container">
         <header>
             <ul class="navigation">
@@ -237,7 +238,11 @@
                                         <span class="header">Прогнозирование</span>
                                     </div>
                                     <div class="form_div">
-                                        <form name="forecast_2d_form" class="forecast_2d_form" onsubmit="event.preventDefault();">
+                                        <form name="forecast_2d_form" class="forecast_2d_form">
+                                            <select class="select_2d_forecast_type" name="select_2d_forecast_type">
+                                                <option value="none">Отсутствует</option>
+                                                <option value="0">ARIMA</option>
+                                            </select>
                                             <label for="arima_p">p:</label>
                                             <input type="number" class="arima_p"
                                                 name="arima_p" id="arima_p" min="0" max="99"
@@ -250,14 +255,17 @@
                                             <input type="number" class="arima_q"
                                                 name="arima_q" id="arima_q" min="0" max="99"
                                                 step="1" value="1">
-                                            <label for="arima_train_number">n:</label>
-                                            <input type="number" class="arima_train_number"
-                                                name="arima_train_number" id="arima_train_number" min="0" max="99"
+                                            <label for="arima_k">k:</label>
+                                            <input type="number" class="arima_k"
+                                                name="arima_k" id="arima_k" min="0" max="99"
+                                                step="1" value="1">
+                                            <label for="arima_n">n:</label>
+                                            <input type="number" class="arima_n"
+                                                name="arima_n" id="arima_n" min="0" max="99"
                                                 step="1" value="1">
                                             <input type="checkbox" id="auto_arima_checkbox"
-                                                class="auto_arima_checkbox standart_checkbox">
+                                                class="auto_arima_checkbox standart_checkbox" name="auto_arima_checkbox">
                                             <label for="auto_arima_checkbox" class="auto_arima_checkbox_label">Автоподбор</label>
-                                            <input type="submit" class="arima_button" name="arima_button" value="Arima">
                                         </form>
                                     </div>
                                     <div class="results forecast_2d_results">
@@ -299,10 +307,8 @@
                                         </form>
                                     </div>
                                     <div class="results trends_2d_results">
-                                        <span class="r results">1</span>
-                                        <span class="a results">2</span>
-                                        <span class="trend_function results">3</span>
-                                    </div>
+                                        <span class="r results">r</span>
+                                        <span class="a results">a</span>                                    </div>
                                 </div>    
                                 <div class="imitation_2d stuff_2d_part">
                                     <div class="header">
@@ -372,68 +378,69 @@
         </select>
         <select class="select_param_template template" name="select_param_template">
             <option value="" disabled>Параметр</option>
-            <option value="0">Год</option>
-            <option value="3">∑О,мм</option>
-            <option value="4" selected>∑t,°C</option>
-            <option value="7">∑t≥10°C</option>
-            <option value="10">∑t≥15°C</option>
-            <option value="13">∑t≥20°C</option>
-            <option value="15">∑О≥2мм</option>
-            <option value="27">∑В,%</option>
-            <option value="39">∑В≥40%</option>
-            <option value="42">∑В≥45%</option>
-            <option value="45">∑В≥50%</option>
-            <option value="75">ЧД(О)</option>
-            <option value="76">ЧД(t≥10°C)</option>
-            <option value="79">ЧД(t≥15°C)</option>
-            <option value="82">ЧД(t≥20°C)</option>
-            <option value="84">ЧД(О≥2мм)</option>
-            <option value="93">ЧД(В≥40%)</option>
-            <option value="102">ЧД(В≥45%)</option>
-            <option value="111">ЧД(В≥50%)</option>
-            <option value="5">X1</option>
-            <option value="8">X2</option>
-            <option value="11">X3</option>
-            <option value="14">X4</option>
-            <option value="17">X5</option>
-            <option value="20">X6</option>
-            <option value="23">X7</option>
-            <option value="26">X8</option>
-            <option value="29">X9</option>
-            <option value="32">X10</option>
-            <option value="35">X11</option>
-            <option value="38">X12</option>
-            <option value="41">X13</option>
-            <option value="44">X14</option>
-            <option value="47">X15</option>
-            <option value="50">X16</option>
-            <option value="53">X17</option>
-            <option value="56">X18</option>
-            <option value="59">X19</option>
-            <option value="62">X20</option>
-            <option value="65">X21</option>
-            <option value="68">X22</option>
-            <option value="71">X23</option>
-            <option value="74">X24</option>
-            <option value="77">X25</option>
-            <option value="80">X26</option>
-            <option value="83">X27</option>
-            <option value="86">X28</option>
-            <option value="89">X29</option>
-            <option value="92">X30</option>
-            <option value="95">X31</option>
-            <option value="98">X32</option>
-            <option value="101">X33</option>
-            <option value="104">X34</option>
-            <option value="107">X35</option>
-            <option value="110">X36</option>
-            <option value="113">X37</option>
-            <option value="116">X38</option>
-            <option value="119">X39</option>
+            <option class="year" value="0">Год</option>
+            <option class="sumO" value="3">∑О,мм</option>
+            <option class="sumT" value="4" selected>∑t,°C</option>
+            <option class="sumT10" value="7">∑t≥10°C</option>
+            <option class="sumT15" value="10">∑t≥15°C</option>
+            <option class="sumT20" value="13">∑t≥20°C</option>
+            <option class="sumO2" value="15">∑О≥2мм</option>
+            <option class="sumB" value="27">∑В,%</option>
+            <option class="sumB40" value="39">∑В≥40%</option>
+            <option class="sumB45" value="42">∑В≥45%</option>
+            <option class="sumB50" value="45">∑В≥50%</option>
+            <option class="chdO" value="75">ЧД(О)</option>
+            <option class="chdT10" value="76">ЧД(t≥10°C)</option>
+            <option class="chdT15" value="79">ЧД(t≥15°C)</option>
+            <option class="chdT20" value="82">ЧД(t≥20°C)</option>
+            <option class="chdO2" value="84">ЧД(О≥2мм)</option>
+            <option class="chdB40" value="93">ЧД(В≥40%)</option>
+            <option class="chdB45" value="102">ЧД(В≥45%)</option>
+            <option class="chdB50" value="111">ЧД(В≥50%)</option>
+            <option class="X1" value="5">X1</option>
+            <option class="X2" value="8">X2</option>
+            <option class="X3" value="11">X3</option>
+            <option class="X4" value="14">X4</option>
+            <option class="X5" value="17">X5</option>
+            <option class="X6" value="20">X6</option>
+            <option class="X7" value="23">X7</option>
+            <option class="X8" value="26">X8</option>
+            <option class="X9" value="29">X9</option>
+            <option class="X10" value="32">X10</option>
+            <option class="X11" value="35">X11</option>
+            <option class="X12" value="38">X12</option>
+            <option class="X13" value="41">X13</option>
+            <option class="X14" value="44">X14</option>
+            <option class="X15" value="47">X15</option>
+            <option class="X16" value="50">X16</option>
+            <option class="X17" value="53">X17</option>
+            <option class="X18" value="56">X18</option>
+            <option class="X19" value="59">X19</option>
+            <option class="X20" value="62">X20</option>
+            <option class="X21" value="65">X21</option>
+            <option class="X22" value="68">X22</option>
+            <option class="X23" value="71">X23</option>
+            <option class="X24" value="74">X24</option>
+            <option class="X25" value="77">X25</option>
+            <option class="X26" value="80">X26</option>
+            <option class="X27" value="83">X27</option>
+            <option class="X28" value="86">X28</option>
+            <option class="X29" value="89">X29</option>
+            <option class="X30" value="92">X30</option>
+            <option class="X31" value="95">X31</option>
+            <option class="X32" value="98">X32</option>
+            <option class="X33" value="101">X33</option>
+            <option class="X34" value="104">X34</option>
+            <option class="X35" value="107">X35</option>
+            <option class="X36" value="110">X36</option>
+            <option class="X37" value="113">X37</option>
+            <option class="X38" value="116">X38</option>
+            <option class="X39" value="119">X39</option>
         </select>
     </div>
     <script src="css-element-queries-1.2.1/src/ResizeSensor.js"></script>
     <script src="js/plotly-latest.js" defer></script>
+    <script src="js/crypto-js.min.js" defer></script>
     <script src="js/common.js" defer></script>
     <script src="js/table_engine.js" defer></script>
     <script src="js/input_engine.js" defer></script>

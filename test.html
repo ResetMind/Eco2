@@ -22,11 +22,11 @@
                 "y": y,
                 "order": order,
                 "prlen": 2,
-                "auto": 0,
+                "auto": 1,
                 "path": path
             }
             let xhr = JSONRequest("cgi/arima.cgi", JSON.stringify(json));
-            console.log(json);
+            console.log(JSON.stringify(json));
             xhr.onload = function () {
                 if (xhr.status != 200) {
                     console.log(xhr.status);

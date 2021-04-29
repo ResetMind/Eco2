@@ -136,6 +136,13 @@ function checkInfoServer(xhr) {
     return true;
 }
 
+function getEmail(xhr) {
+    if (xhr.response.info.length > 0) {
+        return xhr.response.info[0];
+    }
+    return null;
+}
+
 function showError(span, input, text) {
     span.classList.add("show");
     span.classList.remove("close");
@@ -180,8 +187,8 @@ function closePopup(popup) {
     popup.classList.remove("active");
 }
 
-function fadeOut(el) {
-	let opacity = 1;
+function fadeOut(el, op = 1) {
+	let opacity = op;
 	let timer = setInterval(function() {
 		if(opacity <= 0.1) {
 			clearInterval(timer);
@@ -193,12 +200,12 @@ function fadeOut(el) {
 	}, 5);
 }
 
-function fadeIn(el) {
+function fadeIn(el, op = 1) {
 	let opacity = 0.01;
 	el.style.opacity = opacity;
 	el.style.display = "block";
 	let timer = setInterval(function() {
-		if(opacity >= 1) {
+		if(opacity >= op) {
 			clearInterval(timer);
 		}
 		el.style.opacity = opacity;
@@ -225,6 +232,10 @@ function getTwoDimArrayIndex(arr, el) {
         }
     }
     return -1;
+}
+
+Array.prototype.last = function() {
+    return this[this.length - 1];
 }
 
 function request(url, data) {
