@@ -238,39 +238,60 @@
                                         <span class="header">Прогнозирование</span>
                                     </div>
                                     <div class="form_div">
-                                        <form name="forecast_2d_form" class="forecast_2d_form">
+                                        <form name="forecast_2d_form" class="forecast_2d_form"
+                                            onsubmit="event.preventDefault();">
                                             <select class="select_2d_forecast_type" name="select_2d_forecast_type">
                                                 <option value="none">Отсутствует</option>
                                                 <option value="0">ARIMA</option>
                                             </select>
                                             <label for="arima_p">p:</label>
-                                            <input type="number" class="arima_p"
-                                                name="arima_p" id="arima_p" min="0" max="99"
-                                                step="1" value="1">
+                                            <input type="number" class="arima_p" name="arima_p" id="arima_p" min="0"
+                                                max="99" step="1" value="1">
                                             <label for="arima_d">d:</label>
-                                            <input type="number" class="arima_d"
-                                                name="arima_d" id="arima_d" min="0" max="99"
-                                                step="1" value="1">
+                                            <input type="number" class="arima_d" name="arima_d" id="arima_d" min="0"
+                                                max="99" step="1" value="1">
                                             <label for="arima_q">q:</label>
-                                            <input type="number" class="arima_q"
-                                                name="arima_q" id="arima_q" min="0" max="99"
-                                                step="1" value="1">
+                                            <input type="number" class="arima_q" name="arima_q" id="arima_q" min="0"
+                                                max="99" step="1" value="1">
                                             <label for="arima_k">k:</label>
-                                            <input type="number" class="arima_k"
-                                                name="arima_k" id="arima_k" min="0" max="99"
-                                                step="1" value="1">
+                                            <input type="number" class="arima_k" name="arima_k" id="arima_k" min="0"
+                                                max="99" step="1" value="1">
                                             <label for="arima_n">n:</label>
-                                            <input type="number" class="arima_n"
-                                                name="arima_n" id="arima_n" min="0" max="99"
-                                                step="1" value="1">
+                                            <input type="number" class="arima_n" name="arima_n" id="arima_n" min="0"
+                                                max="99" step="1" value="1">
                                             <input type="checkbox" id="auto_arima_checkbox"
-                                                class="auto_arima_checkbox standart_checkbox" name="auto_arima_checkbox">
-                                            <label for="auto_arima_checkbox" class="auto_arima_checkbox_label">Автоподбор</label>
+                                                class="auto_arima_checkbox standart_checkbox"
+                                                name="auto_arima_checkbox">
+                                            <label for="auto_arima_checkbox"
+                                                class="auto_arima_checkbox_label">Автоподбор</label>
+                                            <input type="submit" class="forecast_2d_button" name="forecast_2d_button"
+                                                value="Прогноз">
                                         </form>
                                     </div>
                                     <div class="results forecast_2d_results">
                                         <span class="mse results">mse</span>
                                         <span class="llf results">llf</span>
+                                    </div>
+                                    <div class="imitation_div">
+                                        <div class="table_wrapper">
+                                            <div class="table">
+                                                <div class="table_header_wrapper" style="margin: 0;">
+                                                    <table class="table_header main_table_header main_table">
+                                                        <tr>
+                                                            <th>1</th>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div class="table_body_wrapper" style="margin: 0;">
+                                                    <div class="cell_selection"></div>
+                                                    <table class="table_body main_table_body main_table" tabindex="0">
+                                                        <tr>
+                                                            <td></td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -308,18 +329,7 @@
                                     </div>
                                     <div class="results trends_2d_results">
                                         <span class="r results">r</span>
-                                        <span class="a results">a</span>                                    </div>
-                                </div>    
-                                <div class="imitation_2d stuff_2d_part">
-                                    <div class="header">
-                                        <span class="header">Имитационное моделирование</span>
-                                    </div>
-                                    <div class="imitation_div">
-                                        <table class="imitation_table"></table>
-                                        <!--<ul class="right_context_menu">
-                                            <li class="r_col">Вставить столбец</li>
-                                            <li class="r_delete_col">Удалить столбец</li>
-                                        </ul>-->
+                                        <span class="a results">a</span>
                                     </div>
                                 </div>
                             </div>

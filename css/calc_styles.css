@@ -203,7 +203,12 @@ form span:not(:first-child) {
     display: none;
 }
 
-.chart_stuff div.results.active {
+.chart_stuff div.imitation_div {
+    display: block;
+}
+
+.chart_stuff div.results.active,
+.chart_stuff div.imitation_div.active {
     display: block;
 }
 

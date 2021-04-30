@@ -104,7 +104,8 @@ function addOtherStuff(chart_div, type) {
 
 function addSelects(chart_div, type) {
     let param_form = chart_div.querySelector(".param_form");
-    addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
+    let x_select = addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
+    x_select.querySelector(".year").selected = true;
     let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_y_span"));
     addOptions(x_select_field, fields_list, "cadastral");
     let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_y_span"));

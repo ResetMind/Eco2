@@ -295,7 +295,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                 if (type == 0) {
                     chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
                     addOn2DForecastParamsChangeListeners(chart_div, data, name);
-                    chart_div.querySelector(".forecast_2d_form").select_2d_forecast_type.dispatchEvent(new Event("change"));
+                    chart_div.querySelector(".forecast_2d_form").forecast_2d_button.dispatchEvent(new Event("click"));
                 } else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
 
                 function addLabel(x) {
@@ -345,18 +345,6 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
             }
             return table;
 
-            function addTd(tr, inner) {
-                let td = newTd();
-                td.innerHTML = inner;
-                tr.append(td);
-            }
-
-            function addTh(tr, inner) {
-                let th = newTh();
-                th.innerHTML = inner;
-                tr.append(th);
-            }
-
             function newCheckboxCell(num) {
                 let td = document.createElement("td");
                 let input = document.createElement("input");
@@ -369,12 +357,6 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
                 td.append(input, label);
                 return td.innerHTML;
             }
-
-            function newTr() { return document.createElement("tr"); }
-
-            function newTd() { return document.createElement("td"); }
-
-            function newTh() { return document.createElement("th"); }
         }
     }
 }
@@ -510,6 +492,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
     let results_div = document.querySelector(".forecast_2d_results");
     let forecast_2d_form = forecast_2d.querySelector(".forecast_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
+    let table_header = chart_div.querySelector("table.table_header");
+    let table_body = chart_div.querySelector("table.table_body");
 
     let data_index = getDataIndex(data, name);
     let color = data[data_index]["line"]["color"];
@@ -519,31 +503,27 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
 
     forecast_2d_form.arima_p.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_p);
-        arima();
     }
     forecast_2d_form.arima_d.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_d);
-        arima();
     }
     forecast_2d_form.arima_q.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_q);
-        arima();
     }
     forecast_2d_form.arima_k.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_k);
-        arima();
     }
     forecast_2d_form.arima_n.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_n);
-        arima();
     }
     forecast_2d_form.select_2d_forecast_type.onchange = function() {
         setDisabled();
-        if(forecast_2d_form.select_2d_forecast_type.value == "0") {
-            arima();
-        } else if(forecast_2d_form.select_2d_forecast_type.value == "none") {
+        if(forecast_2d_form.select_2d_forecast_type.value == "none") {
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
         }
+    }
+    forecast_2d_form.forecast_2d_button.onclick = function() {
+        arima();
     }
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if(!forecast_params) {
@@ -573,9 +553,14 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
         forecast_2d_form.arima_q.disabled = flag;
         forecast_2d_form.arima_k.disabled = flag;
         forecast_2d_form.arima_n.disabled = flag;
+        forecast_2d_form.auto_arima_checkbox.disabled = flag;
+        forecast_2d_form.forecast_2d_button.disabled = flag;
     }
 
     function arima() {
+        if(forecast_2d_form.select_2d_forecast_type.value == "none") {
+            return;
+        }
         let response = null;
         let p = parseFloat(forecast_2d_form.arima_p.value);
         let d = parseFloat(forecast_2d_form.arima_d.value);
@@ -604,10 +589,16 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
                 showPopup(popup, "Ошибка сервера " + xhr.status);
             } else {
                 if (xhr.response == null) {
-                    showPopup(popup, "Ошибка сервера");
+                    showPopup(popup, "Ошибка сервера", true);
                     return;
-                } else if(xhr.response["error"] != -1){
-                    showPopup(popup, xhr.response["error"]);
+                } else if(xhr.response["error"] != -1 && xhr.response["yhat"] == -1){
+                    showPopup(popup, xhr.response["error"], true);
+                    onArimaError(forecast_2d_form.arima_p);
+                    onArimaError(forecast_2d_form.arima_d);
+                    onArimaError(forecast_2d_form.arima_q);
+                    onArimaError(forecast_2d_form.arima_k);
+                    onArimaError(forecast_2d_form.arima_n);
+                    console.log(xhr.response);
                 } 
                 if(xhr.response["yhat"] != -1){
                     forecast_2d_form.arima_p.value = xhr.response["order"][0];
@@ -621,9 +612,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
                     for(let i = last + 1; i <= last + n; i++) {
                         x.push(i)
                     }
-                    console.log(yhat);
-                    console.log(x);
                     showForecast(p, d, q, k, n, auto, mse, llf, yhat);
+                    fillImitationTable();
                 }
 
             }
@@ -643,9 +633,17 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
             }
             console.log(forecast);
             data[data_index]["forecast"] = forecast;
-            addToAnalysisData(data, x, yhat, name + " (прогноз)", color, "forecast");
+            addToAnalysisData(data, x, yhat, name + " (прогноз)<sup>2</sup>", color, "forecast");
             newPlot(plotly_div, data, 0);
             showErrors(mse, llf);
+        }
+
+        function onArimaError(input) {
+            input.classList.add("transition");
+            input.classList.add("error");
+            setTimeout(function() {
+                input.classList.remove("error");
+            }, 200);
         }
     }
 
@@ -659,9 +657,16 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
     }
 
     function showErrors(mse, llf) {
-        mse_span.innerHTML = "MSE = " + mse;
-        llf_span.innerHTML = "LLF = " + llf;
+        mse_span.innerHTML = "MSE = " + mse.toFixed(4);
+        llf_span.innerHTML = "LLF = " + llf.toFixed(4);
         results_div.classList.add("active");
+    }
+
+    function fillImitationTable() {
+        let data_v = validateDataForCalculations(data, name, "0");
+        let header_tr = table_header.querySelector("tr");
+        let body_trs = table_header.querySelectorAll("tr");
+        console.log(data_v[data_index]);
     }
 
     function parseName() {
@@ -774,6 +779,24 @@ function getValidatedData(data, type) {
     //console.log(data_v);
     return data_v;
 }
+
+function addTd(tr, inner) {
+    let td = newTd();
+    td.innerHTML = inner;
+    tr.append(td);
+}
+
+function addTh(tr, inner) {
+    let th = newTh();
+    th.innerHTML = inner;
+    tr.append(th);
+}
+
+function newTr() { return document.createElement("tr"); }
+
+function newTd() { return document.createElement("td"); }
+
+function newTh() { return document.createElement("th"); }
 
 function setChartLayout(plotly_div) {
     return {
