@@ -28,11 +28,11 @@
     align-items: center;
 }
 
-.auth_form label, .auth_form a {
+.auth_form > label, .auth_form > a {
     margin-top: 0.25rem;
 }
 
-.auth_form label {
+.auth_form > label {
     align-self: flex-start;
 }
 
@@ -42,7 +42,7 @@
 
 span.auth_span {
     font-family: "OpenSans_Regular";
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     margin-bottom: 1rem;
 }
 
@@ -54,11 +54,40 @@ span.auth_error {
     align-self: start;
 }
 
-input {
+input, form > div {
     margin-top: 0.25rem;
 }
 
-@keyframes show {
+.set_div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.radio_div {
+    display: flex;
+}
+
+.radio_div>input {
+    display: none;
+}
+
+.radio_div>label {
+    padding: 0.25rem;
+    align-items: center;
+    cursor: pointer;
+    color: var(--color_text_dark_on_secondary);
+    transition-duration: 0.3s;
+}
+
+.radio_div>input:checked+label {
+    background: var(--color_primary_dark);
+    color: var(--color_secondary);
+    transition-duration: 0.3s;
+}
+
+@keyframes show_span {
     from {
         line-height: 0;
         opacity: 0;
@@ -72,7 +101,7 @@ input {
     }
 }
 
-@keyframes close {
+@keyframes close_span {
     from {
         line-height: 1.5;
         opacity: 100%;
@@ -87,9 +116,9 @@ input {
 }
 
 span.show {
-    animation: show ease-out 0.3s forwards;
+    animation: show_span ease-out 0.3s forwards;
 }
 
 span.close {
-    animation: close ease-out 0.3s forwards;
+    animation: close_span ease-out 0.3s forwards;
 }

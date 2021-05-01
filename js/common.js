@@ -45,7 +45,7 @@ function checkName(name_input, name_span) {
     }
 }
 
-function checkPassword(password_input, password_span) {
+function checkPassword0(password_input, password_span) {
     if (password_input.value.length < 1) {
         showError(password_span, password_input, "Недопустимая длина пароля");
         return false;
@@ -55,12 +55,12 @@ function checkPassword(password_input, password_span) {
     }
 }
 
-function checkPasswordServer(xhr, password_input, password_span) {
+function checkPassword0Server(xhr, password0_input, password0_span) {
     if (xhr.response.password_e.length > 0) {
-        showError(password_span, password_input, xhr.response.password_e[0]);
+        showError(password0_span, password0_input, xhr.response.password_e[0]);
         return false;
     } else {
-        removeError(password_span, password_input);
+        removeError(password0_span, password0_input);
         return true;
     }
 }
@@ -134,6 +134,17 @@ function checkInfoServer(xhr) {
         return false;
     }
     return true;
+}
+
+function getResultsServer(xhr) {
+    if (xhr.response.results.length > 0) {
+        let text = "";
+        for(let k = 0; k < xhr.response.results.length; k++) {
+            text += xhr.response.results[k] + "<br>";
+        }
+        return text;
+    }
+    return null;
 }
 
 function getEmail(xhr) {

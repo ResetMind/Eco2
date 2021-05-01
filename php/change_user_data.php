@@ -52,7 +52,7 @@ function check_values()
         }
     }
     if (strlen($password) > 0 || strlen($password1) > 0 || strlen($password2) > 0) {
-        if (!findPassword($_SESSION["email"])) {
+        if (!findPassword($_SESSION["email"], FALSE)) {
             $res = false;
         }
         if (!checkPassword1()) {
@@ -75,7 +75,7 @@ function saveChanges()
         if (!changeName($_SESSION["email"], $name)) {
             $res = false;
         } else {
-            $results[] = "Изменения сохранены";
+            $results[] = "Имя изменено";
         }
     }
     if ($_SESSION["email"] != $email) {
@@ -83,7 +83,7 @@ function saveChanges()
         if (!changeEmail($_SESSION["email"], $email)) {
             $res = false;
         } else {
-            $results[] = "На указанный email отправлено письмо с инструкцией по его подтверждению";
+            $results[] = "Подтвердите email";
             $_SESSION = [];
             setcookie("token", "", time() - 3600);
         }
@@ -93,9 +93,7 @@ function saveChanges()
         if (!changePassword($_SESSION["email"], $password1)) {
             $res = false;
         } else {
-            if(!array_search("Изменения сохранены", $results)) {
-                $results[] = "Изменения сохранены";
-            }
+            $results[] = "Пароль изменен";
             $_SESSION = [];
             setcookie("token", "", time() - 3600);
         }

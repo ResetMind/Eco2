@@ -53,7 +53,7 @@ function findEmail() {
     return true;
 }
 
-function findPassword($email) {
+function findPassword($email, $isLogin = TRUE) {
     global $password, $link, $bd_e, $password_e;
     $sqlreq = "SELECT password FROM users WHERE email='$email'";
     if (!$result = mysqli_query($link, $sqlreq)) {
@@ -62,7 +62,10 @@ function findPassword($email) {
     } else {
         if ($row = mysqli_fetch_assoc($result)) {
             if (!password_verify($password, $row["password"])) {
-                $bd_e[] = "Проверьте правильность введенных данных";
+                if($isLogin) {
+                    $bd_e[] = "Проверьте правильность введенных данных";
+                }
+                $password_e[] = "Пароль неверный";
                 return false;
             }
         } else {

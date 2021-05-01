@@ -5,71 +5,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Настройки - Экопрогноз</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/styles_set.css" />
+    <link rel="stylesheet" href="css/common_styles.css" />
+    <link rel="stylesheet" href="css/auth_styles.css" />
 </head>
-
-<header>
-    <a href="home.html">Главная</a>
-    <span>Экопрогноз</span>
-</header>
 
 <body>
     <div class="preloader">
-        <span class="bd_e_preloader">Qwerty</span>
+        <span class="bd_e error">bd_e</span>
     </div>
-    <div class="settings">
-        <div class="settings_content">
-            <!--<span class="email_span info_span">Подтвердите смену email: на указанный адрес отправлено письмо с инструкцией<br></span>
-            <span class="changes_span info_span">Изменения сохранены<br></span>-->
-            <span class="account_settings_span header_span">Настройки аккаунта</span>
-            <span class="bd_e error">Qwerty</span>
-            <span class="info_span">Qwerty</span>
-            <form name="bd_form" class="bd_form" method="POST" novalidate>
-                <span class="subheader_span">Ваше имя:</span>
-                <input type="text" name="name" class="name" placeholder="Имя Фамилия">
-                <span class="name_e error" class="info">Qwerty</span>
-                <span class="subheader_span">Ваш email:</span>
-                <input type="email" name="email" class="email" placeholder="Ваш e-mail">
-                <span class="email_e error">Qwerty</span>
-                <span class="subheader_span">Ваш пароль:</span>
-                <input type="password" name="password0" class="password0" placeholder="Введите старый пароль">
-                <span class="password0_e error">Qwerty</span>
-                <input type="password" name="password1" class="password1" placeholder="Придумайте новый пароль">
-                <span class="password1_e error">Qwerty</span>
-                <input type="password" name="password2" class="password2" placeholder="Повторите новый пароль">
-                <span class="password2_e error">Qwerty</span>
-                <input type="submit" name="set_button" class="set_button" value="Сохранить изменения">
-            </form>
-            <span class="app_settings_span header_span">Настройки приложения</span>
-            <div class="radio_div">
-                <span>Тема:</span>
-                <input type="radio" name="theme_rad" value="1" id="theme_1" checked>
-                <label for="theme_1">Светлая</label>
-                <input type="radio" name="theme_rad" value="2" id="theme_2">
-                <label for="theme_2">Темная</label>
-            </div>
-            <div class="radio_div">
-                <span>Автосохранение:</span>
-                <input type="radio" name="autosave_rad" value="1" id="autosave_1" checked>
-                <label for="autosave_1">Выкл.</label>
-                <input type="radio" name="autosave_rad" value="2" id="autosave_2">
-                <label for="autosave_2">1 м.</label>
-                <input type="radio" name="autosave_rad" value="3" id="autosave_3">
-                <label for="autosave_3">5 м.</label>
-                <input type="radio" name="autosave_rad" value="4" id="autosave_4">
-                <label for="autosave_4">10 м.</label>
-            </div>
-            <div class="logout_div">
+    <div class="container">
+        <header>
+            <ul class="navigation">
+                <li><a href="home.html">Главная</a>
+                <li><a href="calculate.html">Расчет</a>
+            </ul>
+            <span class="app_name">Экопрогноз</span>
+        </header>
+        <div class="wrapper settings">
+            <div></div>
+            <div class="settings_content auth_content">
+                <span class="settings_span auth_span">Настройки</span>
+                <form name="settings_form" class="settings_form auth_form" action="php/change_user_data.php" method="POST" novalidate>
+                    <span class="bd_e send_email_e auth_error">bd_e send_email_e</span>
+                    <input type="email" name="email" class="email" placeholder="Ваш e-mail" size="35"
+                        spellcheck="false">
+                    <span class="email_e auth_error">email_e</span>
+                    <input type="text" name="name" class="name" placeholder="Имя Фамилия" size="35" spellcheck="false"
+                        maxlength="50">
+                    <span class="name_e auth_error">name_e</span>
+                    <input type="password" name="password0" class="password0" placeholder="Введите старый пароль"
+                        size="35" maxlength="12">
+                    <span class="password0_e auth_error">password0_e</span>
+                    <input type="password" name="password1" class="password1" placeholder="Придумайте пароль" size="35"
+                        maxlength="12">
+                    <span class="password1_e auth_error">password1_e</span>
+                    <input type="password" name="password2" class="password2" placeholder="Повторите пароль" size="35"
+                        maxlength="12">
+                    <span class="password2_e auth_error">password2_e</span>
+                    <div class="set_div">
+                        <div>
+                            <span>Тема:</span>
+                        </div>
+                        <div class="radio_div">
+                            <input type="radio" name="theme_rad" value="1" id="theme_1" checked>
+                            <label for="theme_1">Светлая</label>
+                            <input type="radio" name="theme_rad" value="2" id="theme_2">
+                            <label for="theme_2">Темная</label>
+                        </div>
+                    </div>
+                    <div class="set_div">
+                        <div>
+                            <span>Автосохранение:</span>
+                        </div>
+                        <div class="radio_div">
+                            <input type="radio" name="autosave_rad" value="1" id="autosave_1" checked>
+                            <label for="autosave_1">Выкл.</label>
+                            <input type="radio" name="autosave_rad" value="2" id="autosave_2">
+                            <label for="autosave_2">1 м.</label>
+                            <input type="radio" name="autosave_rad" value="3" id="autosave_3">
+                            <label for="autosave_3">5 м.</label>
+                            <input type="radio" name="autosave_rad" value="4" id="autosave_4">
+                            <label for="autosave_4">10 м.</label>
+                        </div>
+                    </div>
+                    <input type="submit" name="settings_button" class="settings_button" value="Сохранить изменения">
+                </form>
                 <form name="logout_form" class="logout_form" action="php/logout.php" method="POST" novalidate>
                     <input type="submit" name="logout_button" class="logout_button" value="Выйти из аккаунта">
                 </form>
             </div>
+            <div></div>
         </div>
+        <footer>
+            <span class="app_info">© Андрей Макаров, 2021</span>
+            <span class="app_info"></span>
+        </footer>
+        <div class="popup"><span class="popup_text"></span><span class="close_cross span_button">&times;</span></div>
     </div>
-    <script src="js/ajax.js" defer></script>
-    <script src="js/animation.js" defer></script>
-    <script src="js/form_checkers.js" defer></script>
+    <script src="js/common.js" defer></script>
     <script src="js/settings.js" defer></script>
 </body>
 
