@@ -37,7 +37,7 @@
 }
 
 .auth_form a:hover {
-    color: var(--color_text_light_on_secondary_dark);
+    color: var(--text4);
 }
 
 span.auth_span {
@@ -47,7 +47,7 @@ span.auth_span {
 }
 
 span.auth_error {
-    color: var(--color_error);
+    color: var(--error);
     line-height: 0;
     opacity: 0;
     font-size: 0.75rem;
@@ -77,13 +77,13 @@ input, form > div {
     padding: 0.25rem;
     align-items: center;
     cursor: pointer;
-    color: var(--color_text_dark_on_secondary);
+    color: var(--text);
     transition-duration: 0.3s;
 }
 
 .radio_div>input:checked+label {
-    background: var(--color_primary_dark);
-    color: var(--color_secondary);
+    background: var(--primary);
+    color: var(--text2);
     transition-duration: 0.3s;
 }
 
