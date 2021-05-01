@@ -8,42 +8,6 @@
     src: url("fonts/OpenSans-SemiBold.ttf") format("truetype");
 }
 
-:root {
-    --primary: #43a047;
-    --primary2: #37853a;
-    --secondary: #f2f2f2;
-    --secondary2: #ffffff;
-    --secondary3: #e4e6e8;
-    --secondary4: #d4d4d4;
-    --accent: #43a047;
-    --accent2: #a0cfa3;
-    --accent3: #a0cfa350;
-    --error: #db4139;
-    --error2: #db413950;
-    --text: #0a0a0a;
-    --text2: #ffffff;
-    --text3: #e2f0d8;
-    --text4: #838b96;
-}
-
-/*:root {
-    --primary: #212121;
-    --primary2: #191919;
-    --secondary: #141414;
-    --secondary2: #212121;
-    --secondary3: #313131;
-    --secondary4: #484848;
-    --accent: #50be54;
-    --accent2: #a0cfa3;
-    --accent3: #a0cfa325;
-    --error: #db4139;
-    --error2: #db413925;
-    --text: #efedef;
-    --text2: #ffffff;
-    --text3: #d3d3d3;
-    --text4: #a0a0a0;
-}*/
-
 @media (min-width: 1920px) {
     html {
         font-size: calc(16px + (32 - 16) * ((100vw - 1920px) / (3840 - 1920)));

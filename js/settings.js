@@ -14,6 +14,7 @@ let bd_e = document.querySelector(".settings_form .bd_e");
 let bd_e_preloader = document.querySelector(".preloader span.bd_e");
 let send_email_e = document.querySelector(".settings_form .send_email_e");
 let popup = document.querySelector("div.popup");
+let theme_radios = document.querySelectorAll("input[type=\"radio\"].theme_rad");
 
 doRequest();
 
@@ -48,6 +49,17 @@ name.oninput = checkName.bind(null, name, name_e);
 password1.oninput = checkPassword1.bind(null, password1, password1_e, password2, password2_e);
 password2.oninput = checkPassword2.bind(null, password1, password2, password2_e);
 
+function onThemeChange() {
+    if(getCookie("theme") == 1) {
+        theme_radios[1].checked = true;
+    }
+    for (let i = 0; i < theme_radios.length; i++) {
+        theme_radios[i].onchange = function() {
+            setTheme(i);
+        };
+    }
+}
+
 function doRequest() {
     let xhr = request("php/settings.php", null);
     xhr.onload = function () {
@@ -71,6 +83,7 @@ function doRequest() {
             if (xhr.response.name != null) {
                 name.value = xhr.response.name;
             }
+            onThemeChange();
         }
     }
 }
