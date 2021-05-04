@@ -81,8 +81,11 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
             }
         }
     }
+    let color_index = getFreeColor(data);
     if (x_arr.length < 2 || isAllNull(y_arr) || (type == 1 && isAllNull(z_arr))) {
         showPopup(popup, "Недостаточно данных для построения");
+    } else if (color_index == -1) {
+        showPopup(popup, "Слишком много графиков");
     } else {
         let name = y_text;
         if (type == 1) name += ", " + z_text + " от " + x_text;
@@ -92,15 +95,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
             showPopup(popup, "График уже построен");
             return;
         }
-        let color_index = 0;
-        for (let k = 0; k < data.length; k++) {
-            if (data[k]["which"] == "normal") {
-                color_index++;
-            }
-        }
-        if (color_index >= colors.length) {
-            color_index -= colors.length;
-        }
+
         if (type == 0) {
             addTo2DData(data, x_arr, y_arr, year_arr, name, x_short_name + y_short_name, x_text, y_text, colors[color_index], "normal");
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
@@ -128,7 +123,7 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_n
         year_arr_sorted = [];
     //сортировка по возрастанию х
     let x_arr_sorted = x_arr.slice();
-    x_arr_sorted.sort(function(a, b) { return a - b });
+    x_arr_sorted.sort(function (a, b) { return a - b });
     for (let k = 0; k < x_arr.length; k++) {
         let old_index = getArrayIndex(x_arr, x_arr_sorted[k]);
         y_arr_sorted.push(y_arr[old_index]);
@@ -183,12 +178,6 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         }
         chart_rectangle.remove();
         let data_index = getDataIndex(data, name);
-        if (type == 0) {
-            let color = data[data_index]["line"]["color"];
-            let color_index = getArrayIndex(colors, color);
-            colors.push(...colors.splice(color_index, 1));
-            //console.log(colors);
-        }
         if (data_index != -1) {
             data.splice(getDataIndex(data, name), 1);
         }
@@ -196,7 +185,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         deleteAnalisis(name + " (прогноз)");
         newPlot(chart_div.querySelector(".plotly_div"), data, type);
 
-        for(let i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             if (data[i]["which"] == "normal") {
                 addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"]);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, data[i]["name"]);
@@ -371,26 +360,26 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     let trend_2d_form = trends_2d.querySelector(".trend_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
 
-    trend_2d_form.select_2d_trend_type.onchange = function() {
+    trend_2d_form.select_2d_trend_type.onchange = function () {
         setDisabled();
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
-    trend_2d_form.number_2d_trend_level.onchange = function() {
+    trend_2d_form.number_2d_trend_level.onchange = function () {
         //console.log("number_2d_trend_level");
         validateNumberInput(trend_2d_form.number_2d_trend_level);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
-    trend_2d_form.number_2d_trend_back.onchange = function() {
+    trend_2d_form.number_2d_trend_back.onchange = function () {
         //console.log("number_2d_trend_back");
         validateNumberInput(trend_2d_form.number_2d_trend_back);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
-    trend_2d_form.number_2d_trend_forward.onchange = function() {
+    trend_2d_form.number_2d_trend_forward.onchange = function () {
         //console.log("number_2d_trend_forward");
         validateNumberInput(trend_2d_form.number_2d_trend_forward);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
     }
-    trend_2d_form.number_2d_trend_step.onchange = function() {
+    trend_2d_form.number_2d_trend_step.onchange = function () {
         //console.log("number_2d_trend_step");
         validateNumberInput(trend_2d_form.number_2d_trend_step);
         addTrend(trend_2d_form.select_2d_trend_type.value, data, name);
@@ -464,15 +453,15 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
         function showTrend(xy) {
             removeIfExist(data, name + " (тренд)");
             let trend = {
-                    trend_type: type,
-                    level: level,
-                    back: back,
-                    forward: forward,
-                    step: step,
-                    r: xy.r,
-                    a: xy.a,
-                    coef: xy.coef
-                }
+                trend_type: type,
+                level: level,
+                back: back,
+                forward: forward,
+                step: step,
+                r: xy.r,
+                a: xy.a,
+                coef: xy.coef
+            }
             data[data_index]["trend"] = trend;
             addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", color, "trendt");
             newPlot(plotly_div, data, 0);
@@ -520,13 +509,13 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     forecast_2d_form.arima_n.onchange = function () {
         validateNumberInput(forecast_2d_form.arima_n);
     }
-    forecast_2d_form.select_2d_forecast_type.onchange = function() {
+    forecast_2d_form.select_2d_forecast_type.onchange = function () {
         setDisabled();
-        if(forecast_2d_form.select_2d_forecast_type.value == "none") {
+        if (forecast_2d_form.select_2d_forecast_type.value == "none") {
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
         }
     }
-    forecast_2d_form.forecast_2d_button.onclick = function() {
+    forecast_2d_form.forecast_2d_button.onclick = function () {
         arima();
     }
 
@@ -535,7 +524,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
 
     let forecast_params = getAnalisisParams(data, name, "forecast");
-    if(!forecast_params) {
+    if (!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
         forecast_2d_form.arima_p.value = "1";
         forecast_2d_form.arima_d.value = "1";
@@ -567,7 +556,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     }
 
     function arima() {
-        if(forecast_2d_form.select_2d_forecast_type.value == "none") {
+        if (forecast_2d_form.select_2d_forecast_type.value == "none") {
             return;
         }
         let response = null;
@@ -631,18 +620,18 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
         fillImitationTable(x, y, y);
 
         function fillImitationTable(x = null, y = null, yhat = null) {
-            if(!y && !yhat) {
+            if (!y && !yhat) {
                 let data_im_index = getDataIndex(data, name, true);
-                while(data_im_index != -1) {
+                while (data_im_index != -1) {
                     data_im.splice(getDataIndex(data, name, true), 1);
                 }
-                addToAnalysisData(data_im, x, y, name, )
+                addToAnalysisData(data_im, x, y, name,)
             }
             console.log(data_im);
             let data_v = validateDataForCalculations(data, name, 0);
             let header_tr = table_header.querySelector("tr");
             let body_trs = table_header.querySelectorAll("tr");
-            
+
             console.log(data_v[data_index]);
         }
 
@@ -668,7 +657,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
         function onArimaError(input) {
             input.classList.add("transition");
             input.classList.add("error");
-            setTimeout(function() {
+            setTimeout(function () {
                 input.classList.remove("error");
             }, 200);
         }
@@ -742,9 +731,9 @@ function removeAnalysis(data, name, results_div, plotly_div) {
     let base_name = name.split(" (")[0];
     let index = getDataIndex(data, base_name);
     type = null;
-    if(name.includes("тренд")) {
+    if (name.includes("тренд")) {
         type = "trend";
-    } else if(name.includes("прогноз")) {
+    } else if (name.includes("прогноз")) {
         type = "forecast";
     }
     data[index][type] = null;
@@ -834,7 +823,7 @@ function updateLayout(plotly_div) {
     };
     try {
         Plotly.relayout(plotly_div, update);
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function removeIfExist(data, name) {
@@ -845,8 +834,25 @@ function removeIfExist(data, name) {
     }
 }
 
+function getFreeColor(data) {
+    let unusedColors = [];
+    for (let i = 0; i < colors.length; i++) {
+        unusedColors.push(colors[i]);
+    }
+    for (let i = 0; i < data.length; i++) {
+        if (data[i]["which"] == "normal") {
+            let color = data[i]["line"]["color"];
+            unusedColors.splice(getArrayIndex(unusedColors, color), 1);
+        }
+    }
+    if(unusedColors.length == 0) {
+        return -1;
+    }
+    return getArrayIndex(colors, unusedColors[0]);
+}
+
 function getDataIndex(data, name, split = false) {
-    if(split) {
+    if (split) {
         name = name.split("(")[0] + name.split(")*")[1];
         console.log(name);
     }
