@@ -1,4 +1,4 @@
-#!C:\Users\spons\anaconda3\python.exe
+#!C:\Users\User\anaconda3\python.exe
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA, ARIMAResults
 import cgi

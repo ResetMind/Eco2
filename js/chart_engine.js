@@ -14,7 +14,7 @@ let colors = [
     "rgba(23, 190, 207, 1)"
 ];
 
-function addChart(chart_div, data, type, plotly_num) {
+function addChart(chart_div, data, data_im, type, plotly_num) {
     let form = chart_div.querySelector(".param_form");
 
     let x_col = parseFloat(form.x_select_param.value);
@@ -104,7 +104,7 @@ function addChart(chart_div, data, type, plotly_num) {
         if (type == 0) {
             addTo2DData(data, x_arr, y_arr, year_arr, name, x_short_name + y_short_name, x_text, y_text, colors[color_index], "normal");
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
-            addChartRectangle(chart_div, data, name, 0, plotly_num);
+            addChartRectangle(chart_div, data, data_im, name, 0, plotly_num);
         } else if (type == 1) {
             //addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_text, y_text, z_text, colors[color_index], "normal");
             //newPlot(chart_div.querySelector(".plotly_div"), data, type);
@@ -165,7 +165,7 @@ function newPlot(plotly_div, data, type) {
     Plotly.newPlot(plotly_div, getValidatedData(data, type), setChartLayout(plotly_div), { scrollZoom: true, responsive: true });
 }
 
-function addChartRectangle(chart_div, data, name, type, plotly_num) {
+function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
     let chart_rectangle = document.createElement("div");
     chart_rectangle.className = "chart_rectangle";
     chart_rectangle.innerHTML = chart_rectangle_template.innerHTML;
@@ -173,6 +173,8 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
     chart_rectangle.querySelector(".chart_rectangle_name").innerHTML = name;
     chart_rectangle.querySelector("span.delete_chart").onclick = deleteChartRectangle;
     chart_rectangle.onclick = onChartRectangleClick;
+    //
+    chart_rectangle.dispatchEvent(new Event("click"));
 
     function deleteChartRectangle() {
         window.event.stopPropagation();
@@ -196,7 +198,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
 
         for(let i = 0; i < data.length; i++) {
             if (data[i]["which"] == "normal") {
-                addOn2DForecastParamsChangeListeners(chart_div, data, data[i]["name"]);
+                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"]);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, data[i]["name"]);
             }
         }
@@ -241,7 +243,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
             addOnCheckboxChangeListeners();
             if (type == 0) {
                 //addOn2DOptimisationParamsListeners(chart_div, data, name);
-                addOn2DForecastParamsChangeListeners(chart_div, data, name);
+                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, name);
                 //addOn2DImitationListeners(chart_div, data, name);
                 //addOn2DInterpolationListeners(chart_div, data, name);
@@ -294,7 +296,7 @@ function addChartRectangle(chart_div, data, name, type, plotly_num) {
 
                 if (type == 0) {
                     chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
-                    addOn2DForecastParamsChangeListeners(chart_div, data, name);
+                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name);
                     chart_div.querySelector(".forecast_2d_form").forecast_2d_button.dispatchEvent(new Event("click"));
                 } else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
 
@@ -485,20 +487,22 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     }
 }
 
-function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
+function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     let forecast_2d = chart_div.querySelector(".forecast_2d");
     let mse_span = forecast_2d.querySelector(".mse");
     let llf_span = forecast_2d.querySelector(".llf");
     let results_div = document.querySelector(".forecast_2d_results");
     let forecast_2d_form = forecast_2d.querySelector(".forecast_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
-    let table_header = chart_div.querySelector("table.table_header");
-    let table_body = chart_div.querySelector("table.table_body");
+    let imitation_div = chart_div.querySelector(".imitation_div");
+    let table_header = imitation_div.querySelector("table.table_header");
+    let table_body = imitation_div.querySelector("table.table_body");
 
     let data_index = getDataIndex(data, name);
     let color = data[data_index]["line"]["color"];
     let data_v = validateDataForCalculations(data, name, 0);
     let y = data_v[data_index]["y"];
+    let x = data_v[data_index]["x"];
     forecast_2d_form.arima_k.max = y.length;
 
     forecast_2d_form.arima_p.onchange = function () {
@@ -525,6 +529,11 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
     forecast_2d_form.forecast_2d_button.onclick = function() {
         arima();
     }
+
+    //
+    forecast_2d_form.select_2d_forecast_type.value = "0";
+    forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
+
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if(!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
@@ -580,7 +589,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
             "auto": auto,
             "path": path
         }
-        let xhr = JSONRequest("/eco2/cgi/arima.cgi", JSON.stringify(json));
+        /*let xhr = JSONRequest("/eco2/cgi/arima.cgi", JSON.stringify(json));
         console.log(JSON.stringify(json));
         fadeIn(document.querySelector(".loader"), 0.5);
         xhr.onload = function() {
@@ -617,6 +626,24 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
                 }
 
             }
+        }*/
+
+        fillImitationTable(x, y, y);
+
+        function fillImitationTable(x = null, y = null, yhat = null) {
+            if(!y && !yhat) {
+                let data_im_index = getDataIndex(data, name, true);
+                while(data_im_index != -1) {
+                    data_im.splice(getDataIndex(data, name, true), 1);
+                }
+                addToAnalysisData(data_im, x, y, name, )
+            }
+            console.log(data_im);
+            let data_v = validateDataForCalculations(data, name, 0);
+            let header_tr = table_header.querySelector("tr");
+            let body_trs = table_header.querySelectorAll("tr");
+            
+            console.log(data_v[data_index]);
         }
 
         function showForecast(p, d, q, k, n, auto, mse, llf, yhat) {
@@ -662,13 +689,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
         results_div.classList.add("active");
     }
 
-    function fillImitationTable() {
-        let data_v = validateDataForCalculations(data, name, "0");
-        let header_tr = table_header.querySelector("tr");
-        let body_trs = table_header.querySelectorAll("tr");
-        console.log(data_v[data_index]);
-    }
-
     function parseName() {
         let [y, x] = name.split(" от ")
     }
@@ -695,7 +715,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, name) {
     }
 }
 
-function addToAnalysisData(data, x_arr, y_arr, name, color, which) {
+function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash = "dash") {
     let trace = {
         x: x_arr,
         y: y_arr,
@@ -703,7 +723,7 @@ function addToAnalysisData(data, x_arr, y_arr, name, color, which) {
         name: name,
         connectgaps: true,
         line: {
-            dash: "dash",
+            dash: dash,
             color: color
         },
         which: which
@@ -825,7 +845,11 @@ function removeIfExist(data, name) {
     }
 }
 
-function getDataIndex(data, name) {
+function getDataIndex(data, name, split = false) {
+    if(split) {
+        name = name.split("(")[0] + name.split(")*")[1];
+        console.log(name);
+    }
     for (let k = 0; k < data.length; k++) {
         if (data[k]["name"] == name) {
             return k;

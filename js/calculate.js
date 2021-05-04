@@ -90,11 +90,11 @@ function addChartDiv(type) {
 
 function addOtherStuff(chart_div, type) {
     let add_chart_button = chart_div.querySelector("span.add_chart");
-    let data = [];
+    let data = [], data_im = [];
     let plotly_num = document.querySelectorAll(".plotly_div").length;
     if (type == 0) {
         console.log("onclick")
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, type, plotly_num);
+        add_chart_button.onclick = addChart.bind(null, chart_div, data, data_im, type, plotly_num);
     }
     let auto_arima_checkbox = chart_div.querySelector(".auto_arima_checkbox");
     auto_arima_checkbox.id += "_" + plotly_num;
@@ -278,6 +278,10 @@ function find() {
                 clearTable(main_table_body);
             }
             setTableEngine(table[0]);
+            //
+            let chart_div = document.querySelector(".chart_div")
+            let add_chart_button = chart_div.querySelector("span.add_chart");
+            add_chart_button.dispatchEvent(new Event("click"));
         }
     }
 
