@@ -307,7 +307,7 @@ table.main_table td {
     width: 6rem;
 }
 
-table.main_table th {
+table.table_header th {
     border-bottom-style: none;
 }
 

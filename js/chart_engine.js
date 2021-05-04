@@ -1,4 +1,5 @@
 let chart_rectangle_template = document.querySelector("div.chart_rectangle_template");
+let imitation_table_body_template = document.querySelector("table.imitation_table_body_template");
 
 let old_rectangle = null;
 let colors = [
@@ -485,7 +486,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     let plotly_div = chart_div.querySelector(".plotly_div");
     let imitation_div = chart_div.querySelector(".imitation_div");
     let table_header = imitation_div.querySelector("table.table_header");
-    let table_body = imitation_div.querySelector("table.table_body");
+    let imitation_table_body = imitation_div.querySelector("table.imitation_table_body");
 
     let data_index = getDataIndex(data, name);
     let color = data[data_index]["line"]["color"];
@@ -520,8 +521,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     }
 
     //
-    forecast_2d_form.select_2d_forecast_type.value = "0";
-    forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
+    /*forecast_2d_form.select_2d_forecast_type.value = "0";
+    forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));*/
 
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if (!forecast_params) {
@@ -553,6 +554,41 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
         forecast_2d_form.arima_n.disabled = flag;
         forecast_2d_form.auto_arima_checkbox.disabled = flag;
         forecast_2d_form.forecast_2d_button.disabled = flag;
+    }
+
+    fillImitationTable(x, y, y);
+
+    function fillImitationTable(x = null, y = null, yhat = null) {
+        let x_name = splitName(name)[0];
+        if (y && yhat) {
+            let data_im_index = getDataIndex(data_im, name, true);
+            while (data_im_index != -1) {
+                data_im.splice(data_im_index, 1);
+                data_im_index = getDataIndex(data, name, true);
+            }
+            let color_index = getFreeColor(data_im);
+            addToAnalysisData(data_im, x, y, x_name, colors[color_index], "normal", "solid");
+            addToAnalysisData(data_im, x, y, x_name + "*", colors[color_index], "normal", "solid");
+            imitation_table_body.innerHTML = "";
+            //createImitationSample(name);
+            
+        }
+        let header_tr = table_header.querySelector("tr");
+        let body_trs = table_header.querySelectorAll("tr");
+        for(let i = 0; i < data_im.length; i++) {
+            let data_im_index = getDataIndex(data_im, x_name, true);
+            console.log(data_im[data_im_index]);
+        }
+
+        function createImitationSample(name) {
+            imitation_table_body.innerHTML += imitation_table_body_template.innerHTML;
+            let first_row = imitation_table_body.querySelector(".first");
+            let second_row = imitation_table_body.querySelector(".second");
+            let name_y = first_row.querySelector(".name_y");
+            let name_yhat = first_row.querySelector(".name_y");
+            name_.innerHTML = splitName(name)[0].replace("*");
+        }
+
     }
 
     function arima() {
@@ -617,24 +653,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
             }
         }*/
 
-        fillImitationTable(x, y, y);
-
-        function fillImitationTable(x = null, y = null, yhat = null) {
-            if (!y && !yhat) {
-                let data_im_index = getDataIndex(data, name, true);
-                while (data_im_index != -1) {
-                    data_im.splice(getDataIndex(data, name, true), 1);
-                }
-                addToAnalysisData(data_im, x, y, name,)
-            }
-            console.log(data_im);
-            let data_v = validateDataForCalculations(data, name, 0);
-            let header_tr = table_header.querySelector("tr");
-            let body_trs = table_header.querySelectorAll("tr");
-
-            console.log(data_v[data_index]);
-        }
-
         function showForecast(p, d, q, k, n, auto, mse, llf, yhat) {
             removeIfExist(data, name + " (прогноз)");
             let forecast = {
@@ -678,8 +696,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
         results_div.classList.add("active");
     }
 
-    function parseName() {
-        let [y, x] = name.split(" от ")
+    function splitName() {
+        return name.split(" от ")
     }
 
     function showStuffParts() {
@@ -845,20 +863,22 @@ function getFreeColor(data) {
             unusedColors.splice(getArrayIndex(unusedColors, color), 1);
         }
     }
-    if(unusedColors.length == 0) {
+    if (unusedColors.length == 0) {
         return -1;
     }
     return getArrayIndex(colors, unusedColors[0]);
 }
 
-function getDataIndex(data, name, split = false) {
-    if (split) {
-        name = name.split("(")[0] + name.split(")*")[1];
-        console.log(name);
-    }
+function getDataIndex(data, name, imitation) { //?
     for (let k = 0; k < data.length; k++) {
-        if (data[k]["name"] == name) {
-            return k;
+        if(imitation) {
+            if (data[k]["name"].includes(name)) {
+                return k;
+            }
+        } else {
+            if (data[k]["name"] == name) {
+                return k;
+            }
         }
     }
     return -1;
