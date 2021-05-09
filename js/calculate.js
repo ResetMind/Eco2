@@ -90,7 +90,7 @@ function addChartDiv(type) {
 
 function addOtherStuff(chart_div, type) {
     let add_chart_button = chart_div.querySelector("span.add_chart");
-    let data = [], data_im = [];
+    let data = [], data_im = {};
     let plotly_num = document.querySelectorAll(".plotly_div").length;
     if (type == 0) {
         console.log("onclick")
