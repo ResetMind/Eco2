@@ -357,7 +357,6 @@ td.error {
 
 .context_menu li {
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
-    color: var(--text2);
     background: var(--secondary3);
     transition: 0.3s;
 }

@@ -671,6 +671,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             if (i % 2 == 0) {
                 let first = newTr();
                 first.innerHTML = imitation_table_body_template.querySelector(".first").innerHTML;
+                if (i == 0) first.className = "undeletable";
                 table_body.append(first);
 
                 let imitation_row_control = first.querySelector(".imitation_row_control");
@@ -679,6 +680,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             } else {
                 let second = newTr();
                 second.innerHTML = imitation_table_body_template.querySelector(".second").innerHTML;
+                if (i == 1) second.className = "undeletable";
                 table_body.append(second);
             }
             let body_trs = table_body.querySelectorAll("tr");
@@ -689,19 +691,23 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                 let x_count = header_tr.querySelectorAll("th").length - 2;
                 let y_count = last_tr.querySelectorAll("td").length;
                 if (x_count < j + 1) {
-                    addTh(header_tr, data_im[name][i]["x"][j]);
+                    let th = addTh(header_tr, data_im[name][i]["x"][j]);
+                    //th.setAttribute("contenteditable", "");
                 }
-                if(y_count < j + 1) {
-                    addTd(last_tr, data_im[name][i]["y"][j]);
+                if (y_count < j + 1) {
+                    let td = addTd(last_tr, data_im[name][i]["y"][j]);
+                    if(i % 2 == 0) td.setAttribute("contenteditable", "");
                 }
                 for (let k = 0; k < body_trs.length - 1; k++) {
-                    if(body_trs[k].querySelectorAll("td").length < j + 1) {
-                        addTd(body_trs[k], "");
+                    if (body_trs[k].querySelectorAll("td").length < j + 1) {
+                        let td = addTd(body_trs[k], "");
+                        if(i % 2 == 0) td.setAttribute("contenteditable", "");
                     }
                 }
             }
         }
         setTableEngine(table);
+        setRightContextMenu(table);
 
         function changeId(imitation_row_control, num) {
             let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
@@ -856,12 +862,14 @@ function addTd(tr, inner) {
     let td = newTd();
     td.innerHTML = inner;
     tr.append(td);
+    return td;
 }
 
 function addTh(tr, inner) {
     let th = newTh();
     th.innerHTML = inner;
     tr.append(th);
+    return th;
 }
 
 function newTr() { return document.createElement("tr"); }

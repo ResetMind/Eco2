@@ -14,3 +14,8 @@
     --text2: #ffffff;
     --text3: #d3d3d3;
     --text4: #a0a0a0;
+}
+
+.context_menu li {
+    color: var(--text2);
+}

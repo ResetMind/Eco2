@@ -15,3 +15,7 @@
     --text3: #e2f0d8;
     --text4: #838b96;
 }
+
+.context_menu li {
+    color: var(--text1);
+}

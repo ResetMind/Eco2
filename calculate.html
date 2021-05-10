@@ -211,9 +211,7 @@
                     </div>
                     <div class="table_body_wrapper">
                         <div class="cell_selection"></div>
-                        <table class="table_body main_table_body main_table" tabindex="0">
-
-                        </table>
+                        <table class="table_body main_table_body main_table" tabindex="0"></table>
                     </div>
                 </div>
             </div>
@@ -287,7 +285,7 @@
                                                 </div>
                                                 <div class="table_body_wrapper" style="margin: 0;">
                                                     <div class="cell_selection"></div>
-                                                    <table class="table_body main_table imitation_table_body"></table>
+                                                    <table class="table_body main_table imitation_table_body" tabindex="0"></table>
                                                 </div>
                                             </div>
                                         </div>
@@ -374,6 +372,16 @@
                     <label for="tab_3">3D графики</label>
             </ul>
         </footer>
+        <ul class="right_context_menu context_menu">
+            <li class="r_copy">Копировать</li>
+            <li class="r_paste">Вставить</li>
+            <li class="r_сut">Вырезать</li>
+            <li class="r_clear">Очистить</li>
+            <li class="r_new_set">Новый набор</li>
+            <li class="r_col_right">Колонку справа</li>
+            <li class="r_col_left">Колонку слева</li>
+            <li class="r_delete_col">Удалить колонку</li>
+        </ul>
         <div class="popup"><span class="popup_text"></span><span class="close_cross span_button">&times;</span></div>
         
         <div class="imitation_row_control imitation_row_control_template template">
@@ -472,6 +480,7 @@
     <script src="js/crypto-js.min.js" defer></script>
     <script src="js/common.js" defer></script>
     <script src="js/table_engine.js" defer></script>
+    <script src="js/context_engine.js" defer></script>
     <script src="js/input_engine.js" defer></script>
     <script src="js/trends.js" defer></script>
     <script src="js/chart_engine.js" defer></script>
