@@ -3,7 +3,7 @@ function setTableEngine(table) { // div.table
     let table_body = table_body_wrapper.querySelector("table.table_body");
     let table_header = table.querySelector("table.table_header");
     let cells = getCellsArray();
-    let ths = table_header.querySelectorAll("th");
+    let ths = table_header.querySelectorAll("th:not(.not_res)");
     let cell_selection = table.querySelector(".cell_selection");
     let start_pos, end_pos;
     removeCellsRect();

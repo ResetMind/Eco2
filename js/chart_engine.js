@@ -1,5 +1,6 @@
 let chart_rectangle_template = document.querySelector("div.chart_rectangle_template");
 let imitation_table_body_template = document.querySelector("table.imitation_table_body_template");
+let imitation_row_control_template = document.querySelector("div.imitation_row_control_template");
 
 let old_rectangle = null;
 let colors = [
@@ -188,7 +189,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
 
         for (let i = 0; i < data.length; i++) {
             if (data[i]["which"] == "normal") {
-                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"]);
+                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"], plotly_num);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, data[i]["name"]);
             }
         }
@@ -233,7 +234,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             addOnCheckboxChangeListeners();
             if (type == 0) {
                 //addOn2DOptimisationParamsListeners(chart_div, data, name);
-                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name);
+                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, name);
                 //addOn2DImitationListeners(chart_div, data, name);
                 //addOn2DInterpolationListeners(chart_div, data, name);
@@ -286,7 +287,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
 
                 if (type == 0) {
                     chart_div.querySelector(".trend_2d_form").select_2d_trend_type.dispatchEvent(new Event("change"));
-                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name);
+                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
                     chart_div.querySelector(".forecast_2d_form").forecast_2d_button.dispatchEvent(new Event("click"));
                 } else if (type == 1) newPlot(chart_div.querySelector(".plotly_div"), data, "1");
 
@@ -464,7 +465,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
                 coef: xy.coef
             }
             data[data_index]["trend"] = trend;
-            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", color, "trendt");
+            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", color, "trendt", "dash");
             newPlot(plotly_div, data, 0);
             showErrors(xy.r, xy.a);
         }
@@ -477,7 +478,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
     }
 }
 
-function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
+function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num) {
     let forecast_2d = chart_div.querySelector(".forecast_2d");
     let mse_span = forecast_2d.querySelector(".mse");
     let llf_span = forecast_2d.querySelector(".llf");
@@ -485,14 +486,16 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     let forecast_2d_form = forecast_2d.querySelector(".forecast_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
     let imitation_div = chart_div.querySelector(".imitation_div");
+    let table = imitation_div.querySelector(".table");
     let table_header = imitation_div.querySelector("table.table_header");
-    let imitation_table_body = imitation_div.querySelector("table.imitation_table_body");
+    let table_body = imitation_div.querySelector("table.table_body");
 
     let data_index = getDataIndex(data, name);
     let color = data[data_index]["line"]["color"];
     let x_name = splitName(name)[0];
     let data_v = validateDataForCalculations(data, name, 0);
     let y = data_v[data_index]["y"];
+
     forecast_2d_form.arima_k.max = y.length;
 
     forecast_2d_form.arima_p.onchange = function() {
@@ -532,9 +535,12 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
         arima(x, y, order, k, n, auto, path);
     }
 
+
+    setTimeout(() => forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click")), 300);
+
     //
-    /*forecast_2d_form.select_2d_forecast_type.value = "0";
-    forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));*/
+    //forecast_2d_form.select_2d_forecast_type.value = "0";
+    //forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
 
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if (!forecast_params) {
@@ -572,101 +578,139 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
 
     function arima(x, y, order, k, n, auto, path) {
         if (forecast_2d_form.select_2d_forecast_type.value == "none") {
-            return;
+            //return;
         }
         let json = {
-                "y": y,
-                "order": order,
-                "prlen": n,
-                "auto": auto,
-                "path": path
-            }
-            let xhr = JSONRequest("/eco2/cgi/arima.cgi", JSON.stringify(json));
-            console.log(JSON.stringify(json));
-            fadeIn(document.querySelector(".loader"), 0.5);
-            xhr.onload = function() {
-                fadeOut(document.querySelector(".loader"), 0.5);
-                if (xhr.status != 200) {
-                    showPopup(popup, "Ошибка сервера " + xhr.status);
-                } else {
-                    if (xhr.response == null) {
-                        showPopup(popup, "Ошибка сервера", true);
-                        return;
-                    } else if(xhr.response["error"] != -1 && xhr.response["yhat"] == -1){
-                        showPopup(popup, xhr.response["error"], true);
-                        onArimaError(forecast_2d_form.arima_p);
-                        onArimaError(forecast_2d_form.arima_d);
-                        onArimaError(forecast_2d_form.arima_q);
-                        onArimaError(forecast_2d_form.arima_k);
-                        onArimaError(forecast_2d_form.arima_n);
-                        console.log(xhr.response);
-                    } 
-                    if(xhr.response["yhat"] != -1){
-                        forecast_2d_form.arima_p.value = xhr.response["order"][0];
-                        forecast_2d_form.arima_d.value = xhr.response["order"][1];
-                        forecast_2d_form.arima_q.value = xhr.response["order"][2];
-                        [p, d, q] = xhr.response["order"];
-                        let mse = xhr.response["mse"];
-                        let llf = xhr.response["llf"];
-                        let yhat = xhr.response["yhat"];
-                        let last = x.last();
-                        let color_index = getFreeColor(data_im[name]);
-                        addToAnalysisData(data_im[name], x, y, x_name, colors[color_index], "normal", "solid");
-                        for(let i = last + 1; i <= last + n; i++) {
-                            x.push(i)
-                        }
-                        showForecast(x, yhat, p, d, q, k, n, auto, mse, llf);
-                        addToAnalysisData(data_im[name], x, yhat, x_name + "*", colors[color_index], "normal");
-                        fillImitationTable();
+            "y": y,
+            "order": order,
+            "prlen": n,
+            "auto": auto,
+            "path": path
+        }
+        let xhr = JSONRequest("/eco2/cgi/arima.cgi", JSON.stringify(json));
+        console.log(JSON.stringify(json));
+        fadeIn(document.querySelector(".loader"), 0.5);
+        xhr.onload = function() {
+            fadeOut(document.querySelector(".loader"), 0.5);
+            if (xhr.status != 200) {
+                showPopup(popup, "Ошибка сервера " + xhr.status);
+            } else {
+                if (xhr.response == null) {
+                    showPopup(popup, "Ошибка сервера", true);
+                    return;
+                } else if (xhr.response["error"] != -1 && xhr.response["yhat"] == -1) {
+                    showPopup(popup, xhr.response["error"], true);
+                    onArimaError(forecast_2d_form.arima_p);
+                    onArimaError(forecast_2d_form.arima_d);
+                    onArimaError(forecast_2d_form.arima_q);
+                    onArimaError(forecast_2d_form.arima_k);
+                    onArimaError(forecast_2d_form.arima_n);
+                    console.log(xhr.response);
+                }
+                if (xhr.response["yhat"] != -1) {
+                    forecast_2d_form.arima_p.value = xhr.response["order"][0];
+                    forecast_2d_form.arima_d.value = xhr.response["order"][1];
+                    forecast_2d_form.arima_q.value = xhr.response["order"][2];
+                    [p, d, q] = xhr.response["order"];
+                    let mse = xhr.response["mse"];
+                    let llf = xhr.response["llf"];
+                    let yhat = xhr.response["yhat"];
+                    let last = x.last();
+                    let color_index = getFreeColor(data_im[name]);
+                    addToImitationAnalysis(x.slice(), y, x_name, colors[color_index], "normal", "solid");
+                    for (let i = last + 1; i <= last + n; i++) {
+                        x.push(i)
                     }
+                    showForecast(x, yhat, p, d, q, k, n, auto, mse, llf);
+                    addToImitationAnalysis(x, yhat, x_name, colors[color_index], "imitation", "dash");
+                    fillImitationTable();
+                }
 
+            }
+        }
+    }
+
+    function showForecast(x, yhat, p, d, q, k, n, auto, mse, llf) {
+        removeIfExist(data, name + " (прогноз)");
+        let forecast = {
+            p: p,
+            d: d,
+            q: q,
+            k: k,
+            n: n,
+            auto: auto,
+            mse: mse,
+            llf: llf
+        }
+        console.log(forecast);
+        data[data_index]["forecast"] = forecast;
+        addToAnalysisData(data, x, yhat, name + " (прогноз)", color, "forecast", "dash");
+        newPlot(plotly_div, data, 0);
+        showErrors(mse, llf);
+    }
+
+    function addToImitationAnalysis(x, y, x_name, color, which, dash) {
+        let length = data_im[name].length;
+        x_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
+        x_name = length % 2 == 0 ? x_name : x_name + "<sup>*</sup>";
+        addToAnalysisData(data_im[name], x, y, x_name, color, which, dash);
+    }
+
+    function fillImitationTable() {
+        if (!data_im[name]) {
+            return;
+        }
+        console.log(data_im[name]);
+        table_body.innerHTML = "";
+
+        let header_tr = table_header.querySelector("tr");
+        let imitation_row_control = header_tr.querySelector(".imitation_row_control");
+        imitation_row_control.innerHTML = imitation_row_control_template.innerHTML;
+        changeId(imitation_row_control, "_" + plotly_num + "_all");
+        for (let i = 0; i < data_im[name].length; i++) {
+            if (i % 2 == 0) {
+                let first = newTr();
+                first.innerHTML = imitation_table_body_template.querySelector(".first").innerHTML;
+                table_body.append(first);
+
+                let imitation_row_control = first.querySelector(".imitation_row_control");
+                imitation_row_control.innerHTML = imitation_row_control_template.innerHTML;
+                changeId(imitation_row_control, "_" + plotly_num + "_" + i);
+            } else {
+                let second = newTr();
+                second.innerHTML = imitation_table_body_template.querySelector(".second").innerHTML;
+                table_body.append(second);
+            }
+            let body_trs = table_body.querySelectorAll("tr");
+            let last_tr = body_trs[body_trs.length - 1];
+            let name_th = last_tr.querySelector(".name");
+            name_th.innerHTML = data_im[name][i]["name"];
+            for (let j = 0; j < data_im[name][i]["x"].length; j++) {
+                let x_count = header_tr.querySelectorAll("th").length - 2;
+                let y_count = last_tr.querySelectorAll("td").length;
+                if (x_count < j + 1) {
+                    addTh(header_tr, data_im[name][i]["x"][j]);
+                }
+                if(y_count < j + 1) {
+                    addTd(last_tr, data_im[name][i]["y"][j]);
+                }
+                for (let k = 0; k < body_trs.length - 1; k++) {
+                    if(body_trs[k].querySelectorAll("td").length < j + 1) {
+                        addTd(body_trs[k], "");
+                    }
                 }
             }
+        }
+        setTableEngine(table);
 
-        function showForecast(x, yhat, p, d, q, k, n, auto, mse, llf) {
-            removeIfExist(data, name + " (прогноз)");
-            let forecast = {
-                p: p,
-                d: d,
-                q: q,
-                k: k,
-                n: n,
-                auto: auto,
-                mse: mse,
-                llf: llf
-            }
-            console.log(forecast);
-            data[data_index]["forecast"] = forecast;
-            addToAnalysisData(data, x, yhat, name + " (прогноз)", color, "forecast");
-            newPlot(plotly_div, data, 0);
-            showErrors(mse, llf);
+        function changeId(imitation_row_control, num) {
+            let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
+            imitation_row_control_checkbox.id += num;
+            let close_imitation_chart_label = imitation_row_control.querySelector("label.close_imitation_chart");
+            close_imitation_chart_label.htmlFor += num;
         }
 
-        function fillImitationTable() {
-            if(!data_im[name]) {
-                return;
-            }
-            console.log(data_im[name]);
-            imitation_table_body.innerHTML = "";
-            //createImitationSample(name);
-    
-            let header_tr = table_header.querySelector("tr");
-            let body_trs = table.querySelectorAll("tr");
-            for (let i = 0; i < data_im.length; i++) {
-                let data_im_index = getDataIndex(data_im, x_name, true);
-                console.log(data_im[data_im_index]);
-            }
-    
-            function createImitationSample(name) {
-                imitation_table_body.innerHTML += imitation_table_body_template.innerHTML;
-                let first_row = imitation_table_body.querySelector(".first");
-                let second_row = imitation_table_body.querySelector(".second");
-                let name_y = first_row.querySelector(".name_y");
-                let name_yhat = first_row.querySelector(".name_y");
-                name_.innerHTML = splitName(name)[0].replace("*");
-            }
-    
-        
+
 
         function showImitationChart(x, y, yhat, x_name) {
             let color_index = getFreeColor(data_im[name]);
@@ -723,7 +767,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name) {
     }
 }
 
-function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash = "dash") {
+function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash) {
     let trace = {
         x: x_arr,
         y: y_arr,
@@ -858,7 +902,7 @@ function getFreeColor(data) {
     for (let i = 0; i < colors.length; i++) {
         unusedColors.push(colors[i]);
     }
-    if(!data) {
+    if (!data) {
         return getArrayIndex(colors, unusedColors[0]);
     }
     for (let i = 0; i < data.length; i++) {
@@ -875,7 +919,7 @@ function getFreeColor(data) {
 
 function getDataIndex(data, name, includes) {
     for (let k = 0; k < data.length; k++) {
-        if(includes) {
+        if (includes) {
             if (data[k]["name"].includes(name)) {
                 return k;
             }
