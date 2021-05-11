@@ -234,8 +234,8 @@ function setOptions() {
             for (let i = 0; i < rows.length; i++) {
                 let tds = rows[i].querySelectorAll("td");
                 let td;
-                if(i % 2 == 0) td = newTd("", true);
-                else td = newTd("");
+                if(i % 2 == 0) td = newTd({ contenteditable: true });
+                else td = newTd({});
                 tds[col].parentNode.insertBefore(td, tds[col].nextSibling);
             }
             let ths = window.active_table_header.querySelectorAll("th:not(.not_res)");
@@ -245,7 +245,7 @@ function setOptions() {
             } else {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col + 1].innerHTML)) / 2;
             }
-            ths[col].parentNode.insertBefore(newTh(th_inner, true), ths[col].nextSibling);
+            ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col].nextSibling);
             setTableEngine(window.active_table);
         }
     }
@@ -257,8 +257,8 @@ function setOptions() {
             for (let i = 0; i < rows.length; i++) {
                 let tds = rows[i].querySelectorAll("td");
                 let td;
-                if(i % 2 == 0) td = newTd("", true);
-                else td = newTd("");
+                if(i % 2 == 0) td = newTd({ contenteditable: true });
+                else td = newTd({});
                 tds[col].parentNode.insertBefore(td, tds[col]);
             }
             let ths = window.active_table_header.querySelectorAll("th:not(.not_res)");
@@ -268,7 +268,7 @@ function setOptions() {
             } else {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col - 1].innerHTML)) / 2;
             }
-            ths[col].parentNode.insertBefore(newTh(th_inner, true), ths[col]);
+            ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col]);
             setTableEngine(window.active_table);
         }
     }

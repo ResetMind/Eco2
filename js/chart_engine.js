@@ -316,24 +316,24 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             let tr = newTr();
             let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
             //add th
-            tr.append(newTh(newCheckboxCell("_" + plotly_num + "_all")));
-            tr.append(newTh(data[data_index]["year_name"]));
+            tr.append(newTh({ inner: newCheckboxCell("_" + plotly_num + "_all") }));
+            tr.append(newTh({ inner: data[data_index]["year_name"] }));
             if (!is_year_chart) {
-                tr.append(newTh(data[data_index]["x_name"]));
+                tr.append(newTh({ inner: data[data_index]["x_name"] }));
             }
-            tr.append(newTh(data[data_index]["y_name"]));
-            if (type == 1) tr.append(newTh(data[data_index]["z_name"]));
+            tr.append(newTh({ inner: data[data_index]["y_name"] }));
+            if (type == 1) tr.append(newTh({ inner: data[data_index]["z_name"] }));
             table.append(tr);
             //add td
             for (let k = 0; k < data[data_index]["x"].length; k++) {
                 tr = newTr();
-                tr.append(newTd(newCheckboxCell(plotly_num + "_" + k)));
+                tr.append(newTd({ inner: newCheckboxCell(plotly_num + "_" + k) }));
                 if (!is_year_chart) {
-                    tr.append(newTd(data[data_index]["years"][k]));
+                    tr.append(newTd({ inner: data[data_index]["years"][k] }));
                 }
-                tr.append(newTd(data[data_index]["x"][k]));
-                tr.append(newTd(data[data_index]["y"][k]));
-                if (type == 1) tr.append(newTd(data[data_index]["z"][k]));
+                tr.append(newTd({ inner: data[data_index]["x"][k] }));
+                tr.append(newTd({ inner: data[data_index]["y"][k] }));
+                if (type == 1) tr.append(newTd({ inner: data[data_index]["z"][k] }));
                 table.append(tr);
             }
             return table;
@@ -741,16 +741,16 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
                 let x_count = header_row.querySelectorAll("th").length - 2;
                 let y_count = last_row.querySelectorAll("td").length;
                 if (x_count < j + 1) {
-                    header_row.append(newTh(data_im[name][i]["x"][j], true));
+                    header_row.append(newTh({ inner: data_im[name][i]["x"][j], contenteditable: true, cl: "double" }));
                 }
                 if (y_count < j + 1) {
-                    if (i % 2 == 0) last_row.append(newTd(data_im[name][i]["y"][j], true));
-                    else last_row.append(newTd(data_im[name][i]["y"][j]));
+                    if (i % 2 == 0) last_row.append(newTd({ inner: data_im[name][i]["y"][j], contenteditable: true }));
+                    else last_row.append(newTd({ inner: data_im[name][i]["y"][j] }));
                 }
                 for (let k = 0; k < body_rows.length - 1; k++) {
                     if (body_rows[k].querySelectorAll("td").length < j + 1) {
-                        if (k % 2 == 0) body_rows[k].append(newTd("", true));
-                        else body_rows[k].append(newTd());
+                        if (k % 2 == 0) body_rows[k].append(newTd({ contenteditable: true }));
+                        else body_rows[k].append(newTd({}));
                     }
                 }
             }

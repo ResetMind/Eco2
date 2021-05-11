@@ -12,6 +12,7 @@ function setTableEngine(table) { // div.table
     }
 
     new ResizeSensor(table_body_wrapper, function() {
+        console.log("ResizeSensor"); // срабатывает при удалении из imitation table
         drawCellsRect();
         onColumnResise();
     });

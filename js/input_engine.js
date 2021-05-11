@@ -5,7 +5,6 @@ document.body.addEventListener("mousedown", function() {
 function setInputEngine(table) {
     let table_body = table.querySelector("table.table_body");
     table_body.oninput = checkValue.bind(null, table);
-    
 }
 function checkValue(table) {
     let e = window.event;
@@ -39,7 +38,7 @@ function checkValue(table) {
             removeError(cell);
         }
     } else if(type == "double") {
-        if (isNaN(parseFloat(+e.target.innerHTML))) {
+        if (isNaN(parseFloat(+cell.innerHTML))) {
             onInputError(cell);
         } else {
             removeError(cell);

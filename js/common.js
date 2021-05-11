@@ -268,17 +268,18 @@ function JSONRequest(url, data) {
 
 function newTr() { return document.createElement("tr"); }
 
-function newTd(inner = "", contenteditable = false, cl = null) { 
+function newTd(options) {
     let td = document.createElement("td")
-    td.innerHTML = inner;
-    if(contenteditable) td.setAttribute("contenteditable", "");
-    if(cl) td.classList.add(cl);
+    if(options.inner != undefined) td.innerHTML = options.inner;
+    if(options.contenteditable) td.setAttribute("contenteditable", "");
+    if(options.cl) td.classList.add(options.cl);
     return td; 
 }
 
-function newTh(inner = "", contenteditable = false) { 
+function newTh(options) { 
     let th = document.createElement("th")
-    th.innerHTML = inner; 
-    if(contenteditable) th.setAttribute("contenteditable", "");
+    if(options.inner != undefined) th.innerHTML = options.inner;
+    if(options.contenteditable) th.setAttribute("contenteditable", "");
+    if(options.cl) th.classList.add(options.cl);
     return th; 
 }
