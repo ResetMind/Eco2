@@ -157,6 +157,11 @@ span.span_button {
     transition: 0.3s;
 }
 
+span.span_button.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 header a,
 footer a {
     color: var(--text2);

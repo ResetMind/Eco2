@@ -360,6 +360,7 @@ function setTableEngine(table) { // div.table
             cell_selection.classList.add("active");
             window.active_cell_selection = cell_selection;
             window.active_table_body = table_body;
+            window.active_table_header = table_header;
             window.active_table = table;
             window.active_cells = cells;
         }

@@ -265,3 +265,20 @@ function JSONRequest(url, data) {
     xhr.send(data);
     return xhr;
 }
+
+function newTr() { return document.createElement("tr"); }
+
+function newTd(inner = "", contenteditable = false, cl = null) { 
+    let td = document.createElement("td")
+    td.innerHTML = inner;
+    if(contenteditable) td.setAttribute("contenteditable", "");
+    if(cl) td.classList.add(cl);
+    return td; 
+}
+
+function newTh(inner = "", contenteditable = false) { 
+    let th = document.createElement("th")
+    th.innerHTML = inner; 
+    if(contenteditable) th.setAttribute("contenteditable", "");
+    return th; 
+}

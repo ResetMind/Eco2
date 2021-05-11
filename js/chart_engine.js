@@ -316,24 +316,24 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             let tr = newTr();
             let is_year_chart = data[data_index]["year_name"] == data[data_index]["x_name"];
             //add th
-            addTh(tr, newCheckboxCell("_" + plotly_num + "_all"));
-            addTh(tr, data[data_index]["year_name"]);
+            tr.append(newTh(newCheckboxCell("_" + plotly_num + "_all")));
+            tr.append(newTh(data[data_index]["year_name"]));
             if (!is_year_chart) {
-                addTh(tr, data[data_index]["x_name"]);
+                tr.append(newTh(data[data_index]["x_name"]));
             }
-            addTh(tr, data[data_index]["y_name"]);
-            if (type == 1) addTh(tr, data[data_index]["z_name"]);
+            tr.append(newTh(data[data_index]["y_name"]));
+            if (type == 1) tr.append(newTh(data[data_index]["z_name"]));
             table.append(tr);
             //add td
             for (let k = 0; k < data[data_index]["x"].length; k++) {
                 tr = newTr();
-                addTd(tr, newCheckboxCell(plotly_num + "_" + k));
+                tr.append(newTd(newCheckboxCell(plotly_num + "_" + k)));
                 if (!is_year_chart) {
-                    addTd(tr, data[data_index]["years"][k]);
+                    tr.append(newTd(data[data_index]["years"][k]));
                 }
-                addTd(tr, data[data_index]["x"][k]);
-                addTd(tr, data[data_index]["y"][k]);
-                if (type == 1) addTd(tr, data[data_index]["z"][k]);
+                tr.append(newTd(data[data_index]["x"][k]));
+                tr.append(newTd(data[data_index]["y"][k]));
+                if (type == 1) tr.append(newTd(data[data_index]["z"][k]));
                 table.append(tr);
             }
             return table;
@@ -487,8 +487,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let plotly_div = chart_div.querySelector(".plotly_div");
     let imitation_div = chart_div.querySelector(".imitation_div");
     let table = imitation_div.querySelector(".table");
-    let table_header = imitation_div.querySelector("table.table_header");
-    let table_body = imitation_div.querySelector("table.table_body");
 
     let data_index = getDataIndex(data, name);
     let color = data[data_index]["line"]["color"];
@@ -574,7 +572,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.forecast_2d_button.disabled = flag;
     }
 
-    fillImitationTable();
+    //fillImitationTable();
 
     function arima(x, y, order, k, n, auto, path) {
         if (forecast_2d_form.select_2d_forecast_type.value == "none") {
@@ -600,11 +598,11 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     return;
                 } else if (xhr.response["error"] != -1 && xhr.response["yhat"] == -1) {
                     showPopup(popup, xhr.response["error"], true);
-                    onArimaError(forecast_2d_form.arima_p);
+                    /*onArimaError(forecast_2d_form.arima_p);
                     onArimaError(forecast_2d_form.arima_d);
                     onArimaError(forecast_2d_form.arima_q);
                     onArimaError(forecast_2d_form.arima_k);
-                    onArimaError(forecast_2d_form.arima_n);
+                    onArimaError(forecast_2d_form.arima_n);*/
                     console.log(xhr.response);
                 }
                 if (xhr.response["yhat"] != -1) {
@@ -623,7 +621,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     }
                     showForecast(x, yhat, p, d, q, k, n, auto, mse, llf);
                     addToImitationAnalysis(x, yhat, x_name, colors[color_index], "imitation", "dash");
-                    fillImitationTable();
+                    addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
                 }
 
             }
@@ -656,80 +654,12 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         addToAnalysisData(data_im[name], x, y, x_name, color, which, dash);
     }
 
-    function fillImitationTable() {
-        if (!data_im[name]) {
-            return;
-        }
-        console.log(data_im[name]);
-        table_body.innerHTML = "";
-
-        let header_tr = table_header.querySelector("tr");
-        let imitation_row_control = header_tr.querySelector(".imitation_row_control");
-        imitation_row_control.innerHTML = imitation_row_control_template.innerHTML;
-        changeId(imitation_row_control, "_" + plotly_num + "_all");
-        for (let i = 0; i < data_im[name].length; i++) {
-            if (i % 2 == 0) {
-                let first = newTr();
-                first.innerHTML = imitation_table_body_template.querySelector(".first").innerHTML;
-                if (i == 0) first.className = "undeletable";
-                table_body.append(first);
-
-                let imitation_row_control = first.querySelector(".imitation_row_control");
-                imitation_row_control.innerHTML = imitation_row_control_template.innerHTML;
-                changeId(imitation_row_control, "_" + plotly_num + "_" + i);
-            } else {
-                let second = newTr();
-                second.innerHTML = imitation_table_body_template.querySelector(".second").innerHTML;
-                if (i == 1) second.className = "undeletable";
-                table_body.append(second);
-            }
-            let body_trs = table_body.querySelectorAll("tr");
-            let last_tr = body_trs[body_trs.length - 1];
-            let name_th = last_tr.querySelector(".name");
-            name_th.innerHTML = data_im[name][i]["name"];
-            for (let j = 0; j < data_im[name][i]["x"].length; j++) {
-                let x_count = header_tr.querySelectorAll("th").length - 2;
-                let y_count = last_tr.querySelectorAll("td").length;
-                if (x_count < j + 1) {
-                    let th = addTh(header_tr, data_im[name][i]["x"][j]);
-                    //th.setAttribute("contenteditable", "");
-                }
-                if (y_count < j + 1) {
-                    let td = addTd(last_tr, data_im[name][i]["y"][j]);
-                    if(i % 2 == 0) td.setAttribute("contenteditable", "");
-                }
-                for (let k = 0; k < body_trs.length - 1; k++) {
-                    if (body_trs[k].querySelectorAll("td").length < j + 1) {
-                        let td = addTd(body_trs[k], "");
-                        if(i % 2 == 0) td.setAttribute("contenteditable", "");
-                    }
-                }
-            }
-        }
-        setTableEngine(table);
-        setRightContextMenu(table);
-
-        function changeId(imitation_row_control, num) {
-            let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
-            imitation_row_control_checkbox.id += num;
-            let close_imitation_chart_label = imitation_row_control.querySelector("label.close_imitation_chart");
-            close_imitation_chart_label.htmlFor += num;
-        }
-
-
-
-        function showImitationChart(x, y, yhat, x_name) {
-            let color_index = getFreeColor(data_im[name]);
-
-        }
-
-        function onArimaError(input) {
-            input.classList.add("transition");
-            input.classList.add("error");
-            setTimeout(function() {
-                input.classList.remove("error");
-            }, 200);
-        }
+    function onArimaError(input) {
+        input.classList.add("transition");
+        input.classList.add("error");
+        setTimeout(function() {
+            input.classList.remove("error");
+        }, 200);
     }
 
     function getYSum(y_arr) {
@@ -751,16 +681,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         return name.split(" от ");
     }
 
-    function showStuffParts() {
-        imitation_2d.classList.add("active");
-        setDisabledInputs(imitation_2d, false);
-    }
-
-    function removeStuffParts() {
-        imitation_2d.classList.remove("active");
-        setDisabledInputs(imitation_2d, true);
-    }
-
     function setDisabledInputs(stuff_2d_part, disabled) {
         let inputs = stuff_2d_part.querySelectorAll("input");
         let selects = stuff_2d_part.querySelectorAll("select");
@@ -771,6 +691,153 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             selects[i].disabled = disabled;
         }
     }
+}
+
+function addOn2DImitationParamsChangeListeners(table, data_im = null, name = null, plotly_num = null) {
+    let table_header = table.querySelector("table.table_header");
+    let table_body = table.querySelector("table.table_body");
+    let header_row = table_header.querySelector("tr");
+    let body_rows = table_body.querySelectorAll("tr");
+    let imitation_row_control_header = header_row.querySelector(".imitation_row_control");
+    let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+
+    if (data_im && name && plotly_num) {
+        fillImitationTable();
+    } else {
+        updateNewImitationSets();
+    }
+
+    setTableEngine(table);
+    setInputEngine(table);
+    setOnDeleteImitationListeners();
+
+    function fillImitationTable() {
+        if (!data_im[name]) {
+            return;
+        }
+        console.log(data_im[name]);
+        table_body.innerHTML = "";
+        imitation_row_control_header.innerHTML = imitation_row_control_template.innerHTML;
+        changeId(imitation_row_control_header, "close_imitation_chart_" + plotly_num + "_all");
+        for (let i = 0; i < data_im[name].length; i++) {
+            if (i % 2 == 0) {
+                let first = newTr();
+                first.innerHTML = imitation_table_body_template.querySelector(".first").innerHTML;
+                table_body.append(first);
+                let imitation_row_control_body = first.querySelector(".imitation_row_control");
+                imitation_row_control_body.innerHTML = imitation_row_control_template.innerHTML;
+                changeId(imitation_row_control_body, "close_imitation_chart_" + plotly_num + "_" + i);
+            } else {
+                let second = newTr();
+                second.innerHTML = imitation_table_body_template.querySelector(".second").innerHTML;
+                table_body.append(second);
+            }
+            body_rows = table_body.querySelectorAll("tr");
+            imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+            let last_row = body_rows[body_rows.length - 1];
+            let name_th = last_row.querySelector(".name");
+            name_th.innerHTML = data_im[name][i]["name"];
+            for (let j = 0; j < data_im[name][i]["x"].length; j++) {
+                let x_count = header_row.querySelectorAll("th").length - 2;
+                let y_count = last_row.querySelectorAll("td").length;
+                if (x_count < j + 1) {
+                    header_row.append(newTh(data_im[name][i]["x"][j], true));
+                }
+                if (y_count < j + 1) {
+                    if (i % 2 == 0) last_row.append(newTd(data_im[name][i]["y"][j], true));
+                    else last_row.append(newTd(data_im[name][i]["y"][j]));
+                }
+                for (let k = 0; k < body_rows.length - 1; k++) {
+                    if (body_rows[k].querySelectorAll("td").length < j + 1) {
+                        if (k % 2 == 0) body_rows[k].append(newTd("", true));
+                        else body_rows[k].append(newTd());
+                    }
+                }
+            }
+        }
+
+        setRightContextMenu(table);
+
+        function showImitationChart(x, y, yhat, x_name) {
+            let color_index = getFreeColor(data_im[name]);
+
+        }
+    }
+
+    function setOnDeleteImitationListeners() {
+        body_rows = table_body.querySelectorAll("tr");
+        imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+        let span_button_header = table_header.querySelector("span.delete_imitation_chart");
+        span_button_header.onclick = onHeaderDelete;
+        for (let i = 0; i < imitation_row_controls_body.length; i++) {
+            let span_button_body = imitation_row_controls_body[i].querySelector("span.delete_imitation_chart");
+            span_button_body.onclick = onBodyDelete.bind(null, i);
+        }
+
+        function onBodyDelete(num) {
+            let first = num * 2;
+            if (body_rows.length == 2) {
+                clearRow(body_rows[first]);
+                clearRow(body_rows[first + 1]);
+            } else {
+                body_rows[first].remove();
+                body_rows[first + 1].remove();
+            }
+            setTableEngine(table);
+            updateNewImitationSets();
+            setOnDeleteImitationListeners();
+        }
+
+        function onHeaderDelete() {
+            for (let i = body_rows.length - 1; i >= 0; i--) {
+                if (i == 0 || i == 1) {
+                    clearRow(body_rows[i]);
+                } else {
+                    body_rows[i].remove();
+                }
+            }
+            setTableEngine(table);
+            setOnDeleteImitationListeners();
+        }
+
+        function clearRow(row) {
+            let tds = row.querySelectorAll("td");
+            for (let i = 0; i < tds.length; i++) {
+                tds[i].innerHTML = null;
+            }
+        }
+    }
+
+    function updateNewImitationSets() {
+        body_rows = table_body.querySelectorAll("tr");
+        imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+        let num = 0;
+        for (let i = 0; i < imitation_row_controls_body.length; i++) {
+            let splited = imitation_row_controls_body[i].querySelector("input[type=\"checkbox\"].close_imitation_chart").id.split("_");
+            let plotly_num = splited[splited.length - 2];
+            changeId(imitation_row_controls_body[i], "close_imitation_chart_" + plotly_num + "_" + num);
+            num += 2;
+        }
+
+        num = 0;
+        for (let i = 0; i < body_rows.length; i++) {
+            let th = body_rows[i].querySelector("th.name");
+            let inner = th.innerHTML;
+            let before_bracket = inner.split("(")[0];
+            let after_bracket = inner.split(")")[1];
+            th.innerHTML = before_bracket + "(" + num + ")" + after_bracket;
+            if (i % 2 != 0) {
+                num++;
+            }
+        }
+    }
+}
+
+function changeId(imitation_row_control, name) {
+    let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
+    imitation_row_control_checkbox.id = name;
+    let close_imitation_chart_label = imitation_row_control.querySelector("label.close_imitation_chart");
+    close_imitation_chart_label.htmlFor = name;
 }
 
 function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash) {
@@ -857,26 +924,6 @@ function getValidatedData(data, type) {
     //console.log(data_v);
     return data_v;
 }
-
-function addTd(tr, inner) {
-    let td = newTd();
-    td.innerHTML = inner;
-    tr.append(td);
-    return td;
-}
-
-function addTh(tr, inner) {
-    let th = newTh();
-    th.innerHTML = inner;
-    tr.append(th);
-    return th;
-}
-
-function newTr() { return document.createElement("tr"); }
-
-function newTd() { return document.createElement("td"); }
-
-function newTh() { return document.createElement("th"); }
 
 function setChartLayout(plotly_div) {
     return {

@@ -55,6 +55,13 @@ function setRightContextMenu(table) { //div.table
                     }
                 }
             }
+            if(r_delete_col) {
+                if (window.selected_cells[0].length > 1) {
+                    r_delete_col.innerHTML = "Удалить колонки";
+                } else {
+                    r_delete_col.innerHTML = "Удалить колонку";
+                }
+            }
             showContextMenu(e.clientX, e.clientY, right_context_menu);
         }
     }
@@ -216,25 +223,75 @@ function setOptions() {
             rows = window.active_table_body.querySelectorAll("tr");
             ref = window.active_table_body.querySelectorAll("tr")[rows.length - 1];
             ref.parentNode.insertBefore(new_last_row, ref.nextSibling);
-            setTableEngine(window.active_table);
+            addOn2DImitationParamsChangeListeners(window.active_table);
         }
     }
 
     if (r_col_right) {
         r_col_right.onmousedown = function() {
-
+            let col = getTwoDimArrayIndex(window.active_cells, window.selected_cells[window.selected_cells.length - 1][0])[1];
+            rows = window.active_table_body.querySelectorAll("tr");
+            for (let i = 0; i < rows.length; i++) {
+                let tds = rows[i].querySelectorAll("td");
+                let td;
+                if(i % 2 == 0) td = newTd("", true);
+                else td = newTd("");
+                tds[col].parentNode.insertBefore(td, tds[col].nextSibling);
+            }
+            let ths = window.active_table_header.querySelectorAll("th:not(.not_res)");
+            let th_inner;
+            if (col == ths.length - 1) {
+                th_inner = parseFloat(ths[col].innerHTML) + 1;
+            } else {
+                th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col + 1].innerHTML)) / 2;
+            }
+            ths[col].parentNode.insertBefore(newTh(th_inner, true), ths[col].nextSibling);
+            setTableEngine(window.active_table);
         }
     }
 
     if (r_col_left) {
         r_col_left.onmousedown = function() {
-
+            let col = getTwoDimArrayIndex(window.active_cells, window.selected_cells[0][0])[1];
+            rows = window.active_table_body.querySelectorAll("tr");
+            for (let i = 0; i < rows.length; i++) {
+                let tds = rows[i].querySelectorAll("td");
+                let td;
+                if(i % 2 == 0) td = newTd("", true);
+                else td = newTd("");
+                tds[col].parentNode.insertBefore(td, tds[col]);
+            }
+            let ths = window.active_table_header.querySelectorAll("th:not(.not_res)");
+            let th_inner;
+            if (col == 0) {
+                th_inner = parseFloat(ths[col].innerHTML) - 1;
+            } else {
+                th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col - 1].innerHTML)) / 2;
+            }
+            ths[col].parentNode.insertBefore(newTh(th_inner, true), ths[col]);
+            setTableEngine(window.active_table);
         }
     }
 
     if (r_delete_col) {
         r_delete_col.onmousedown = function() {
-
+            let rows = window.active_table_body.querySelectorAll("tr");
+            let ths = window.active_table_header.querySelectorAll("th:not(.not_res)");
+            for (let i = 0; i < rows.length; i++) {
+                let tds = rows[i].querySelectorAll("td");
+                for (let j = 0; j < window.selected_cells[0].length; j++) {
+                    let col = getTwoDimArrayIndex(window.active_cells, window.selected_cells[0][j])[1];
+                    if(rows[i].querySelectorAll("td").length == 1) {
+                        tds[col].innerHTML = null;
+                        continue;
+                    }
+                    if(i == 0) {
+                        ths[col].remove();
+                    }
+                    tds[col].remove();
+                }
+            }
+            setTableEngine(window.active_table);
         }
     }
 }
@@ -310,7 +367,7 @@ function closeAllContext() {
 
 function createNewRow() {
     let first_row = window.active_table_body.querySelector("tr");
-    let new_row = document.createElement("tr");
+    let new_row = newTr();
     new_row.innerHTML = first_row.innerHTML;
     let cells = new_row.querySelectorAll("td");
     for (let i = 0; i < cells.length; i++) {
@@ -324,8 +381,8 @@ function createNewSet() {
     let rows = window.active_table_body.querySelectorAll("tr");
     let last_row = rows[rows.length - 1];
     let penultimate_row = rows[rows.length - 2];
-    let new_last_row = document.createElement("tr");
-    let new_penultimate_row = document.createElement("tr");
+    let new_last_row = newTr();
+    let new_penultimate_row = newTr();
     new_last_row.innerHTML = last_row.innerHTML;
     new_penultimate_row.innerHTML = penultimate_row.innerHTML;
     let last_cells = new_last_row.querySelectorAll("td");
