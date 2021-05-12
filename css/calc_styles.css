@@ -43,10 +43,10 @@ hr.active {
 
 .plotly_div {
     background: var(--secondary2);
-    /*height: 30rem;
-    width: 60rem;*/
-    height: 10rem;
-    width: 10rem;
+    height: 30rem;
+    width: 60rem;
+    /*height: 10rem;
+    width: 10rem;*/
     max-width: 100%;
     align-self: center;
 }
@@ -205,7 +205,7 @@ form span:not(:first-child) {
 }
 
 .chart_stuff div.imitation_div {
-    display: block;
+    display: none;
 }
 
 .chart_stuff div.results.active,
@@ -223,8 +223,7 @@ form span:not(:first-child) {
     transition: 0.2s;
 }
 
-.chart_stuff .forecast_2d.active,
-.chart_stuff .imitation_2d.active {
+.chart_stuff .forecast_2d.active{
     opacity: 100%;
     transition: 0.2s;
 }

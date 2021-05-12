@@ -282,12 +282,7 @@
                                         <div class="table_wrapper">
                                             <div class="table">
                                                 <div class="table_header_wrapper" style="margin: 0;">
-                                                    <table class="table_header main_table_header main_table">
-                                                        <tr>
-                                                            <th class="imitation_row_control not_res"></th>
-                                                            <th class="not_res"></th>
-                                                        </tr>
-                                                    </table>
+                                                    <table class="table_header main_table_header main_table"></table>
                                                 </div>
                                                 <div class="table_body_wrapper" style="margin: 0;">
                                                     <div class="cell_selection"></div>
@@ -389,7 +384,12 @@
             <li class="r_delete_col">Удалить колонку</li>
         </ul>
         <div class="popup"><span class="popup_text"></span><span class="close_cross span_button">&times;</span></div>
-        
+        <table class="imitation_header_template template">
+            <tr>
+                <th class="imitation_row_control not_res">...</th>
+                <th class="not_res"></th>
+            </tr>
+        </table>
         <div class="imitation_row_control imitation_row_control_template template">
             <div>
                 <input type="checkbox" id="close_imitation_chart"

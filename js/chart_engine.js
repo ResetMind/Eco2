@@ -1,6 +1,8 @@
 let chart_rectangle_template = document.querySelector("div.chart_rectangle_template");
 let imitation_table_body_template = document.querySelector("table.imitation_table_body_template");
 let imitation_row_control_template = document.querySelector("div.imitation_row_control_template");
+let imitation_header_template = document.querySelector("table.imitation_header_template");
+
 
 let old_rectangle = null;
 let colors = [
@@ -489,7 +491,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let table = imitation_div.querySelector(".table");
 
     let data_index = getDataIndex(data, name);
-    let color = data[data_index]["line"]["color"];
+    let forecast_color = data[data_index]["line"]["color"];
     let x_name = splitName(name)[0];
     let data_v = validateDataForCalculations(data, name, 0);
     let y = data_v[data_index]["y"];
@@ -515,33 +517,52 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         setDisabled();
         if (forecast_2d_form.select_2d_forecast_type.value == "none") {
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
+            data_im[name] = [];
+            data[data_index]["imitation"] = null;
+            imitation_div.classList.remove("active");
         }
     }
     forecast_2d_form.imitation_checkbox.onchange = function() {
         if (forecast_2d_form.imitation_checkbox.checked) {
-
+            data[data_index]["imitation"] = true;
+            forecast_2d_form.arima_k.value = "";
+            if (forecast_2d_form.auto_arima_checkbox.checked) {
+                forecast_2d_form.auto_arima_checkbox.checked = false;
+            }
+        } else {
+            data_im[name] = [];
+            data[data_index]["imitation"] = null;
+            forecast_2d_form.arima_k.value = y.length;
+            imitation_div.classList.remove("active");
         }
+        forecast_2d_form.arima_k.disabled = forecast_2d_form.imitation_checkbox.checked;
+        forecast_2d_form.auto_arima_checkbox.disabled = forecast_2d_form.imitation_checkbox.checked;
     }
     forecast_2d_form.forecast_2d_button.onclick = function() {
+        data_v = validateDataForCalculations(data, name, 0);
+        let x = data_v[data_index]["x"];
+        y = data_v[data_index]["y"];
         let p = parseFloat(forecast_2d_form.arima_p.value);
         let d = parseFloat(forecast_2d_form.arima_d.value);
         let q = parseFloat(forecast_2d_form.arima_q.value);
         let k = parseFloat(forecast_2d_form.arima_k.value);
+        if (isNaN(k)) k = y.length;
         let n = parseFloat(forecast_2d_form.arima_n.value);
         let order = [p, d, q];
-        data_v = validateDataForCalculations(data, name, 0);
-        let x = data_v[data_index]["x"].slice(0, k);
-        y = data_v[data_index]["y"].slice(0, k);
         let auto = forecast_2d_form.auto_arima_checkbox.checked ? 1 : 0;
         let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
         data_im[name] = [];
-        let result = arima(x, y, order, k, n, auto, path);
-        while(!result) {
-            result = arima(x, y, order, k, n, auto, path);
+        let json = {
+            "y": y,
+            "x": x,
+            "order": order,
+            "k": k,
+            "prlen": n,
+            "auto": auto,
+            "path": path
         }
-        console.log(result);
+        arima([json]);
     }
-
 
     //setTimeout(() => forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click")), 300);
 
@@ -550,7 +571,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     //forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
 
     let forecast_params = getAnalisisParams(data, name, "forecast");
-    let imitation_params = getAnalisisParams(data, name, "imitation");
     if (!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
         forecast_2d_form.arima_p.value = "1";
@@ -568,10 +588,15 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_n.value = forecast_params.n;
         showErrors(forecast_params.mse, forecast_params.llf);
     }
-    if(imitation_params) {
+    let imitation_params = getAnalisisParams(data, name, "imitation");
+    if (imitation_params) {
         forecast_2d_form.imitation_checkbox.checked = true;
+        forecast_2d_form.arima_k.value = "";
+        imitation_div.classList.add("active");
+        addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
     } else {
         forecast_2d_form.imitation_checkbox.checked = false;
+        imitation_div.classList.remove("active");
     }
     setDisabled();
 
@@ -590,59 +615,76 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
 
     //fillImitationTable();
 
-    function arima(x, y, order, k, n, auto, path) {
-        if (forecast_2d_form.select_2d_forecast_type.value == "none") {
-            //return;
-        }
-        let json = {
-            "y": y,
-            "order": order,
-            "prlen": n,
-            "auto": auto,
-            "path": path
-        }
-        let xhr = JSONRequest("/eco2/cgi/arima.cgi", JSON.stringify(json));
-        console.log(JSON.stringify(json));
-        fadeIn(document.querySelector(".loader"), 0.5);
-        xhr.onload = function() {
-            fadeOut(document.querySelector(".loader"), 0.5);
-            if (xhr.status != 200) {
-                showPopup(popup, "Ошибка сервера " + xhr.status);
-            } else {
-                if (xhr.response == null) {
-                    showPopup(popup, "Ошибка сервера", true);
-                    return;
-                } else if (xhr.response["error"] != -1 && xhr.response["yhat"] == -1) {
-                    showPopup(popup, xhr.response["error"], true);
-                    /*onArimaError(forecast_2d_form.arima_p);
-                    onArimaError(forecast_2d_form.arima_d);
-                    onArimaError(forecast_2d_form.arima_q);
-                    onArimaError(forecast_2d_form.arima_k);
-                    onArimaError(forecast_2d_form.arima_n);*/
-                    console.log(xhr.response);
-                }
-                if (xhr.response["yhat"] != -1) {
-                    forecast_2d_form.arima_p.value = xhr.response["order"][0];
-                    forecast_2d_form.arima_d.value = xhr.response["order"][1];
-                    forecast_2d_form.arima_q.value = xhr.response["order"][2];
-                    [p, d, q] = xhr.response["order"];
-                    let mse = xhr.response["mse"];
-                    let llf = xhr.response["llf"];
-                    let yhat = xhr.response["yhat"];
-                    let last = x.last();
-                    let color_index = getFreeColor(data_im[name]);
-                    addToImitationAnalysis(x.slice(), y, x_name, colors[color_index], "normal", "solid");
-                    for (let i = last + 1; i <= last + n; i++) {
-                        x.push(i)
+    function arima(jsons) {
+        let results = [];
+        for (let i = 0; i < jsons.length; i++) {
+            let result = fetch("/eco2/cgi/arima.cgi", {
+                method: "POST",
+                headers: { "Content-Type": "application/json;charset=utf-8" },
+                body: JSON.stringify(jsons[i])
+            }).then(
+                response => {
+                    if (response.status != 200) {
+                        return {
+                            status: response.status
+                        };
+                    } else {
+                        return response.json();
                     }
-                    showForecast(x, yhat, p, d, q, k, n, auto, mse, llf);
-                    addToImitationAnalysis(x, yhat, x_name, colors[color_index], "imitation", "dash");
-                    addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
                 }
-
-            }
-            return xhr.status;
+            );
+            results.push(result);
         }
+        fadeIn(document.querySelector(".loader"), 0.5);
+        Promise.all(results).then(values => {
+            fadeOut(document.querySelector(".loader"), 0.5);
+            let errors = "";
+            for (let i = 0; i < values.length; i++) {
+                console.log(values[i]);
+                if (values[i].status && values[i].status != 200) {
+                    errors += i + ": Ошибка сервера " + values[i].status + "<br>";
+                } else if (!values[i]) {
+                    errors += i + ": Ошибка сервера" + "<br>";
+                } else if (values[i]["error"] != -1 && values[i]["yhat"] == -1) {
+                    errors += i + ": " + values[i]["error"] + "<br>";
+                }
+                if (values[i]["yhat"] != -1) {
+                    forecast_2d_form.arima_p.value = values[i]["order"][0];
+                    forecast_2d_form.arima_d.value = values[i]["order"][1];
+                    forecast_2d_form.arima_q.value = values[i]["order"][2];
+                    let x_old = jsons[i]["x"];
+                    let y_old = jsons[i]["y"];
+
+                    let x_new = values[i]["x"];
+                    let yhat = values[i]["yhat"];
+                    let k = values[i]["k"];
+                    let n = values[i]["prlen"];
+                    let auto = values[i]["auto"];
+                    let [p, d, q] = values[i]["order"];
+                    let mse = values[i]["mse"];
+                    let llf = values[i]["llf"];
+                    for (let j = k; j < x_old.length + n; j++) {
+                        if (j < x_old.length) {
+                            x_new.push(x_old[j]);
+                        } else {
+                            x_new.push(x_new.last() + 1);
+                        }
+                    }
+                    let color_index = getFreeColor(data_im[name]);
+                    showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
+                    addToImitationAnalysis(x_old, y, x_name, colors[color_index], "normal", "solid");
+                    addToImitationAnalysis(x_new, yhat, x_name, colors[color_index], "imitation", "dash");
+                    if (forecast_2d_form.imitation_checkbox.checked) {
+                        imitation_div.classList.add("active");
+                        addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
+                    }
+                }
+            }
+            if (errors != "") showPopup(popup, errors, true);
+        }, reason => {
+            console.log(reason);
+            fadeOut(document.querySelector(".loader"), 0.5);
+        });
     }
 
     function showForecast(x, yhat, p, d, q, k, n, auto, mse, llf) {
@@ -659,7 +701,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         }
         console.log(forecast);
         data[data_index]["forecast"] = forecast;
-        addToAnalysisData(data, x, yhat, name + " (прогноз)", color, "forecast", "dash");
+        addToAnalysisData(data, x, yhat, name + " (прогноз)", forecast_color, "forecast", "dash");
         newPlot(plotly_div, data, 0);
         showErrors(mse, llf);
     }
@@ -713,11 +755,10 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
 function addOn2DImitationParamsChangeListeners(table, data_im = null, name = null, plotly_num = null) {
     let table_header = table.querySelector("table.table_header");
     let table_body = table.querySelector("table.table_body");
-    let header_row = table_header.querySelector("tr");
     let body_rows = table_body.querySelectorAll("tr");
-    let imitation_row_control_header = header_row.querySelector(".imitation_row_control");
     let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
 
+    //imitation_div.classList.remove("active");
     if (data_im && name && plotly_num) {
         fillImitationTable();
     } else {
@@ -728,12 +769,38 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
     setInputEngine(table);
     setOnDeleteImitationListeners();
 
+    function parseDataTable() {
+        let ths = table_header.querySelectorAll("th:not(.not_res)");
+        data_im[name] = [];
+        for (let i = 0; i < body_rows.length; i++) {
+            let x_arr = [],
+                y_arr = [];
+            let tds = body_rows[i].querySelectorAll("td");
+            for (let j = 0; j < ths.length; j++) {
+                let y = parseFloat(+ths[j].innerHTML);
+                if (!isNaN(y)) {
+                    x_arr.push(x);
+                    y_arr.push(y);
+                }
+            }
+            let color_index = getFreeColor(data_im[name]);
+            if(i % 2 == 0) {
+                addToImitationAnalysis(x_old, y, x_name, colors[color_index], "normal", "solid");
+            } else {
+                addToImitationAnalysis(x_new, yhat, x_name, colors[color_index], "imitation", "dash");
+            }
+        }
+    }
+
     function fillImitationTable() {
         if (!data_im[name]) {
             return;
         }
         console.log(data_im[name]);
         table_body.innerHTML = "";
+        table_header.innerHTML = imitation_header_template.innerHTML;
+        let header_row = table_header.querySelector("tr");
+        let imitation_row_control_header = header_row.querySelector(".imitation_row_control");
         imitation_row_control_header.innerHTML = imitation_row_control_template.innerHTML;
         changeId(imitation_row_control_header, "close_imitation_chart_" + plotly_num + "_all");
         for (let i = 0; i < data_im[name].length; i++) {

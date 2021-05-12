@@ -77,12 +77,14 @@ def getSavedModel(path):
 
 
 def main():
-    global result, y, yhat, order, mse, llf, aic, bic, summary, error, tb
+    global result, y, x, k, prlen, auto, yhat, order, mse, llf, aic, bic, summary, error, tb
     #json_data = '{"y":[1.282, 0.958, 11.22, 0.431, 2.029, 1.699, 6.46, 0.401, 12.03, 5.233, 1.254, 3.051, 8.626, 3.693, 5.616, 0.906, 8.833, 2.236, 12.255, 1.273, 6.913, 4.737, 0.848, 13.418, 2.337, 7.242], "order":[1,2,1], "prlen":1, "auto":0, "path":"a@gmail.com/1e79fa8e9b499f00a59225569bc698ee_yst_[1,2,1].pickle"}'
     try:
         #json_data = json.loads(json_data)
         json_data = json.load(sys.stdin)
-        y = json_data["y"]
+        k = json_data["k"]
+        y = json_data["y"][:k]
+        x = json_data["x"][:k]
         order = json_data["order"]
         prlen = json_data["prlen"]
         auto = json_data["auto"]
@@ -101,11 +103,26 @@ def main():
 
 
 cgitb.enable()
-y = yhat = order = mse = llf = aic = bic = summary = error = tb = -1
+y = x = k = prlen = auto = yhat = order = mse = llf = aic = bic = summary = error = tb = -1
 info = ""
 main()
-result = {"y": y, "yhat": yhat, "order": order, "mse": mse, "llf": llf, "aic": aic,
-          "bic": bic, "summary": summary, "error": error, "tb": tb, "info": info}
+result = {
+    "k": k,
+    "prlen": prlen,
+    "auto": auto,
+    "y": y,
+    "x": x,
+    "yhat": yhat,
+    "order": order,
+    "mse": mse,
+    "llf": llf,
+    "aic": aic,
+    "bic": bic,
+    "summary": summary,
+    "error": error,
+    "tb": tb,
+    "info": info
+}
 
 print('Content-Type: application/json\n\n')
 print(json.dumps(result))
