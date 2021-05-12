@@ -2,7 +2,8 @@ let chart_rectangle_template = document.querySelector("div.chart_rectangle_templ
 let imitation_table_body_template = document.querySelector("table.imitation_table_body_template");
 let imitation_row_control_template = document.querySelector("div.imitation_row_control_template");
 let imitation_header_template = document.querySelector("table.imitation_header_template");
-
+let im_data_observer;
+let observing = [];
 
 let old_rectangle = null;
 let colors = [
@@ -484,7 +485,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let forecast_2d = chart_div.querySelector(".forecast_2d");
     let mse_span = forecast_2d.querySelector(".mse");
     let llf_span = forecast_2d.querySelector(".llf");
-    let results_div = document.querySelector(".forecast_2d_results");
+    let results_div = forecast_2d.querySelector(".forecast_2d_results");
     let forecast_2d_form = forecast_2d.querySelector(".forecast_2d_form");
     let plotly_div = chart_div.querySelector(".plotly_div");
     let imitation_div = chart_div.querySelector(".imitation_div");
@@ -492,7 +493,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
 
     let data_index = getDataIndex(data, name);
     let forecast_color = data[data_index]["line"]["color"];
-    let x_name = splitName(name)[0];
     let data_v = validateDataForCalculations(data, name, 0);
     let y = data_v[data_index]["y"];
 
@@ -672,8 +672,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     }
                     let color_index = getFreeColor(data_im[name]);
                     showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
-                    addToImitationAnalysis(x_old, y, x_name, colors[color_index], "normal", "solid");
-                    addToImitationAnalysis(x_new, yhat, x_name, colors[color_index], "imitation", "dash");
+                    addToImitationData(x_old, y, data_im, name, colors[color_index], "normal", "solid");
+                    addToImitationData(x_new, yhat, data_im, name, colors[color_index], "imitation", "dash");
                     if (forecast_2d_form.imitation_checkbox.checked) {
                         imitation_div.classList.add("active");
                         addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
@@ -706,13 +706,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         showErrors(mse, llf);
     }
 
-    function addToImitationAnalysis(x, y, x_name, color, which, dash) {
-        let length = data_im[name].length;
-        x_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
-        x_name = length % 2 == 0 ? x_name : x_name + "<sup>*</sup>";
-        addToAnalysisData(data_im[name], x, y, x_name, color, which, dash);
-    }
-
     function onArimaError(input) {
         input.classList.add("transition");
         input.classList.add("error");
@@ -735,21 +728,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         llf_span.innerHTML = "LLF = " + llf.toFixed(4);
         results_div.classList.add("active");
     }
-
-    function splitName() {
-        return name.split(" от ");
-    }
-
-    function setDisabledInputs(stuff_2d_part, disabled) {
-        let inputs = stuff_2d_part.querySelectorAll("input");
-        let selects = stuff_2d_part.querySelectorAll("select");
-        for (let i = 0; i < inputs.length; i++) {
-            inputs[i].disabled = disabled;
-        }
-        for (let i = 0; i < selects.length; i++) {
-            selects[i].disabled = disabled;
-        }
-    }
 }
 
 function addOn2DImitationParamsChangeListeners(table, data_im = null, name = null, plotly_num = null) {
@@ -765,11 +743,32 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
         updateNewImitationSets();
     }
 
+    startObserver();
+
     setTableEngine(table);
     setInputEngine(table);
     setOnDeleteImitationListeners();
 
-    function parseDataTable() {
+    function startObserver() {
+        let config = {
+            childList: true,
+            subtree: true,
+            characterData: true
+        };
+        let callback = function(mutationsList) {
+            for(const mutation of mutationsList) {
+                console.log(mutation.type);
+            }
+            console.log(table);
+        };
+        if (getArrayIndex(observing, table) == -1) {
+            im_data_observer = new MutationObserver(callback);
+            im_data_observer.observe(table, config);
+            observing.push(table);
+        }
+    }
+
+    function parseDataTable(data_im, name, plotly_num) {
         let ths = table_header.querySelectorAll("th:not(.not_res)");
         data_im[name] = [];
         for (let i = 0; i < body_rows.length; i++) {
@@ -784,10 +783,10 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
                 }
             }
             let color_index = getFreeColor(data_im[name]);
-            if(i % 2 == 0) {
-                addToImitationAnalysis(x_old, y, x_name, colors[color_index], "normal", "solid");
+            if (i % 2 == 0) {
+                addToImitationData(x_old, y, data_im, name, colors[color_index], "normal", "solid");
             } else {
-                addToImitationAnalysis(x_new, yhat, x_name, colors[color_index], "imitation", "dash");
+                addToImitationData(x_new, yhat, data_im, name, colors[color_index], "imitation", "dash");
             }
         }
     }
@@ -922,6 +921,14 @@ function changeId(imitation_row_control, name) {
     imitation_row_control_checkbox.id = name;
     let close_imitation_chart_label = imitation_row_control.querySelector("label.close_imitation_chart");
     close_imitation_chart_label.htmlFor = name;
+}
+
+function addToImitationData(x, y, data_im, name, color, which, dash) {
+    let x_name = name.split(" от ")[0];
+    let length = data_im[name].length;
+    x_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
+    x_name = length % 2 == 0 ? x_name : x_name + "<sup>*</sup>";
+    addToAnalysisData(data_im[name], x, y, x_name, color, which, dash);
 }
 
 function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash) {

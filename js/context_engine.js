@@ -246,7 +246,7 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col + 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col].nextSibling);
-            setTableEngine(window.active_table);
+            addOn2DImitationParamsChangeListeners(window.active_table);
         }
     }
 
@@ -269,7 +269,7 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col - 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col]);
-            setTableEngine(window.active_table);
+            addOn2DImitationParamsChangeListeners(window.active_table);
         }
     }
 
@@ -291,7 +291,7 @@ function setOptions() {
                     tds[col].remove();
                 }
             }
-            setTableEngine(window.active_table);
+            addOn2DImitationParamsChangeListeners(window.active_table);
         }
     }
 }

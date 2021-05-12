@@ -101,6 +101,11 @@ function addOtherStuff(chart_div, type) {
     auto_arima_checkbox.id += "_" + plotly_num;
     let auto_arima_checkbox_label = chart_div.querySelector(".auto_arima_checkbox_label");
     auto_arima_checkbox_label.setAttribute("for", auto_arima_checkbox.id);
+
+    let imitation_checkbox = chart_div.querySelector(".imitation_checkbox");
+    imitation_checkbox.id += "_" + plotly_num;
+    let imitation_checkbox_label = chart_div.querySelector(".imitation_checkbox_label");
+    imitation_checkbox_label.setAttribute("for", imitation_checkbox.id);
 }
 
 function addSelects(chart_div, type) {
