@@ -517,6 +517,11 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
         }
     }
+    forecast_2d_form.imitation_checkbox.onchange = function() {
+        if (forecast_2d_form.imitation_checkbox.checked) {
+
+        }
+    }
     forecast_2d_form.forecast_2d_button.onclick = function() {
         let p = parseFloat(forecast_2d_form.arima_p.value);
         let d = parseFloat(forecast_2d_form.arima_d.value);
@@ -530,17 +535,22 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         let auto = forecast_2d_form.auto_arima_checkbox.checked ? 1 : 0;
         let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
         data_im[name] = [];
-        arima(x, y, order, k, n, auto, path);
+        let result = arima(x, y, order, k, n, auto, path);
+        while(!result) {
+            result = arima(x, y, order, k, n, auto, path);
+        }
+        console.log(result);
     }
 
 
-    setTimeout(() => forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click")), 300);
+    //setTimeout(() => forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click")), 300);
 
     //
     //forecast_2d_form.select_2d_forecast_type.value = "0";
     //forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
 
     let forecast_params = getAnalisisParams(data, name, "forecast");
+    let imitation_params = getAnalisisParams(data, name, "imitation");
     if (!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
         forecast_2d_form.arima_p.value = "1";
@@ -558,6 +568,11 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_n.value = forecast_params.n;
         showErrors(forecast_params.mse, forecast_params.llf);
     }
+    if(imitation_params) {
+        forecast_2d_form.imitation_checkbox.checked = true;
+    } else {
+        forecast_2d_form.imitation_checkbox.checked = false;
+    }
     setDisabled();
 
     function setDisabled() {
@@ -569,6 +584,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_k.disabled = flag;
         forecast_2d_form.arima_n.disabled = flag;
         forecast_2d_form.auto_arima_checkbox.disabled = flag;
+        forecast_2d_form.imitation_checkbox.disabled = flag;
         forecast_2d_form.forecast_2d_button.disabled = flag;
     }
 
@@ -625,6 +641,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                 }
 
             }
+            return xhr.status;
         }
     }
 
