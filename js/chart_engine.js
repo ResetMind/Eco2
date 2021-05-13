@@ -219,10 +219,13 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-            //chart_stuff.innerHTML = "";
+            updateDataIm(window.active_table, rectangle.querySelector(".chart_rectangle_name").innerHTML);
         } else {
             for (let k = 0; k < rectangles.length; k++) {
-                rectangles[k].classList.remove("active");
+                if (rectangles[k].classList.contains("active")) {
+                    rectangles[k].classList.remove("active");
+                    updateDataIm(window.active_table, rectangles[k].querySelector(".chart_rectangle_name").innerHTML);
+                }
                 if (k == 0) {
                     chart_settings.classList.remove("active");
                     chart_data.innerHTML = "";
@@ -242,6 +245,12 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
                 //addOn2DImitationListeners(chart_div, data, name);
                 //addOn2DInterpolationListeners(chart_div, data, name);
             }
+        }
+
+        function updateDataIm(table, name) {
+            if (!table) return;
+            if (!table.classList.contains("imitation_table")) return;
+            addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, update_data_im: true });
         }
 
         function addOnCheckboxChangeListeners() {
@@ -593,7 +602,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.imitation_checkbox.checked = true;
         forecast_2d_form.arima_k.value = "";
         imitation_div.classList.add("active");
-        addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
+        addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
     } else {
         forecast_2d_form.imitation_checkbox.checked = false;
         imitation_div.classList.remove("active");
@@ -676,7 +685,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     addToImitationData(x_new, yhat, data_im, name, colors[color_index], "imitation", "dash");
                     if (forecast_2d_form.imitation_checkbox.checked) {
                         imitation_div.classList.add("active");
-                        addOn2DImitationParamsChangeListeners(table, data_im, name, plotly_num);
+                        addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
                     }
                 }
             }
@@ -730,7 +739,16 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     }
 }
 
-function addOn2DImitationParamsChangeListeners(table, data_im = null, name = null, plotly_num = null) {
+function addOn2DImitationParamsChangeListeners(options) {
+    let table, data_im, name, plotly_num, update_sets, update_data_im;
+    if (options.table != undefined) table = options.table;
+    else return;
+    if (options.data_im != undefined) data_im = options.data_im;
+    if (options.name != undefined) name = options.name;
+    if (options.plotly_num != undefined) plotly_num = options.plotly_num;
+    if (options.update_sets != undefined) update_sets = options.update_sets;
+    if (options.update_data_im != undefined) update_data_im = options.update_data_im;
+
     let table_header = table.querySelector("table.table_header");
     let table_body = table.querySelector("table.table_body");
     let body_rows = table_body.querySelectorAll("tr");
@@ -739,36 +757,20 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
     //imitation_div.classList.remove("active");
     if (data_im && name && plotly_num) {
         fillImitationTable();
-    } else {
+    }
+    if (update_sets) {
         updateNewImitationSets();
     }
-
-    startObserver();
+    if (data_im && name && update_data_im) {
+        parseDataTable();
+    }
 
     setTableEngine(table);
     setInputEngine(table);
     setOnDeleteImitationListeners();
 
-    function startObserver() {
-        let config = {
-            childList: true,
-            subtree: true,
-            characterData: true
-        };
-        let callback = function(mutationsList) {
-            for(const mutation of mutationsList) {
-                console.log(mutation.type);
-            }
-            console.log(table);
-        };
-        if (getArrayIndex(observing, table) == -1) {
-            im_data_observer = new MutationObserver(callback);
-            im_data_observer.observe(table, config);
-            observing.push(table);
-        }
-    }
-
-    function parseDataTable(data_im, name, plotly_num) {
+    function parseDataTable() {
+        //let name = table_header.querySelector("th.name").innerHTML;
         let ths = table_header.querySelectorAll("th:not(.not_res)");
         data_im[name] = [];
         for (let i = 0; i < body_rows.length; i++) {
@@ -776,19 +778,20 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
                 y_arr = [];
             let tds = body_rows[i].querySelectorAll("td");
             for (let j = 0; j < ths.length; j++) {
-                let y = parseFloat(+ths[j].innerHTML);
-                if (!isNaN(y)) {
-                    x_arr.push(x);
-                    y_arr.push(y);
+                let year = parseFloat(+ths[j].innerHTML);
+                if (!isNaN(year)) {
+                    x_arr.push(year);
+                    y_arr.push(tds[j].innerHTML);
                 }
             }
             let color_index = getFreeColor(data_im[name]);
             if (i % 2 == 0) {
-                addToImitationData(x_old, y, data_im, name, colors[color_index], "normal", "solid");
+                addToImitationData(x_arr, y_arr, data_im, name, colors[color_index], "normal", "solid");
             } else {
-                addToImitationData(x_new, yhat, data_im, name, colors[color_index], "imitation", "dash");
+                addToImitationData(x_arr, y_arr, data_im, name, colors[color_index], "imitation", "dash");
             }
         }
+        //console.log(data_im[name]);
     }
 
     function fillImitationTable() {
@@ -801,6 +804,8 @@ function addOn2DImitationParamsChangeListeners(table, data_im = null, name = nul
         let header_row = table_header.querySelector("tr");
         let imitation_row_control_header = header_row.querySelector(".imitation_row_control");
         imitation_row_control_header.innerHTML = imitation_row_control_template.innerHTML;
+        let header_hame = header_row.querySelector("th.name");
+        header_hame.innerHTML = name;
         changeId(imitation_row_control_header, "close_imitation_chart_" + plotly_num + "_all");
         for (let i = 0; i < data_im[name].length; i++) {
             if (i % 2 == 0) {
