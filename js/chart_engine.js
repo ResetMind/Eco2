@@ -176,7 +176,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
     chart_rectangle.querySelector("span.delete_chart").onclick = deleteChartRectangle;
     chart_rectangle.onclick = onChartRectangleClick;
     //
-    //chart_rectangle.dispatchEvent(new Event("click"));
+    chart_rectangle.dispatchEvent(new Event("click"));
 
     function deleteChartRectangle() {
         window.event.stopPropagation();
@@ -636,10 +636,14 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.imitation_checkbox.checked = true;
         forecast_2d_form.arima_k.value = "";
         imitation_div.classList.add("active");
+        /*forecast_2d_form.arima_k.disabled = true;
+        forecast_2d_form.auto_arima_checkbox.disabled = true;*/
         addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
     } else {
         forecast_2d_form.imitation_checkbox.checked = false;
         imitation_div.classList.remove("active");
+        /*forecast_2d_form.arima_k.disabled = false;
+        forecast_2d_form.auto_arima_checkbox.disabled = false;*/
     }
     setDisabled();
 
@@ -789,7 +793,7 @@ function addOn2DImitationParamsChangeListeners(options) {
     let body_rows = table_body.querySelectorAll("tr");
     let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
 
-    if(!table.classList.contains("context_listener")) {
+    /*if(!table.classList.contains("context_listener")) {
         table.classList.add("context_listener");
         table.addEventListener("context_listener", function(e) {
             updateNewImitationSets();
@@ -798,7 +802,7 @@ function addOn2DImitationParamsChangeListeners(options) {
             setInputEngine(table);
             setOnDeleteImitationListeners();
         });
-    }
+    }*/
 
     //imitation_div.classList.remove("active");
     if (data_im && name && plotly_num) {
