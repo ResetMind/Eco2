@@ -330,6 +330,25 @@
                                         <span class="a results">a</span>
                                     </div>
                                 </div>
+
+                                <div class="interpolation_2d stuff_2d_part">
+                                    <div class="header">
+                                        <span class="header">Интерполяция</span>
+                                    </div>
+                                    <div class="form_div">
+                                        <form name="interpolation_2d_form" class="interpolation_2d_form">
+                                            <select class="select_2d_interpolation_type" name="select_2d_interpolation_type">
+                                                <option value="none">Отсутствует</option>
+                                                <option value="0">Линейная</option>
+                                                <option value="1">Кубический сплайн</option>
+                                            </select>
+                                            <label for="number_2d_interpolation_step">шаг:</label>
+                                            <input type="number" class="number_2d_interpolation_step"
+                                                name="number_2d_interpolation_step" id="number_2d_interpolation_step" min="0.05" max="99"
+                                                step="0.1" value="1" disabled>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

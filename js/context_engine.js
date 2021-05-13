@@ -223,7 +223,8 @@ function setOptions() {
             rows = window.active_table_body.querySelectorAll("tr");
             ref = window.active_table_body.querySelectorAll("tr")[rows.length - 1];
             ref.parentNode.insertBefore(new_last_row, ref.nextSibling);
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("context_listener"));
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -246,7 +247,8 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col + 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col].nextSibling);
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("context_listener"));
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -269,7 +271,8 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col - 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col]);
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("context_listener"));
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -291,7 +294,8 @@ function setOptions() {
                     tds[col].remove();
                 }
             }
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("context_listener"));
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 }

@@ -140,6 +140,8 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_n
         years: year_arr_sorted,
         x: x_arr_sorted,
         y: y_arr_sorted,
+        x_unint: null,
+        y_unint: null,
         type: "scatter",
         name: name,
         short_name: short_name,
@@ -174,7 +176,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
     chart_rectangle.querySelector("span.delete_chart").onclick = deleteChartRectangle;
     chart_rectangle.onclick = onChartRectangleClick;
     //
-    chart_rectangle.dispatchEvent(new Event("click"));
+    //chart_rectangle.dispatchEvent(new Event("click"));
 
     function deleteChartRectangle() {
         window.event.stopPropagation();
@@ -210,7 +212,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         let chart_rectangles = chart_div.querySelector(".chart_rectangles");
         let chart_data = chart_settings.querySelector(".chart_data");
         let rectangles = chart_rectangles.querySelectorAll(".chart_rectangle");
-        //console.log(rectangles);
+        console.log("click");
         let rectangle = window.event.target;
         let data_index = getDataIndex(data, name);
         let short_name = data[data_index]["short_name"];
@@ -218,15 +220,17 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             rectangle = window.event.target.parentNode;
         }
         if (rectangle.classList.contains("active")) {
+            //console.log("close1")
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-            updateDataIm(window.active_table, plotly_num, data_im, rectangle.querySelector(".chart_rectangle_name").innerHTML, short_name);
+            updateDataIm(window.active_table, plotly_num, data_im, rectangle.querySelector(".chart_rectangle_name").innerHTML, short_name); //если закрываем
         } else {
+            //console.log("close2")
             for (let k = 0; k < rectangles.length; k++) {
                 if (rectangles[k].classList.contains("active")) {
                     rectangles[k].classList.remove("active");
-                    updateDataIm(window.active_table, plotly_num, data_im, rectangles[k].querySelector(".chart_rectangle_name").innerHTML, short_name);
+                    updateDataIm(window.active_table, plotly_num, data_im, rectangles[k].querySelector(".chart_rectangle_name").innerHTML, short_name); //если закрываем
                 }
                 if (k == 0) {
                     chart_settings.classList.remove("active");
@@ -241,11 +245,9 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             chart_settings.classList.add("active");
             addOnCheckboxChangeListeners();
             if (type == 0) {
-                //addOn2DOptimisationParamsListeners(chart_div, data, name);
                 addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
                 addOn2DTrendsParamsChangeListeners(chart_div, data, name);
-                //addOn2DImitationListeners(chart_div, data, name);
-                //addOn2DInterpolationListeners(chart_div, data, name);
+                addOn2DInterpolationParamsChangeListeners(chart_div, rectangle, data, name);
             }
         }
 
@@ -554,8 +556,8 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         let auto = forecast_2d_form.auto_arima_checkbox.checked ? 1 : 0;
         let order = [p, d, q];
         let jsons = [];
-        if(forecast_2d_form.imitation_checkbox.checked && data_im[name]) {
-            if(imitation_div.classList.contains("active")) updateDataIm(table, plotly_num, data_im, name, short_name);
+        if (forecast_2d_form.imitation_checkbox.checked && data_im[name]) {
+            if (imitation_div.classList.contains("active")) updateDataIm(table, plotly_num, data_im, name, short_name);
             console.log("data_im");
             console.log(data_im);
             for (let i = 0; i < data_im[name].length; i++) {
@@ -594,7 +596,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
             jsons.push(getJSON(y, x, order, k, n, auto, path));
         }
-        
+
         data_im[name] = [];
         arima(jsons);
 
@@ -610,7 +612,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             }
         }
     }
-    
+
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if (!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
@@ -711,7 +713,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                             x_new.push(x_new.last() + 1);
                         }
                     }
-                    if(i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
+                    if (i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
                     let color_index = getFreeColor(data_im[name]);
                     addToImitationData(x_old, y_old, data_im, name, data[data_index]["short_name"], colors[color_index], "normal", "solid");
                     addToImitationData(x_new, yhat, data_im, name, data[data_index]["short_name"], colors[color_index], "imitation", "dash");
@@ -787,6 +789,17 @@ function addOn2DImitationParamsChangeListeners(options) {
     let body_rows = table_body.querySelectorAll("tr");
     let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
 
+    if(!table.classList.contains("context_listener")) {
+        table.classList.add("context_listener");
+        table.addEventListener("context_listener", function(e) {
+            updateNewImitationSets();
+            parseDataTable();
+            setTableEngine(table);
+            setInputEngine(table);
+            setOnDeleteImitationListeners();
+        });
+    }
+
     //imitation_div.classList.remove("active");
     if (data_im && name && plotly_num) {
         fillImitationTable();
@@ -794,7 +807,7 @@ function addOn2DImitationParamsChangeListeners(options) {
     if (update_sets) {
         updateNewImitationSets();
     }
-    if(data_im && name && update_data_im) {
+    if (data_im && name && update_data_im) {
         parseDataTable();
     }
 
@@ -951,6 +964,62 @@ function addOn2DImitationParamsChangeListeners(options) {
                 num++;
             }
         }
+    }
+}
+
+function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, data, name) {
+    let interpolation_2d_form = document.querySelector("form.interpolation_2d_form");
+    let data_index = getDataIndex(data, name);
+
+    interpolation_2d_form.select_2d_interpolation_type.onchange = function() {
+        setDisabled();
+        addInterpolation(interpolation_2d_form.select_2d_interpolation_type.value);
+    }
+
+    let interpolation_params = getAnalisisParams(data, name, "interpolation");
+    console.log(interpolation_params);
+    if (!interpolation_params) {
+        interpolation_2d_form.select_2d_interpolation_type.value = "none";
+    } else {
+        interpolation_2d_form.select_2d_interpolation_type.value = interpolation_params.type;
+    }
+
+    setDisabled();
+
+    function setDisabled() {
+        interpolation_2d_form.number_2d_interpolation_step.disabled = interpolation_2d_form.select_2d_interpolation_type.value == "none"
+    }
+
+    function addInterpolation(type) {
+        x = [1, 2, 3, 4];
+        y = [10, 20, 30, 40];
+        if (type == "0") {
+            if (!data[data_index]["x_unint"]) {
+                data[data_index]["x_unint"] = data[data_index]["x"];
+                data[data_index]["y_unint"] = data[data_index]["y"];
+            }
+            data[data_index]["x"] = x;
+            data[data_index]["y"] = y;
+            data[data_index]["interpolation"] = { "type": type };
+        } else if (type == "1") {
+            if (!data[data_index]["x_unint"]) {
+                data[data_index]["x_unint"] = data[data_index]["x"];
+                data[data_index]["y_unint"] = data[data_index]["y"];
+            }
+            data[data_index]["x"] = x;
+            data[data_index]["y"] = y;
+            data[data_index]["interpolation"] = { "type": type };
+        } else if (type == "none") {
+            data[data_index]["x"] = data[data_index]["x_unint"];
+            data[data_index]["x_unint"] = null;
+            data[data_index]["y"] = data[data_index]["y_unint"];
+            data[data_index]["y_unint"] = null;
+            data[data_index]["interpolation"] = { "type": type };
+            data[data_index]["interpolation"] = null;
+        }
+        //chart_rectangle.dispatchEvent(new Event("click"));
+        //chart_rectangle.dispatchEvent(new Event("click"));
+        //console.log(data[data_index]);
     }
 }
 
