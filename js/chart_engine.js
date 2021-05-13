@@ -212,6 +212,8 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         let rectangles = chart_rectangles.querySelectorAll(".chart_rectangle");
         //console.log(rectangles);
         let rectangle = window.event.target;
+        let data_index = getDataIndex(data, name);
+        let short_name = data[data_index]["short_name"];
         if (rectangle.className != "chart_rectangle") {
             rectangle = window.event.target.parentNode;
         }
@@ -219,12 +221,12 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-            updateDataIm(window.active_table, rectangle.querySelector(".chart_rectangle_name").innerHTML);
+            updateDataIm(window.active_table, plotly_num, data_im, rectangle.querySelector(".chart_rectangle_name").innerHTML, short_name);
         } else {
             for (let k = 0; k < rectangles.length; k++) {
                 if (rectangles[k].classList.contains("active")) {
                     rectangles[k].classList.remove("active");
-                    updateDataIm(window.active_table, rectangles[k].querySelector(".chart_rectangle_name").innerHTML);
+                    updateDataIm(window.active_table, plotly_num, data_im, rectangles[k].querySelector(".chart_rectangle_name").innerHTML, short_name);
                 }
                 if (k == 0) {
                     chart_settings.classList.remove("active");
@@ -245,12 +247,6 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
                 //addOn2DImitationListeners(chart_div, data, name);
                 //addOn2DInterpolationListeners(chart_div, data, name);
             }
-        }
-
-        function updateDataIm(table, name) {
-            if (!table) return;
-            if (!table.classList.contains("imitation_table")) return;
-            addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, update_data_im: true });
         }
 
         function addOnCheckboxChangeListeners() {
@@ -477,7 +473,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
                 coef: xy.coef
             }
             data[data_index]["trend"] = trend;
-            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", color, "trendt", "dash");
+            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", "", color, "trendt", "dash");
             newPlot(plotly_div, data, 0);
             showErrors(xy.r, xy.a);
         }
@@ -501,6 +497,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let table = imitation_div.querySelector(".table");
 
     let data_index = getDataIndex(data, name);
+    let short_name = data[data_index]["short_name"];
     let forecast_color = data[data_index]["line"]["color"];
     let data_v = validateDataForCalculations(data, name, 0);
     let y = data_v[data_index]["y"];
@@ -548,37 +545,72 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.auto_arima_checkbox.disabled = forecast_2d_form.imitation_checkbox.checked;
     }
     forecast_2d_form.forecast_2d_button.onclick = function() {
-        data_v = validateDataForCalculations(data, name, 0);
-        let x = data_v[data_index]["x"];
-        y = data_v[data_index]["y"];
         let p = parseFloat(forecast_2d_form.arima_p.value);
         let d = parseFloat(forecast_2d_form.arima_d.value);
         let q = parseFloat(forecast_2d_form.arima_q.value);
         let k = parseFloat(forecast_2d_form.arima_k.value);
         if (isNaN(k)) k = y.length;
         let n = parseFloat(forecast_2d_form.arima_n.value);
-        let order = [p, d, q];
         let auto = forecast_2d_form.auto_arima_checkbox.checked ? 1 : 0;
-        let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
-        data_im[name] = [];
-        let json = {
-            "y": y,
-            "x": x,
-            "order": order,
-            "k": k,
-            "prlen": n,
-            "auto": auto,
-            "path": path
+        let order = [p, d, q];
+        let jsons = [];
+        if(forecast_2d_form.imitation_checkbox.checked && data_im[name]) {
+            if(imitation_div.classList.contains("active")) updateDataIm(table, plotly_num, data_im, name, short_name);
+            console.log("data_im");
+            console.log(data_im);
+            for (let i = 0; i < data_im[name].length; i++) {
+                if (i % 2 == 0) {
+                    data_v = validateDataImForCalculations(data_im[name][i]);
+                    console.log(data_v);
+                    let x = data_v["x"];
+                    y = data_v["y"];
+                    let path = email + "/" + getYSum(y) + "_" + data_v["short_name"] + "_[" + order + "].pickle";
+                    k = y.length;
+                    jsons.push(getJSON(y, x, order, k, n, auto, path));
+                }
+            }
+
+            function validateDataImForCalculations(data) { //data_im[name][i]
+                let data_v = data;
+                for (let k = 0; k < data_v["x"].length; k++) {
+                    let x = parseFloat(+data_v["x"][k]);
+                    let y = parseFloat(+data_v["y"][k]);
+                    if (isNaN(x) || isNaN(y) || data_v["x"][k] == "" || data_v["y"][k] == "") {
+                        data_v["x"].splice(k, 1);
+                        data_v["y"].splice(k, 1);
+                        k--;
+                    } else {
+                        data_v["x"][k] = x;
+                        data_v["y"][k] = y;
+                    }
+                }
+                return data_v;
+            }
+
+        } else {
+            data_v = validateDataForCalculations(data, name, 0);
+            let x = data_v[data_index]["x"];
+            y = data_v[data_index]["y"];
+            let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
+            jsons.push(getJSON(y, x, order, k, n, auto, path));
         }
-        arima([json]);
+        
+        data_im[name] = [];
+        arima(jsons);
+
+        function getJSON(y, x, order, k, n, auto, path) {
+            return {
+                "y": y,
+                "x": x,
+                "order": order,
+                "k": k,
+                "prlen": n,
+                "auto": auto,
+                "path": path
+            }
+        }
     }
-
-    //setTimeout(() => forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click")), 300);
-
-    //
-    //forecast_2d_form.select_2d_forecast_type.value = "0";
-    //forecast_2d_form.forecast_2d_button.dispatchEvent(new Event("click"));
-
+    
     let forecast_params = getAnalisisParams(data, name, "forecast");
     if (!forecast_params) {
         forecast_2d_form.select_2d_forecast_type.value = "none";
@@ -664,7 +696,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     let x_old = jsons[i]["x"];
                     let y_old = jsons[i]["y"];
 
-                    let x_new = values[i]["x"];
+                    let x_new = values[i]["x"].slice();
                     let yhat = values[i]["yhat"];
                     let k = values[i]["k"];
                     let n = values[i]["prlen"];
@@ -679,15 +711,15 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                             x_new.push(x_new.last() + 1);
                         }
                     }
+                    if(i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
                     let color_index = getFreeColor(data_im[name]);
-                    showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
-                    addToImitationData(x_old, y, data_im, name, colors[color_index], "normal", "solid");
-                    addToImitationData(x_new, yhat, data_im, name, colors[color_index], "imitation", "dash");
-                    if (forecast_2d_form.imitation_checkbox.checked) {
-                        imitation_div.classList.add("active");
-                        addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
-                    }
+                    addToImitationData(x_old, y_old, data_im, name, data[data_index]["short_name"], colors[color_index], "normal", "solid");
+                    addToImitationData(x_new, yhat, data_im, name, data[data_index]["short_name"], colors[color_index], "imitation", "dash");
                 }
+            }
+            if (forecast_2d_form.imitation_checkbox.checked) {
+                imitation_div.classList.add("active");
+                addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
             }
             if (errors != "") showPopup(popup, errors, true);
         }, reason => {
@@ -710,7 +742,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         }
         console.log(forecast);
         data[data_index]["forecast"] = forecast;
-        addToAnalysisData(data, x, yhat, name + " (прогноз)", forecast_color, "forecast", "dash");
+        addToAnalysisData(data, x, yhat, name + " (прогноз)", "", forecast_color, "forecast", "dash");
         newPlot(plotly_div, data, 0);
         showErrors(mse, llf);
     }
@@ -740,11 +772,12 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
 }
 
 function addOn2DImitationParamsChangeListeners(options) {
-    let table, data_im, name, plotly_num, update_sets, update_data_im;
+    let table, data_im, name, short_name, plotly_num, update_sets, update_data_im;
     if (options.table != undefined) table = options.table;
     else return;
     if (options.data_im != undefined) data_im = options.data_im;
     if (options.name != undefined) name = options.name;
+    if (options.short_name != undefined) short_name = options.short_name;
     if (options.plotly_num != undefined) plotly_num = options.plotly_num;
     if (options.update_sets != undefined) update_sets = options.update_sets;
     if (options.update_data_im != undefined) update_data_im = options.update_data_im;
@@ -761,7 +794,7 @@ function addOn2DImitationParamsChangeListeners(options) {
     if (update_sets) {
         updateNewImitationSets();
     }
-    if (data_im && name && update_data_im) {
+    if(data_im && name && update_data_im) {
         parseDataTable();
     }
 
@@ -786,9 +819,9 @@ function addOn2DImitationParamsChangeListeners(options) {
             }
             let color_index = getFreeColor(data_im[name]);
             if (i % 2 == 0) {
-                addToImitationData(x_arr, y_arr, data_im, name, colors[color_index], "normal", "solid");
+                addToImitationData(x_arr, y_arr, data_im, name, short_name, colors[color_index], "normal", "solid");
             } else {
-                addToImitationData(x_arr, y_arr, data_im, name, colors[color_index], "imitation", "dash");
+                addToImitationData(x_arr, y_arr, data_im, name, short_name, colors[color_index], "imitation", "dash");
             }
         }
         //console.log(data_im[name]);
@@ -921,6 +954,12 @@ function addOn2DImitationParamsChangeListeners(options) {
     }
 }
 
+function updateDataIm(table, plotly_num, data_im, name, short_name) {
+    if (!table) return;
+    if (!table.classList.contains("imitation_table")) return;
+    addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, short_name: short_name, update_data_im: true });
+}
+
 function changeId(imitation_row_control, name) {
     let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
     imitation_row_control_checkbox.id = name;
@@ -928,20 +967,21 @@ function changeId(imitation_row_control, name) {
     close_imitation_chart_label.htmlFor = name;
 }
 
-function addToImitationData(x, y, data_im, name, color, which, dash) {
-    let x_name = name.split(" от ")[0];
+function addToImitationData(x, y, data_im, name, short_name, color, which, dash) {
+    let y_name = name.split(" от ")[0];
     let length = data_im[name].length;
-    x_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
-    x_name = length % 2 == 0 ? x_name : x_name + "<sup>*</sup>";
-    addToAnalysisData(data_im[name], x, y, x_name, color, which, dash);
+    y_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
+    y_name = length % 2 == 0 ? y_name : y_name + "<sup>*</sup>";
+    addToAnalysisData(data_im[name], x, y, y_name, short_name, color, which, dash);
 }
 
-function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash) {
+function addToAnalysisData(data, x_arr, y_arr, name, short_name, color, which, dash) {
     let trace = {
         x: x_arr,
         y: y_arr,
         type: "scatter",
         name: name,
+        short_name: short_name,
         connectgaps: true,
         line: {
             dash: dash,
