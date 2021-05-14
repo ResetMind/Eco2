@@ -249,6 +249,18 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
                 addOn2DTrendsParamsChangeListeners(chart_div, data, name);
                 addOn2DInterpolationParamsChangeListeners(chart_div, rectangle, data, name);
             }
+            if (!rectangle.classList.contains("interpolation_listener")) {
+                rectangle.classList.add("interpolation_listener");
+                rectangle.addEventListener("interpolation_listener", function(e) {
+                    chart_data.innerHTML = "";
+                    chart_data.append(createDataTable());
+                    addOnCheckboxChangeListeners();
+                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
+                    addOn2DTrendsParamsChangeListeners(chart_div, data, name);
+                    addOn2DInterpolationParamsChangeListeners(chart_div, rectangle, data, name);
+                    console.log("interpolation_listener");
+                });
+            }
         }
 
         function addOnCheckboxChangeListeners() {
@@ -1021,6 +1033,7 @@ function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, d
             data[data_index]["interpolation"] = { "type": type };
             data[data_index]["interpolation"] = null;
         }
+        chart_rectangle.dispatchEvent(new CustomEvent("interpolation_listener"));
         //chart_rectangle.dispatchEvent(new Event("click"));
         //chart_rectangle.dispatchEvent(new Event("click"));
         //console.log(data[data_index]);
