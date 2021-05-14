@@ -13,7 +13,7 @@ function checkValue(table) {
         return;
     }
     //console.log(cell.innerHTML + " changed ");
-    let table_header = table.querySelectorAll("table.table_header th");
+    let table_header = table.querySelectorAll("table.table_header th:not(.not_res)");
     let col = getTwoDimArrayIndex(window.active_cells, cell)[1];
     let type = table_header[col].className;
     if (type == "field") {
@@ -44,6 +44,7 @@ function checkValue(table) {
             removeError(cell);
         }
     }
+    window.active_table.dispatchEvent(new CustomEvent("change_listener"));
 }
 
 function onInputError(cell) {
@@ -77,4 +78,5 @@ function removeErrorCells() {
             }
         }
     }
+    window.active_table.dispatchEvent(new CustomEvent("change_listener"));
 }

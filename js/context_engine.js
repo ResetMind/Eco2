@@ -223,8 +223,9 @@ function setOptions() {
             rows = window.active_table_body.querySelectorAll("tr");
             ref = window.active_table_body.querySelectorAll("tr")[rows.length - 1];
             ref.parentNode.insertBefore(new_last_row, ref.nextSibling);
-            //window.active_table.dispatchEvent(new CustomEvent("context_listener"));
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+            setTableEngine(window.active_table);
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -247,8 +248,9 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col + 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col].nextSibling);
-            //window.active_table.dispatchEvent(new CustomEvent("context_listener"));
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+            setTableEngine(window.active_table);
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -271,8 +273,9 @@ function setOptions() {
                 th_inner = (parseFloat(ths[col].innerHTML) + parseFloat(ths[col - 1].innerHTML)) / 2;
             }
             ths[col].parentNode.insertBefore(newTh({ inner: th_inner, contenteditable: true, cl: "double" }), ths[col]);
-            //window.active_table.dispatchEvent(new CustomEvent("context_listener"));
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+            setTableEngine(window.active_table);
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 
@@ -294,8 +297,9 @@ function setOptions() {
                     tds[col].remove();
                 }
             }
-            //window.active_table.dispatchEvent(new CustomEvent("context_listener"));
-            addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
+            window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+            setTableEngine(window.active_table);
+            //addOn2DImitationParamsChangeListeners({ table: window.active_table, update_sets: true });
         }
     }
 }

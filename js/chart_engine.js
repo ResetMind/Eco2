@@ -224,13 +224,12 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-            updateDataIm(window.active_table, plotly_num, data_im, rectangle.querySelector(".chart_rectangle_name").innerHTML, short_name); //если закрываем
+
         } else {
             //console.log("close2")
             for (let k = 0; k < rectangles.length; k++) {
                 if (rectangles[k].classList.contains("active")) {
                     rectangles[k].classList.remove("active");
-                    updateDataIm(window.active_table, plotly_num, data_im, rectangles[k].querySelector(".chart_rectangle_name").innerHTML, short_name); //если закрываем
                 }
                 if (k == 0) {
                     chart_settings.classList.remove("active");
@@ -487,7 +486,7 @@ function addOn2DTrendsParamsChangeListeners(chart_div, data, name) {
                 coef: xy.coef
             }
             data[data_index]["trend"] = trend;
-            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", "", color, "trendt", "dash");
+            addToAnalysisData(data, xy.x_tr, xy.y_tr, name + " (тренд)", color, "trendt", "dash");
             newPlot(plotly_div, data, 0);
             showErrors(xy.r, xy.a);
         }
@@ -509,69 +508,65 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let plotly_div = chart_div.querySelector(".plotly_div");
     let imitation_div = chart_div.querySelector(".imitation_div");
     let table = imitation_div.querySelector(".table");
+    let table_header = table.querySelector(".table_header");
+    let table_body = table.querySelector(".table_body");
 
     let data_index = getDataIndex(data, name);
     let short_name = data[data_index]["short_name"];
     let forecast_color = data[data_index]["line"]["color"];
     let data_v = validateDataForCalculations(data, name, 0);
-    let y = data_v[data_index]["y"];
+    let default_length = data_v[data_index]["y"].length;
 
-    forecast_2d_form.arima_k.max = y.length;
-
-    forecast_2d_form.arima_p.onchange = function() {
-        validateNumberInput(forecast_2d_form.arima_p);
-    }
-    forecast_2d_form.arima_d.onchange = function() {
-        validateNumberInput(forecast_2d_form.arima_d);
-    }
-    forecast_2d_form.arima_q.onchange = function() {
-        validateNumberInput(forecast_2d_form.arima_q);
-    }
-    forecast_2d_form.arima_k.onchange = function() {
-        validateNumberInput(forecast_2d_form.arima_k);
-    }
-    forecast_2d_form.arima_n.onchange = function() {
-        validateNumberInput(forecast_2d_form.arima_n);
+    forecast_2d_form.arima_k.max = default_length;
+    forecast_2d_form.arima_p.onchange = function() { validateNumberInput(forecast_2d_form.arima_p); }
+    forecast_2d_form.arima_d.onchange = function() { validateNumberInput(forecast_2d_form.arima_d); }
+    forecast_2d_form.arima_q.onchange = function() { validateNumberInput(forecast_2d_form.arima_q); }
+    forecast_2d_form.arima_k.onchange = function() { validateNumberInput(forecast_2d_form.arima_k); }
+    forecast_2d_form.arima_n.onchange = function() { validateNumberInput(forecast_2d_form.arima_n); }
+    forecast_2d_form.auto_arima_checkbox.onchange = function() {
+        let flag = forecast_2d_form.auto_arima_checkbox.checked;
+        forecast_2d_form.imitation_checkbox.disabled = flag;
     }
     forecast_2d_form.select_2d_forecast_type.onchange = function() {
         setDisabled();
         if (forecast_2d_form.select_2d_forecast_type.value == "none") {
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
-            data_im[name] = [];
-            data[data_index]["imitation"] = null;
-            imitation_div.classList.remove("active");
+            forecast_2d_form.auto_arima_checkbox.checked = false;
+        } else {
+            forecast_2d_form.auto_arima_checkbox.disabled = forecast_2d_form.imitation_checkbox.checked;
         }
     }
     forecast_2d_form.imitation_checkbox.onchange = function() {
+        let flag = forecast_2d_form.imitation_checkbox.checked;
+        forecast_2d_form.arima_k.disabled = flag;
+        forecast_2d_form.auto_arima_checkbox.disabled = flag;
+        if (flag) forecast_2d_form.arima_k.value = "";
+        else forecast_2d_form.arima_k.value = default_length;
+
         if (forecast_2d_form.imitation_checkbox.checked) {
-            data[data_index]["imitation"] = true;
-            forecast_2d_form.arima_k.value = "";
-            if (forecast_2d_form.auto_arima_checkbox.checked) {
-                forecast_2d_form.auto_arima_checkbox.checked = false;
-            }
-        } else {
             data_im[name] = [];
-            data[data_index]["imitation"] = null;
-            forecast_2d_form.arima_k.value = y.length;
-            imitation_div.classList.remove("active");
+            data[data_index]["imitation"] = true;
+            let color = colors[getFreeColor(data_im[name])];
+            addToImitationData(data_v[data_index]["x"], data_v[data_index]["y"], data_im, name, color, "normal", "solid");
+            addToImitationData(data_v[data_index]["x"], [], data_im, name, color, "imitation", "dash");
+            console.log("first check");
+            console.log(data_im[name]);
+            addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
+        } else {
+            removeImitation();
         }
-        forecast_2d_form.arima_k.disabled = forecast_2d_form.imitation_checkbox.checked;
-        forecast_2d_form.auto_arima_checkbox.disabled = forecast_2d_form.imitation_checkbox.checked;
     }
     forecast_2d_form.forecast_2d_button.onclick = function() {
         let p = parseFloat(forecast_2d_form.arima_p.value);
         let d = parseFloat(forecast_2d_form.arima_d.value);
         let q = parseFloat(forecast_2d_form.arima_q.value);
-        let k = parseFloat(forecast_2d_form.arima_k.value);
-        if (isNaN(k)) k = y.length;
         let n = parseFloat(forecast_2d_form.arima_n.value);
         let auto = forecast_2d_form.auto_arima_checkbox.checked ? 1 : 0;
         let order = [p, d, q];
         let jsons = [];
         if (forecast_2d_form.imitation_checkbox.checked && data_im[name]) {
-            if (imitation_div.classList.contains("active")) updateDataIm(table, plotly_num, data_im, name, short_name);
-            console.log("data_im");
-            console.log(data_im);
+            console.log("data_im[name] before arima");
+            console.log(data_im[name].slice());
             for (let i = 0; i < data_im[name].length; i++) {
                 if (i % 2 == 0) {
                     data_v = validateDataImForCalculations(data_im[name][i]);
@@ -579,7 +574,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     let x = data_v["x"];
                     y = data_v["y"];
                     let path = email + "/" + getYSum(y) + "_" + data_v["short_name"] + "_[" + order + "].pickle";
-                    k = y.length;
+                    let k = y.length;
                     jsons.push(getJSON(y, x, order, k, n, auto, path));
                 }
             }
@@ -603,8 +598,9 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
 
         } else {
             data_v = validateDataForCalculations(data, name, 0);
+            let k = parseFloat(forecast_2d_form.arima_k.value);
             let x = data_v[data_index]["x"];
-            y = data_v[data_index]["y"];
+            let y = data_v[data_index]["y"];
             let path = email + "/" + getYSum(y) + "_" + data_v[data_index]["short_name"] + "_[" + order + "].pickle";
             jsons.push(getJSON(y, x, order, k, n, auto, path));
         }
@@ -631,7 +627,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_p.value = "1";
         forecast_2d_form.arima_d.value = "1";
         forecast_2d_form.arima_q.value = "1";
-        forecast_2d_form.arima_k.value = y.length;
+        forecast_2d_form.arima_k.value = default_length;
         forecast_2d_form.arima_n.value = "1";
         removeAnalisysResults(results_div);
     } else {
@@ -643,19 +639,12 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_n.value = forecast_params.n;
         showErrors(forecast_params.mse, forecast_params.llf);
     }
+
     let imitation_params = getAnalisisParams(data, name, "imitation");
     if (imitation_params) {
-        forecast_2d_form.imitation_checkbox.checked = true;
-        forecast_2d_form.arima_k.value = "";
-        imitation_div.classList.add("active");
-        /*forecast_2d_form.arima_k.disabled = true;
-        forecast_2d_form.auto_arima_checkbox.disabled = true;*/
-        addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
+        showImitation();
     } else {
-        forecast_2d_form.imitation_checkbox.checked = false;
-        imitation_div.classList.remove("active");
-        /*forecast_2d_form.arima_k.disabled = false;
-        forecast_2d_form.auto_arima_checkbox.disabled = false;*/
+        removeImitation();
     }
     setDisabled();
 
@@ -668,8 +657,25 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         forecast_2d_form.arima_k.disabled = flag;
         forecast_2d_form.arima_n.disabled = flag;
         forecast_2d_form.auto_arima_checkbox.disabled = flag;
-        forecast_2d_form.imitation_checkbox.disabled = flag;
         forecast_2d_form.forecast_2d_button.disabled = flag;
+    }
+
+    function showImitation() {
+        forecast_2d_form.imitation_checkbox.checked = true;
+        forecast_2d_form.auto_arima_checkbox.checked = false;
+        forecast_2d_form.auto_arima_checkbox.disabled = true;
+        addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
+    }
+
+    function removeImitation() {
+        data_im[name] = null;
+        data[data_index]["imitation"] = null;
+        forecast_2d_form.arima_k.value = default_length;
+        forecast_2d_form.imitation_checkbox.checked = false;
+        table_header.innerHTML = "";
+        table_body.innerHTML = "";
+        table.classList.remove("change_listener");
+        imitation_div.classList.remove("active");
     }
 
     //fillImitationTable();
@@ -730,16 +736,17 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                         }
                     }
                     if (i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
-                    let color_index = getFreeColor(data_im[name]);
-                    addToImitationData(x_old, y_old, data_im, name, data[data_index]["short_name"], colors[color_index], "normal", "solid");
-                    addToImitationData(x_new, yhat, data_im, name, data[data_index]["short_name"], colors[color_index], "imitation", "dash");
+                    if (forecast_2d_form.imitation_checkbox.checked) {
+                        let color = colors[getFreeColor(data_im[name])];
+                        addToImitationData(x_old, y_old, data_im, name, color, "normal", "solid");
+                        addToImitationData(x_new, yhat, data_im, name, color, "imitation", "dash");
+                    }
                 }
             }
-            if (forecast_2d_form.imitation_checkbox.checked) {
-                imitation_div.classList.add("active");
-                addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, plotly_num: plotly_num });
-            }
             if (errors != "") showPopup(popup, errors, true);
+            if(forecast_2d_form.imitation_checkbox.checked) {
+                addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
+            }
         }, reason => {
             console.log(reason);
             fadeOut(document.querySelector(".loader"), 0.5);
@@ -760,7 +767,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         }
         console.log(forecast);
         data[data_index]["forecast"] = forecast;
-        addToAnalysisData(data, x, yhat, name + " (прогноз)", "", forecast_color, "forecast", "dash");
+        addToAnalysisData(data, x, yhat, name + " (прогноз)", forecast_color, "forecast", "dash");
         newPlot(plotly_div, data, 0);
         showErrors(mse, llf);
     }
@@ -789,91 +796,78 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     }
 }
 
-function addOn2DImitationParamsChangeListeners(options) {
-    let table, data_im, name, short_name, plotly_num, update_sets, update_data_im;
-    if (options.table != undefined) table = options.table;
-    else return;
-    if (options.data_im != undefined) data_im = options.data_im;
-    if (options.name != undefined) name = options.name;
-    if (options.short_name != undefined) short_name = options.short_name;
-    if (options.plotly_num != undefined) plotly_num = options.plotly_num;
-    if (options.update_sets != undefined) update_sets = options.update_sets;
-    if (options.update_data_im != undefined) update_data_im = options.update_data_im;
-
+function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num) {
+    let table = imitation_div.querySelector("div.table");
     let table_header = table.querySelector("table.table_header");
     let table_body = table.querySelector("table.table_body");
-    let body_rows = table_body.querySelectorAll("tr");
-    let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
-
-    /*if(!table.classList.contains("context_listener")) {
-        table.classList.add("context_listener");
-        table.addEventListener("context_listener", function(e) {
-            updateNewImitationSets();
+    if (!data_im[name]) return;
+    if (data_im[name].length == 0) return;
+    if (!table.classList.contains("change_listener")) {
+        table.classList.add("change_listener");
+        table.addEventListener("change_listener", function(e) {
             parseDataTable();
-            setTableEngine(table);
-            setInputEngine(table);
+            updateNewImitationSets();
             setOnDeleteImitationListeners();
         });
-    }*/
-
-    //imitation_div.classList.remove("active");
-    if (data_im && name && plotly_num) {
-        fillImitationTable();
-    }
-    if (update_sets) {
-        updateNewImitationSets();
-    }
-    if (data_im && name && update_data_im) {
-        parseDataTable();
     }
 
-    setTableEngine(table);
-    setInputEngine(table);
-    setOnDeleteImitationListeners();
-
-    function parseDataTable() {
-        //let name = table_header.querySelector("th.name").innerHTML;
-        let ths = table_header.querySelectorAll("th:not(.not_res)");
-        data_im[name] = [];
-        for (let i = 0; i < body_rows.length; i++) {
-            let x_arr = [],
-                y_arr = [];
-            let tds = body_rows[i].querySelectorAll("td");
-            for (let j = 0; j < ths.length; j++) {
-                let year = parseFloat(+ths[j].innerHTML);
-                if (!isNaN(year)) {
-                    x_arr.push(year);
-                    y_arr.push(tds[j].innerHTML);
-                }
-            }
-            let color_index = getFreeColor(data_im[name]);
-            if (i % 2 == 0) {
-                addToImitationData(x_arr, y_arr, data_im, name, short_name, colors[color_index], "normal", "solid");
-            } else {
-                addToImitationData(x_arr, y_arr, data_im, name, short_name, colors[color_index], "imitation", "dash");
-            }
-        }
-        //console.log(data_im[name]);
-    }
+    fillImitationTable();
+    imitation_div.classList.add("active");
 
     function fillImitationTable() {
-        if (!data_im[name]) {
-            return;
+        console.log("fillImitationTable");
+        /*data_im[name] = [];
+        data_im[name].push({
+            name: "∑t,°C<sup>(0)</sup>",
+            x: [1999, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
+            y: [19999, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
+        })
+        data_im[name].push({
+            name: "∑t,°C<sup>(0)</sup>",
+            x: [1972, 1970, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
+            y: [1972, 1970, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
+        })
+        data_im[name].push({
+            name: "∑t,°C<sup>(0)</sup>",
+            x: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
+            y: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
+        })
+        data_im[name].push({
+            name: "∑t,°C<sup>(0)</sup>",
+            x: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990, 1991],
+            y: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990, 1991]
+        })*/
+
+        function getXArray() {
+            let result = data_im[name][0]["x"];
+            for (let i = 1; i < data_im[name].length; i++) {
+                let data = {};
+                result.concat(data_im[name][i]["x"]).forEach(function(item) {
+                    data[item] = true;
+                });
+                result = Object.keys(data);
+            }
+            return result.sort(function(a, b) { return a - b });
         }
+
         console.log(data_im[name]);
         table_body.innerHTML = "";
         table_header.innerHTML = imitation_header_template.innerHTML;
         let header_row = table_header.querySelector("tr");
         let imitation_row_control_header = header_row.querySelector(".imitation_row_control");
         imitation_row_control_header.innerHTML = imitation_row_control_template.innerHTML;
-        let header_hame = header_row.querySelector("th.name");
-        header_hame.innerHTML = name;
         changeId(imitation_row_control_header, "close_imitation_chart_" + plotly_num + "_all");
+        let x = getXArray();
+        for (let i = 0; i < x.length; i++) {
+            header_row.append(newTh({ inner: x[i], contenteditable: true, cl: "double" }));
+        }
         for (let i = 0; i < data_im[name].length; i++) {
+            let last_row;
             if (i % 2 == 0) {
                 let first = newTr();
                 first.innerHTML = imitation_table_body_template.querySelector(".first").innerHTML;
                 table_body.append(first);
+                last_row = first;
                 let imitation_row_control_body = first.querySelector(".imitation_row_control");
                 imitation_row_control_body.innerHTML = imitation_row_control_template.innerHTML;
                 changeId(imitation_row_control_body, "close_imitation_chart_" + plotly_num + "_" + i);
@@ -881,42 +875,53 @@ function addOn2DImitationParamsChangeListeners(options) {
                 let second = newTr();
                 second.innerHTML = imitation_table_body_template.querySelector(".second").innerHTML;
                 table_body.append(second);
+                last_row = second;
             }
-            body_rows = table_body.querySelectorAll("tr");
-            imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
-            let last_row = body_rows[body_rows.length - 1];
             let name_th = last_row.querySelector(".name");
             name_th.innerHTML = data_im[name][i]["name"];
+            for (let j = 0; j < x.length; j++) {
+                if (i % 2 == 0) last_row.append(newTd({ contenteditable: true }));
+                else last_row.append(newTd({}));
+            }
+            let tds = last_row.querySelectorAll("td");
             for (let j = 0; j < data_im[name][i]["x"].length; j++) {
-                let x_count = header_row.querySelectorAll("th").length - 2;
-                let y_count = last_row.querySelectorAll("td").length;
-                if (x_count < j + 1) {
-                    header_row.append(newTh({ inner: data_im[name][i]["x"][j], contenteditable: true, cl: "double" }));
-                }
-                if (y_count < j + 1) {
-                    if (i % 2 == 0) last_row.append(newTd({ inner: data_im[name][i]["y"][j], contenteditable: true }));
-                    else last_row.append(newTd({ inner: data_im[name][i]["y"][j] }));
-                }
-                for (let k = 0; k < body_rows.length - 1; k++) {
-                    if (body_rows[k].querySelectorAll("td").length < j + 1) {
-                        if (k % 2 == 0) body_rows[k].append(newTd({ contenteditable: true }));
-                        else body_rows[k].append(newTd({}));
-                    }
-                }
+                let index = getArrayIndex(x, data_im[name][i]["x"][j]);
+                if (data_im[name][i]["y"][j]) tds[index].innerHTML = data_im[name][i]["y"][j];
             }
         }
-
+        setTableEngine(table);
+        setInputEngine(table);
         setRightContextMenu(table);
+    }
 
-        function showImitationChart(x, y, yhat, x_name) {
-            let color_index = getFreeColor(data_im[name]);
-
+    function parseDataTable() {
+        //let name = table_header.querySelector("th.name").innerHTML;
+        let body_rows = table_body.querySelectorAll("tr");
+        let ths = table_header.querySelectorAll("th:not(.not_res)");
+        data_im[name] = [];
+        for (let i = 0; i < body_rows.length; i++) {
+            let x_arr = [],
+                y_arr = [],
+                color;
+            let tds = body_rows[i].querySelectorAll("td");
+            for (let j = 0; j < ths.length; j++) {
+                x_arr.push(ths[j].innerHTML);
+                y_arr.push(tds[j].innerHTML);
+            }
+            if (i % 2 == 0) {
+                color = colors[getFreeColor(data_im[name])];
+                addToImitationData(x_arr, y_arr, data_im, name, color, "normal", "solid");
+            } else {
+                addToImitationData(x_arr, y_arr, data_im, name, color, "imitation", "dash");
+            }
         }
+        console.log("parseDataTable");
+        console.log(data_im[name]);
     }
 
     function setOnDeleteImitationListeners() {
-        body_rows = table_body.querySelectorAll("tr");
-        imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+        let body_rows = table_body.querySelectorAll("tr");
+        let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
         let span_button_header = table_header.querySelector("span.delete_imitation_chart");
         span_button_header.onclick = onHeaderDelete;
         for (let i = 0; i < imitation_row_controls_body.length; i++) {
@@ -933,9 +938,8 @@ function addOn2DImitationParamsChangeListeners(options) {
                 body_rows[first].remove();
                 body_rows[first + 1].remove();
             }
+            table.dispatchEvent(new CustomEvent("change_listener"));
             setTableEngine(table);
-            updateNewImitationSets();
-            setOnDeleteImitationListeners();
         }
 
         function onHeaderDelete() {
@@ -946,8 +950,8 @@ function addOn2DImitationParamsChangeListeners(options) {
                     body_rows[i].remove();
                 }
             }
+            table.dispatchEvent(new CustomEvent("change_listener"));
             setTableEngine(table);
-            setOnDeleteImitationListeners();
         }
 
         function clearRow(row) {
@@ -959,8 +963,8 @@ function addOn2DImitationParamsChangeListeners(options) {
     }
 
     function updateNewImitationSets() {
-        body_rows = table_body.querySelectorAll("tr");
-        imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
+        let body_rows = table_body.querySelectorAll("tr");
+        let imitation_row_controls_body = table_body.querySelectorAll(".imitation_row_control");
         let num = 0;
         for (let i = 0; i < imitation_row_controls_body.length; i++) {
             let splited = imitation_row_controls_body[i].querySelector("input[type=\"checkbox\"].close_imitation_chart").id.split("_");
@@ -1040,12 +1044,6 @@ function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, d
     }
 }
 
-function updateDataIm(table, plotly_num, data_im, name, short_name) {
-    if (!table) return;
-    if (!table.classList.contains("imitation_table")) return;
-    addOn2DImitationParamsChangeListeners({ table: table, data_im: data_im, name: name, short_name: short_name, update_data_im: true });
-}
-
 function changeId(imitation_row_control, name) {
     let imitation_row_control_checkbox = imitation_row_control.querySelector("input[type=\"checkbox\"].close_imitation_chart");
     imitation_row_control_checkbox.id = name;
@@ -1053,21 +1051,20 @@ function changeId(imitation_row_control, name) {
     close_imitation_chart_label.htmlFor = name;
 }
 
-function addToImitationData(x, y, data_im, name, short_name, color, which, dash) {
+function addToImitationData(x, y, data_im, name, color, which, dash) {
     let y_name = name.split(" от ")[0];
     let length = data_im[name].length;
     y_name += "<sup>(" + Math.floor(length / 2) + ")</sup>";
     y_name = length % 2 == 0 ? y_name : y_name + "<sup>*</sup>";
-    addToAnalysisData(data_im[name], x, y, y_name, short_name, color, which, dash);
+    addToAnalysisData(data_im[name], x, y, y_name, color, which, dash);
 }
 
-function addToAnalysisData(data, x_arr, y_arr, name, short_name, color, which, dash) {
+function addToAnalysisData(data, x_arr, y_arr, name, color, which, dash) {
     let trace = {
         x: x_arr,
         y: y_arr,
         type: "scatter",
         name: name,
-        short_name: short_name,
         connectgaps: true,
         line: {
             dash: dash,
