@@ -126,6 +126,7 @@ function saveTable(table, name) {
             }
             array["row" + k] = row;
         }
+        console.log(array)
         return JSON.stringify(array);
     }
 

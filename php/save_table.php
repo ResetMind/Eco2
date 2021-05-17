@@ -36,11 +36,16 @@ function saveTable()
         return false;
     }
     if ($data["name"] == "factors") {
-        $sqlreq = "CREATE TABLE IF NOT EXISTS `$name`(id int not null primary key AUTO_INCREMENT, 
-    year int, field varchar(100), culture varchar(100), sumO float, sumT int, 
-    sumT10 int, sumT15 int, sumT20 int, sumO2 float, sumB int, sumB40 int, 
+        /*$sqlreq = "CREATE TABLE IF NOT EXISTS `$name`(id int not null primary key AUTO_INCREMENT, 
+    year int, field varchar(100), culture varchar(100), sumO float, sumT float, 
+    sumT10 float, sumT15 float, sumT20 float, sumO2 float, sumB int, sumB40 int, 
     sumB45 int, sumB50 int, chdO int, chdT10 int, chdT15 int, chdT20 int, 
-    chdO2 int, chdB40 int, chdB45 int, chdB50 int);";
+    chdO2 int, chdB40 int, chdB45 int, chdB50 int);";*/
+        $sqlreq = "CREATE TABLE IF NOT EXISTS `$name`(id int not null primary key AUTO_INCREMENT, 
+    year int, field varchar(100), culture varchar(100), sumT float, sumT10 float, 
+    sumT15 float, sumT20 float, chdT10 int, chdT15 int, chdT20 int, sumO float, 
+    sumO2 float, chdO int, chdO2 int, sumB int, sumB40 int, sumB45 int, sumB50 int, 
+    chdB40 int, chdB45 int, chdB50 int);";
     } else if ($data["name"] == "fields") {
         $sqlreq = "CREATE TABLE IF NOT EXISTS `$name`(id int not null primary key AUTO_INCREMENT, 
     cadastral varchar(50), coordinates varchar(100), owner varchar (100));";
