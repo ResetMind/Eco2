@@ -809,6 +809,7 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
     let table = imitation_div.querySelector("div.table");
     let table_header = table.querySelector("table.table_header");
     let table_body = table.querySelector("table.table_body");
+    let im_plotly_div = imitation_div.querySelector(".im_plotly_div");
     if (!data_im[name]) return;
     if (data_im[name].length == 0) return;
 
@@ -827,27 +828,6 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
 
     function fillImitationTable() {
         console.log("fillImitationTable data_im[name] " + name);
-        /*data_im[name] = [];
-        data_im[name].push({
-            name: "∑t,°C<sup>(0)</sup>",
-            x: [1999, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
-            y: [19999, 1974, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
-        })
-        data_im[name].push({
-            name: "∑t,°C<sup>(0)</sup>",
-            x: [1972, 1970, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
-            y: [1972, 1970, 1975, 1976, 1977, 1978, 1979, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
-        })
-        data_im[name].push({
-            name: "∑t,°C<sup>(0)</sup>",
-            x: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990],
-            y: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990]
-        })
-        data_im[name].push({
-            name: "∑t,°C<sup>(0)</sup>",
-            x: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990, 1991],
-            y: [1970, 1972, 1974, 1975, 1976, 1977, 1978, 1980, 1982, 1986, 1987, 1988, 1989, 1990, 1991]
-        })*/
 
         function getXArray() {
             let result = data_im[name][0]["x"];
@@ -897,9 +877,13 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
             let tds = last_row.querySelectorAll("td");
             for (let j = 0; j < data_im[name][i]["x"].length; j++) {
                 let index = getArrayIndex(x, data_im[name][i]["x"][j]);
-                if (data_im[name][i]["y"][j]) tds[index].innerHTML = data_im[name][i]["y"][j];
+                if (data_im[name][i]["y"][j] != undefined) tds[index].innerHTML = data_im[name][i]["y"][j];
             }
         }
+        newPlot(im_plotly_div, data_im[name], 0);
+        new ResizeSensor(im_plotly_div, function() {
+            updateLayout(im_plotly_div);
+        })
         setTableEngine(table);
         setInputEngine(table);
         setRightContextMenu(table);
