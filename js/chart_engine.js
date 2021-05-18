@@ -212,10 +212,11 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         let chart_rectangles = chart_div.querySelector(".chart_rectangles");
         let chart_data = chart_settings.querySelector(".chart_data");
         let rectangles = chart_rectangles.querySelectorAll(".chart_rectangle");
-        console.log("click");
+        console.log("click " + name);
         let rectangle = window.event.target;
         let data_index = getDataIndex(data, name);
         let short_name = data[data_index]["short_name"];
+        let table = chart_div.querySelector("div.table");
         if (rectangle.className != "chart_rectangle") {
             rectangle = window.event.target.parentNode;
         }
@@ -224,7 +225,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
             rectangle.classList.remove("active");
             chart_settings.classList.remove("active");
             chart_data.innerHTML = "";
-
+            $(table).off("change_listener");
         } else {
             //console.log("close2")
             for (let k = 0; k < rectangles.length; k++) {
@@ -237,6 +238,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
                     //chart_stuff.innerHTML = "";
                 }
             }
+            $(table).off("change_listener");
             rectangle.classList.add("active");
             chart_data.append(createDataTable());
             //if (trends != null) chart_stuff.append(trends);
@@ -570,6 +572,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             for (let i = 0; i < data_im[name].length; i++) {
                 if (i % 2 == 0) {
                     data_v = validateDataImForCalculations(data_im[name][i]);
+                    console.log("data_v for arima");
                     console.log(data_v);
                     let x = data_v["x"];
                     y = data_v["y"];
@@ -605,7 +608,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             jsons.push(getJSON(y, x, order, k, n, auto, path));
         }
 
-        data_im[name] = [];
         arima(jsons);
 
         function getJSON(y, x, order, k, n, auto, path) {
@@ -704,7 +706,9 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         Promise.all(results).then(values => {
             fadeOut(document.querySelector(".loader"), 0.5);
             let errors = "";
+            data_im[name] = [];
             for (let i = 0; i < values.length; i++) {
+                console.log("server response")
                 console.log(values[i]);
                 if (values[i].status && values[i].status != 200) {
                     errors += i + ": Ошибка сервера " + values[i].status + "<br>";
@@ -744,12 +748,16 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                 }
             }
             if (errors != "") showPopup(popup, errors, true);
-            if(forecast_2d_form.imitation_checkbox.checked) {
+            if (forecast_2d_form.imitation_checkbox.checked) {
                 addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
             }
         }, reason => {
             console.log(reason);
+            showPopup(popup, reason, true);
             fadeOut(document.querySelector(".loader"), 0.5);
+            if (forecast_2d_form.imitation_checkbox.checked) {
+                addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
+            }
         });
     }
 
@@ -765,6 +773,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             mse: mse,
             llf: llf
         }
+        console.log("forecast array");
         console.log(forecast);
         data[data_index]["forecast"] = forecast;
         addToAnalysisData(data, x, yhat, name + " (прогноз)", forecast_color, "forecast", "dash");
@@ -802,20 +811,22 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
     let table_body = table.querySelector("table.table_body");
     if (!data_im[name]) return;
     if (data_im[name].length == 0) return;
-    if (!table.classList.contains("change_listener")) {
-        table.classList.add("change_listener");
-        table.addEventListener("change_listener", function(e) {
-            parseDataTable();
-            updateNewImitationSets();
-            setOnDeleteImitationListeners();
-        });
-    }
 
+
+    console.log("add change_listener to")
+    console.log(table)
+    $(table).on("change_listener", function() {
+        console.log("change_listener of")
+        console.log(table)
+        parseDataTable();
+        updateNewImitationSets();
+        setOnDeleteImitationListeners();
+    });
     fillImitationTable();
     imitation_div.classList.add("active");
 
     function fillImitationTable() {
-        console.log("fillImitationTable");
+        console.log("fillImitationTable data_im[name] " + name);
         /*data_im[name] = [];
         data_im[name].push({
             name: "∑t,°C<sup>(0)</sup>",
@@ -892,12 +903,15 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
         setTableEngine(table);
         setInputEngine(table);
         setRightContextMenu(table);
+        setOnDeleteImitationListeners();
     }
 
     function parseDataTable() {
-        //let name = table_header.querySelector("th.name").innerHTML;
         let body_rows = table_body.querySelectorAll("tr");
         let ths = table_header.querySelectorAll("th:not(.not_res)");
+        let newObj = Object.assign({}, data_im);
+        console.log("parseDataTable all before");
+        console.log(newObj);
         data_im[name] = [];
         for (let i = 0; i < body_rows.length; i++) {
             let x_arr = [],
@@ -915,8 +929,10 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
                 addToImitationData(x_arr, y_arr, data_im, name, color, "imitation", "dash");
             }
         }
-        console.log("parseDataTable");
+        console.log("parseDataTable " + name);
         console.log(data_im[name]);
+        console.log("parseDataTable all after");
+        console.log(data_im);
     }
 
     function setOnDeleteImitationListeners() {
@@ -938,7 +954,7 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
                 body_rows[first].remove();
                 body_rows[first + 1].remove();
             }
-            table.dispatchEvent(new CustomEvent("change_listener"));
+            $(table).trigger("change_listener");
             setTableEngine(table);
         }
 
@@ -950,7 +966,7 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
                     body_rows[i].remove();
                 }
             }
-            table.dispatchEvent(new CustomEvent("change_listener"));
+            $(table).trigger("change_listener");
             setTableEngine(table);
         }
 
@@ -997,7 +1013,7 @@ function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, d
     }
 
     let interpolation_params = getAnalisisParams(data, name, "interpolation");
-    console.log(interpolation_params);
+    //console.log(interpolation_params);
     if (!interpolation_params) {
         interpolation_2d_form.select_2d_interpolation_type.value = "none";
     } else {
@@ -1114,7 +1130,7 @@ function validateDataForCalculations(data, name, type) {
     let data_index = getDataIndex(data, name);
     let data_v = getValidatedData(data, type);
     for (let k = 0; k < data_v[data_index]["x"].length; k++) {
-        if (data_v[data_index]["x"][k] == null) {
+        if (data_v[data_index]["x"][k] == null || data_v[data_index]["y"][k] == null) {
             data_v[data_index]["x"].splice(k, 1);
             data_v[data_index]["y"].splice(k, 1);
             k--;

@@ -44,7 +44,10 @@ function checkValue(table) {
             removeError(cell);
         }
     }
-    window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+    console.log("dispatchEvent of window.active_table from checkValue")
+    console.log(window.active_table)
+    //window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+    $(window.active_table).trigger("change_listener");
 }
 
 function onInputError(cell) {
@@ -78,5 +81,6 @@ function removeErrorCells() {
             }
         }
     }
-    window.active_table.dispatchEvent(new CustomEvent("change_listener"));
+    
+    //window.active_table.dispatchEvent(new CustomEvent("change_listener"));
 }
