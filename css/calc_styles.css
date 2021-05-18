@@ -247,3 +247,6 @@ th.imitation_row_control div {
     width: 100%;
 }
 
+th.imitation_row_control input[type="checkbox"], th.imitation_row_control label {
+    display: none;
+}

@@ -256,9 +256,10 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
                     chart_data.innerHTML = "";
                     chart_data.append(createDataTable());
                     addOnCheckboxChangeListeners();
-                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
+                    newPlot(chart_div.querySelector(".plotly_div"), data, type);
+                    /*addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, plotly_num);
                     addOn2DTrendsParamsChangeListeners(chart_div, data, name);
-                    addOn2DInterpolationParamsChangeListeners(chart_div, rectangle, data, name);
+                    addOn2DInterpolationParamsChangeListeners(chart_div, rectangle, data, name);*/
                     console.log("interpolation_listener");
                 });
             }
@@ -514,7 +515,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let table_body = table.querySelector(".table_body");
 
     let data_index = getDataIndex(data, name);
-    let short_name = data[data_index]["short_name"];
     let forecast_color = data[data_index]["line"]["color"];
     let data_v = validateDataForCalculations(data, name, 0);
     let default_length = data_v[data_index]["y"].length;
@@ -534,6 +534,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
         if (forecast_2d_form.select_2d_forecast_type.value == "none") {
             removeAnalysis(data, name + " (прогноз)", results_div, plotly_div);
             forecast_2d_form.auto_arima_checkbox.checked = false;
+            console.log("forecast_2d_form.select_2d_forecast_type")
         } else {
             forecast_2d_form.auto_arima_checkbox.disabled = forecast_2d_form.imitation_checkbox.checked;
         }
@@ -813,7 +814,6 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
     if (!data_im[name]) return;
     if (data_im[name].length == 0) return;
 
-
     console.log("add change_listener to")
     console.log(table)
     $(table).on("change_listener", function() {
@@ -988,12 +988,21 @@ function addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plo
 }
 
 function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, data, name) {
-    let interpolation_2d_form = document.querySelector("form.interpolation_2d_form");
+    let interpolation_2d_form = chart_div.querySelector("form.interpolation_2d_form");
     let data_index = getDataIndex(data, name);
+    let forecast_2d_form = chart_div.querySelector(".forecast_2d_form");
+    let data_v = validateDataForCalculations(data, name, 0);
 
     interpolation_2d_form.select_2d_interpolation_type.onchange = function() {
         setDisabled();
+    }
+
+    interpolation_2d_form.interpolation_2d_button.onclick = function() {
         addInterpolation(interpolation_2d_form.select_2d_interpolation_type.value);
+        forecast_2d_form.select_2d_forecast_type.value = "none";
+        forecast_2d_form.imitation_checkbox.checked = false;
+        forecast_2d_form.imitation_checkbox.dispatchEvent(new CustomEvent("change"));
+        forecast_2d_form.select_2d_forecast_type.dispatchEvent(new CustomEvent("change"));
     }
 
     let interpolation_params = getAnalisisParams(data, name, "interpolation");
@@ -1002,45 +1011,77 @@ function addOn2DInterpolationParamsChangeListeners(chart_div, chart_rectangle, d
         interpolation_2d_form.select_2d_interpolation_type.value = "none";
     } else {
         interpolation_2d_form.select_2d_interpolation_type.value = interpolation_params.type;
+        interpolation_2d_form.number_2d_interpolation_step.value = interpolation_params.step;
     }
 
     setDisabled();
 
     function setDisabled() {
-        interpolation_2d_form.number_2d_interpolation_step.disabled = interpolation_2d_form.select_2d_interpolation_type.value == "none"
+        let flag = interpolation_2d_form.select_2d_interpolation_type.value == "none";
+        interpolation_2d_form.interpolation_2d_button.disabled = flag;
+        interpolation_2d_form.number_2d_interpolation_step.disabled = flag;
     }
 
     function addInterpolation(type) {
-        x = [1, 2, 3, 4];
-        y = [10, 20, 30, 40];
+        let step = interpolation_2d_form.number_2d_interpolation_step.value;
         if (type == "0") {
+            let json = getJSON(data_v[data_index]["x"], data_v[data_index]["y"], step, type);
             if (!data[data_index]["x_unint"]) {
                 data[data_index]["x_unint"] = data[data_index]["x"];
                 data[data_index]["y_unint"] = data[data_index]["y"];
             }
-            data[data_index]["x"] = x;
-            data[data_index]["y"] = y;
-            data[data_index]["interpolation"] = { "type": type };
+            interpolate(json);
         } else if (type == "1") {
+            let json = getJSON(data_v[data_index]["x"], data_v[data_index]["y"], step, type);
             if (!data[data_index]["x_unint"]) {
                 data[data_index]["x_unint"] = data[data_index]["x"];
                 data[data_index]["y_unint"] = data[data_index]["y"];
             }
-            data[data_index]["x"] = x;
-            data[data_index]["y"] = y;
-            data[data_index]["interpolation"] = { "type": type };
+            interpolate(json);
         } else if (type == "none") {
             data[data_index]["x"] = data[data_index]["x_unint"];
             data[data_index]["x_unint"] = null;
             data[data_index]["y"] = data[data_index]["y_unint"];
             data[data_index]["y_unint"] = null;
-            data[data_index]["interpolation"] = { "type": type };
             data[data_index]["interpolation"] = null;
+            chart_rectangle.dispatchEvent(new CustomEvent("interpolation_listener"));
         }
-        chart_rectangle.dispatchEvent(new CustomEvent("interpolation_listener"));
-        //chart_rectangle.dispatchEvent(new Event("click"));
-        //chart_rectangle.dispatchEvent(new Event("click"));
-        //console.log(data[data_index]);
+
+        function getJSON(x, y, step, type) {
+            return {
+                "x": x,
+                "y": y,
+                "step": step,
+                "type": type
+            }
+        }
+    }
+
+    function interpolate(json) {
+        console.log(json)
+        let xhr = JSONRequest("/eco2/cgi/interpolation.cgi", JSON.stringify(json));
+        fadeIn(document.querySelector(".loader"), 0.5);
+        xhr.onload = function() {
+            fadeOut(document.querySelector(".loader"), 0.5);
+            if (xhr.status != 200) {
+                console.log(xhr.status);
+                showPopup(popup, "Ошибка сервера " + xhr.status, true);
+            } else {
+                console.log(xhr.response);
+                if (xhr.response == null) {
+                    showPopup(popup, "Ошибка сервера", true);
+                    return;
+                }
+                if (xhr.response["error"] != -1) {
+                    showPopup(popup, "Ошибка сервера: " + xhr.response["error"], true);
+                    return;
+                }
+                data[data_index]["x"] = xhr.response["x_new"];
+                data[data_index]["y"] = xhr.response["y_new"];
+                data[data_index]["interpolation"] = { "type": json["type"], "step": json["step"] };
+                chart_rectangle.dispatchEvent(new CustomEvent("interpolation_listener"));
+            }
+        }
     }
 }
 

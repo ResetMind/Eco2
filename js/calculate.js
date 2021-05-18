@@ -272,7 +272,7 @@ function find() {
             console.log(xhr.response);
             if (xhr.response == null) return;
             if (!checkBdServer(xhr, null)) {
-                showPopup(popup, "Ошибка сохранения таблиц");
+                showPopup(popup, "Ошибка сохранения таблиц", true);
                 return;
             }
             if (!checkInfoServer(xhr)) {

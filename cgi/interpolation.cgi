@@ -11,7 +11,7 @@ import traceback
 
 def main():
     global x, y, x_new, y_new, step, t, result, error, tb
-    #json_data = '{"x":[1980,1981,1982,1983,1984,1985,1986,1987,1990,1991], "y":[429,470,379,375,367,502,374,575,348,398], "step":"0.5", "type":"spline"}'
+    #json_data = '{"x":[1980,1981,1982,1983,1984,1985,1986,1987,1990,1991], "y":[429,470,379,375,367,502,374,575,348,398], "step":"0.5", "type":"0"}'
     try:
         #json_data = json.loads(json_data)
         json_data = json.load(sys.stdin)
@@ -25,9 +25,9 @@ def main():
         return
     try:
         x_new = np.arange(x[0], x[-1] + step, step).tolist()
-        if(t == "linear"):
+        if(t == "0"):
             f = interp1d(x, y)
-        elif(t == "spline"):
+        elif(t == "1"):
             f = interp1d(x, y, kind="cubic")
         y_new = f(x_new).tolist()
     except Exception as e:
