@@ -27,28 +27,28 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
     let x_text = form.x_select_param[x_index].text;
     let x_short_name = form.x_select_param[x_index].className;
     let cx_index = form.x_select_culture.selectedIndex;
-    let cx_text = cx_index > 0 ? form.x_select_culture[cx_index].text : "";
+    let cx_text = form.x_select_culture[cx_index].text;
     let fx_index = form.x_select_field.selectedIndex;
-    let fx_text = fx_index > 0 ? form.x_select_field[fx_index].text : "";
+    let fx_text = form.x_select_field[fx_index].text;
 
     let y_col = parseFloat(form.y_select_param.value);
     let y_index = form.y_select_param.selectedIndex;
     let y_text = form.y_select_param[y_index].text;
     let y_short_name = form.y_select_param[y_index].className;
-    let cy_index = form.y_select_culture.selectedIndex;
-    let cy_text = cy_index > 0 ? form.y_select_culture[cy_index].text : "";
+    /*let cy_index = form.y_select_culture.selectedIndex;
+    let cy_text = form.y_select_culture[cy_index].text;
     let fy_index = form.y_select_field.selectedIndex;
-    let fy_text = fy_index > 0 ? form.y_select_field[fy_index].text : "";
+    let fy_text = form.y_select_field[fy_index].text;*/
 
     let z_col, z_text, cz_text, fz_text;
     if (type == 1) {
         z_col = parseFloat(form.z_select_param.value);
         let z_index = form.z_select_param.selectedIndex;
         z_text = form.z_select_param[z_index].text;
-        let cz_index = form.z_select_culture.selectedIndex;
-        cz_text = cz_index > 0 ? form.z_select_culture[cz_index].text : "";
+        /*let cz_index = form.z_select_culture.selectedIndex;
+        cz_text = form.z_select_culture[cz_index].text;
         let fz_index = form.z_select_field.selectedIndex;
-        fz_text = fz_index > 0 ? form.z_select_field[fz_index].text : "";
+        fz_text = form.z_select_field[fz_index].text;*/
     }
     if (isNaN(x_col) || isNaN(y_col) || (type == 1 && isNaN(z_col))) {
         showPopup(popup, "Не выбраны параметры");
@@ -71,7 +71,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
         year_arr.push(cells[0].innerHTML);
 
         let y = parseFloat(cells[y_col].innerHTML);
-        if (isNaN(y) || c.indexOf(cy_text) == -1 || f.indexOf(fy_text) == -1) {
+        if (isNaN(y)) {
             y_arr.push(null);
         } else {
             y_arr.push(y);
@@ -79,7 +79,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
 
         if (type == 1) {
             let z = parseFloat(tds[z_col].innerHTML);
-            if (isNaN(z) || c.indexOf(cz_text) == -1 || f.indexOf(fz_text) == -1) {
+            if (isNaN(z)) {
                 z_arr.push(null);
             } else {
                 z_arr.push(z);
@@ -102,7 +102,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
         }
 
         if (type == 0) {
-            addTo2DData(data, x_arr, y_arr, year_arr, name, x_short_name + y_short_name, x_text, y_text, colors[color_index], "normal");
+            addTo2DData(data, x_arr, y_arr, year_arr, name, x_short_name + y_short_name, x_text, y_text, fx_text, cx_text, colors[color_index], "normal");
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
             addChartRectangle(chart_div, data, data_im, name, 0, plotly_num);
         } else if (type == 1) {
@@ -123,7 +123,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
     }
 }
 
-function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_name, color, which, trend = null, forecast = null, imitation = null, interpolation = null) {
+function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_name, fx_text, cx_text, color, which, trend = null, forecast = null, imitation = null, interpolation = null) {
     let y_arr_sorted = [],
         year_arr_sorted = [];
     //сортировка по возрастанию х
@@ -148,6 +148,8 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_n
         year_name: "Год",
         x_name: x_name,
         y_name: y_name,
+        fx_text: fx_text,
+        cx_text: cx_text,
         connectgaps: true,
         line: {
             dash: "solid",
@@ -518,6 +520,9 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
     let forecast_color = data[data_index]["line"]["color"];
     let data_v = validateDataForCalculations(data, name, 0);
     let default_length = data_v[data_index]["y"].length;
+    let field_name = data_v[data_index]["fx_text"];
+    let culture_name = data_v[data_index]["cx_text"];
+    let y_name = name.split(" от ")[0];
 
     forecast_2d_form.arima_k.max = default_length;
     forecast_2d_form.arima_p.onchange = function() { validateNumberInput(forecast_2d_form.arima_p); }
@@ -740,6 +745,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                             x_new.push(x_new.last() + 1);
                         }
                     }
+                    if (values.length == 1 /*&& y_name.includes("X")*/) updateForecastServer(y_name, x_new, yhat);
                     if (i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
                     if (forecast_2d_form.imitation_checkbox.checked) {
                         let color = colors[getFreeColor(data_im[name])];
@@ -760,6 +766,44 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                 addOn2DImitationParamsChangeListeners(imitation_div, data_im, name, plotly_num);
             }
         });
+    }
+
+    function updateForecastServer(y_name, x_arr, y_arr) {
+        let xhr = JSONRequest("php/forecast.php", JSON.stringify({ "step": "0", "field_name": field_name, "forecast": "" }));
+        xhr.onload = function() {
+            if (xhr.status != 200) {
+                console.log(xhr.status);
+            } else {
+                console.log(xhr.response);
+                if (xhr.response == null) return;
+                if (xhr.response["forecast_result"].length == 0) return;
+                //let forecast = JSON.parse(xhr.response["forecast_result"][0]);
+                let forecast = {};
+                try {
+                    forecast = JSON.parse(xhr.response.forecast_result[0].forecast);
+                } catch(e) {}
+                if(!forecast[culture_name]) {
+                    forecast[culture_name] = {};
+                }
+                if(!forecast[culture_name][y_name]) {
+                    forecast[culture_name][y_name] = {};
+                }
+                for(let i = 0; i < x_arr.length; i++) {
+                    forecast[culture_name][y_name][x_arr[i]] = y_arr[i];
+                }
+                console.log(forecast);
+                xhr = JSONRequest("php/forecast.php", JSON.stringify({ "step": "1", "field_name": field_name, "forecast": JSON.stringify(forecast) }));
+                xhr.onload = function() {
+                    if (xhr.status != 200) {
+                        console.log(xhr.status);
+                    } else {
+                        console.log(xhr.response);
+                        if (xhr.response == null) return;
+                        
+                    }
+                }
+            }
+        }
     }
 
     function showForecast(x, yhat, p, d, q, k, n, auto, mse, llf) {

@@ -89,6 +89,13 @@ function createTables()
         $bd_e[] = "Ошибка регистрации";
         return false;
     }
+    $forecast_name = $email . "_forecast";
+    $sqlreq = "CREATE TABLE IF NOT EXISTS `$forecast_name`(id int not null primary key AUTO_INCREMENT, 
+    field varchar(100), forecast text);";
+    if (!mysqli_query($link, $sqlreq)) {
+        $bd_e[] = "Ошибка регистрации";
+        return false;
+    }
     return true;
 }
 

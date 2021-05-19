@@ -18,8 +18,8 @@ let cultures_list = [];
 let fields_list = [];
 
 doRequest();
-wrapper[0].style.display = "none";
-wrapper[1].style.display = "flex";
+/*wrapper[0].style.display = "none";
+wrapper[1].style.display = "flex";*/
 
 function onRadioChange() {
     for (let i = 0; i < radios.length; i++) {
@@ -112,15 +112,15 @@ function addSelects(chart_div, type) {
     let param_form = chart_div.querySelector(".param_form");
     let x_select = addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
     x_select.querySelector(".year").selected = true;
-    let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_y_span"));
+    let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_x_span"));
     addOptions(x_select_field, fields_list, "cadastral");
-    let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_y_span"));
+    let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_x_span"));
     addOptions(x_select_culture, cultures_list, "name");
 
-    let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
+    /*let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
     addOptions(y_select_culture, cultures_list, "name");
     let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
-    addOptions(y_select_field, fields_list, "cadastral");
+    addOptions(y_select_field, fields_list, "cadastral");*/
     addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
 
     if (type == 1) {
@@ -264,6 +264,7 @@ function getFieldsCulturesList(xhr) {
 }
 
 function find() {
+    console.log(new FormData(search))
     let xhr = request("php/find.php", new FormData(search));
     xhr.onload = function() {
         if (xhr.status != 200) {
