@@ -776,7 +776,6 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
             } else {
                 console.log(xhr.response);
                 if (xhr.response == null) return;
-                if (xhr.response["forecast_result"].length == 0) return;
                 //let forecast = JSON.parse(xhr.response["forecast_result"][0]);
                 let forecast = {};
                 try {

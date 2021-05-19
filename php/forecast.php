@@ -38,8 +38,15 @@ function update()
             return false;
         }
         $forecast_result = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        if(count($forecast_result) == 0) {
+            $sqlreq = "INSERT into `$forecast_name` values (null, '$field_name', '')";
+            if (!$result = mysqli_query($link, $sqlreq)) {
+                $bd_e[] = "Ошибка выполнения запроса к БД";
+                return false;
+            }
+        }
         return $forecast_result;
-    } elseif($step == "1") {
+    } elseif ($step == "1") {
         $sqlreq = "UPDATE `$forecast_name` SET forecast='$forecast' where field='$field_name'";
         if (!$result = mysqli_query($link, $sqlreq)) {
             $bd_e[] = "Ошибка выполнения запроса к БД";
