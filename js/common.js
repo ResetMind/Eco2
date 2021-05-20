@@ -104,10 +104,10 @@ function checkPassword2(password1_input, password2_input, password2_span) {
 
 function checkBdServer(xhr, bd_span) {
     if (xhr.response.bd_e.length > 0) {
-        if(bd_span) showError(bd_span, null, xhr.response.bd_e[0]);
+        if (bd_span) showError(bd_span, null, xhr.response.bd_e[0]);
         return false;
     } else {
-        if(bd_span) removeError(bd_span, null);
+        if (bd_span) removeError(bd_span, null);
         return true;
     }
 }
@@ -139,7 +139,7 @@ function checkInfoServer(xhr) {
 function getResultsServer(xhr) {
     if (xhr.response.results.length > 0) {
         let text = "";
-        for(let k = 0; k < xhr.response.results.length; k++) {
+        for (let k = 0; k < xhr.response.results.length; k++) {
             text += xhr.response.results[k] + "<br>";
         }
         return text;
@@ -174,7 +174,7 @@ function removeError(span, input) {
 }
 
 function showPopup(popup, text, error) {
-    if(error) {
+    if (error) {
         popup.classList.add("error");
     } else {
         popup.classList.remove("error");
@@ -188,7 +188,7 @@ function showPopup(popup, text, error) {
     popup.style.left = (f_width - p_width) + "px";
     popup.style.top = (f_top - p_height) + "px";
     popup.classList.add("active");
-    setTimeout(function() { closePopup(popup)}, 3000);
+    setTimeout(function() { closePopup(popup) }, 3000);
     popup.querySelector("span.close_cross").onclick = function() {
         closePopup(popup);
     }
@@ -199,30 +199,30 @@ function closePopup(popup) {
 }
 
 function fadeOut(el, op = 1) {
-	let opacity = op;
-	let timer = setInterval(function() {
-		if(opacity <= 0.1) {
-			clearInterval(timer);
-			el.style.display = "none";
-		}
-		el.style.opacity = opacity;
-		el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
-		opacity -= opacity * 0.1;
-	}, 5);
+    let opacity = op;
+    let timer = setInterval(function() {
+        if (opacity <= 0.1) {
+            clearInterval(timer);
+            el.style.display = "none";
+        }
+        el.style.opacity = opacity;
+        el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
+        opacity -= opacity * 0.1;
+    }, 5);
 }
 
-function fadeIn(el, op = 1) {
-	let opacity = 0.01;
-	el.style.opacity = opacity;
-	el.style.display = "block";
-	let timer = setInterval(function() {
-		if(opacity >= op) {
-			clearInterval(timer);
-		}
-		el.style.opacity = opacity;
-		el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
-		opacity += opacity * 0.1;
-	}, 5);
+function fadeIn(el, op = 1, display = "block") {
+    let opacity = 0.01;
+    el.style.opacity = opacity;
+    el.style.display = display;
+    let timer = setInterval(function() {
+        if (opacity >= op) {
+            clearInterval(timer);
+        }
+        el.style.opacity = opacity;
+        el.style.filter = 'alpha(opacity=' + opacity * 100 + ")";
+        opacity += opacity * 0.1;
+    }, 5);
 }
 
 function getArrayIndex(arr, el) {
@@ -249,6 +249,14 @@ Array.prototype.last = function() {
     return this[this.length - 1];
 }
 
+Array.prototype.max = function() {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function() {
+    return Math.min.apply(null, this);
+};
+
 function request(url, data) {
     let xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -270,16 +278,16 @@ function newTr() { return document.createElement("tr"); }
 
 function newTd(options) {
     let td = document.createElement("td")
-    if(options.inner != undefined) td.innerHTML = options.inner;
-    if(options.contenteditable) td.setAttribute("contenteditable", "");
-    if(options.cl) td.classList.add(options.cl);
-    return td; 
+    if (options.inner != undefined) td.innerHTML = options.inner;
+    if (options.contenteditable) td.setAttribute("contenteditable", "");
+    if (options.cl) td.classList.add(options.cl);
+    return td;
 }
 
-function newTh(options) { 
+function newTh(options) {
     let th = document.createElement("th")
-    if(options.inner != undefined) th.innerHTML = options.inner;
-    if(options.contenteditable) th.setAttribute("contenteditable", "");
-    if(options.cl) th.classList.add(options.cl);
-    return th; 
+    if (options.inner != undefined) th.innerHTML = options.inner;
+    if (options.contenteditable) th.setAttribute("contenteditable", "");
+    if (options.cl) th.classList.add(options.cl);
+    return th;
 }

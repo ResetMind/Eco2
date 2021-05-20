@@ -6,10 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Экопрогноз</title>
-    <link rel="stylesheet" href="" id="theme"/>
+    <link rel="stylesheet" href="" id="theme" />
     <script src="js/theme.js"></script>
     <link rel="stylesheet" href="css/common_styles.css" />
     <link rel="stylesheet" href="css/home_styles.css" />
+    <link
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+        rel="stylesheet">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=83f1e130-e039-4c38-a009-bc164d6b65df&lang=ru_RU"
+        type="text/javascript"></script>
 </head>
 
 <body>
@@ -100,9 +105,18 @@
                     <div class="table_header_wrapper">
                         <table class="table_header main_table">
                             <tr>
-                                <th class="any">Поле</th>
-                                <th class="any">Владелец</th>
+                                <th class="any">
+                                    <div>
+                                        <span class="material-icons material-icons-outlined md-18"
+                                            style="opacity: 0;">map </span>
+                                        Поле
+                                        <span
+                                            class="material-icons material-icons-outlined md-18 span_button map_button">
+                                            map</span>
+                                    </div>
+                                </th>
                                 <th class="any">Координаты</th>
+                                <th class="any">Владелец</th>
                             </tr>
                         </table>
                     </div>
@@ -117,9 +131,19 @@
                         </table>
                     </div>
                 </div>
-                <!--<div class="map">
-                    65656565
-                </div>-->
+                <div class="map_div">
+                    <div class="map_control">
+                        <select class="select_param" name="select_param">
+                            <option class="X17" value="X17">X17</option>
+                            <option class="X26" value="X26">X26</option>
+                            <option class="X32" value="X32">X32</option>
+                        </select>
+                        <select class="select_culture" name="select_culture"></select>
+                        <input type="range" min="1" max="100" value="50" class="year_slider">
+                        <span class="year_span"></span>
+                    </div>
+                    <div id="map"></div>
+                </div>
             </div>
             <div class="table_wrapper">
                 <div class="table">

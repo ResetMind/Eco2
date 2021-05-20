@@ -36,13 +36,93 @@ div.table_body_wrapper {
     overflow: auto;
     flex: 1;
     position: relative;
-    
 }
 
 .wrapper div.table_wrapper:nth-of-type(2) div.table_header_wrapper {
     margin-top: 0;
 }
 
-.map {
-    background: #444;
+.map_div {
+    display: none;
+    margin: 0.25rem 0.25rem 0.25rem 0;
+    flex: 1;
+    width: 50%;
+    flex-direction: column;
+}
+
+.map_div #map {
+    flex: 1;
+    border: 0.1rem solid var(--secondary4);
+}
+
+.map_div .map_control {
+    margin-bottom: 0.25rem;
+}
+
+.material-icons.md-18 {
+    font-size: 1rem;
+}
+
+.map_control {
+    display: flex;
+    align-items: center;
+}
+
+.map_control * {
+    margin-right: 0.25rem;
+}
+
+.map_control span {
+    margin-left: 0.25rem;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 0.5rem;
+    border-radius: 0;
+    outline: none;
+    background: var(--secondary2);
+    border: 0.1rem solid var(--secondary4);
+    margin: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.35rem;
+    height: 1.5rem;
+    background: var(--accent2);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 0.35rem;
+    height: 1.5rem;
+    background: var(--accent2);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+input[type="range"]:hover::-webkit-slider-thumb {
+    background: var(--accent);
+    transition: 0.3s;
+}
+
+input[type="range"]:hover::-moz-range-thumb {
+    background: var(--accent);
+    transition: 0.3s;
+}
+
+input[type="range"]:active::-webkit-slider-thumb,
+input[type="range"]:focus::-webkit-slider-thumb {
+    background: var(--accent);
+    transition: 0.3s;
+}
+
+input[type="range"]:active::-moz-range-thumb,
+input[type="range"]:focus::-moz-range-thumb {
+    background: var(--accent);
+    transition: 0.3s;
 }

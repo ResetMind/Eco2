@@ -32,7 +32,11 @@ function update()
     $step = $data["step"];
     $forecast = $data["forecast"];
     if ($step == "0") {
-        $sqlreq = "SELECT * from `$forecast_name` where field='$field_name'";
+        if($field_name == "") {
+            $sqlreq = "SELECT * from `$forecast_name`";
+        } else {
+            $sqlreq = "SELECT * from `$forecast_name` where field='$field_name'";
+        }
         if (!$result = mysqli_query($link, $sqlreq)) {
             $bd_e[] = "Ошибка выполнения запроса к БД";
             return false;
