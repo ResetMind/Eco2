@@ -75,7 +75,7 @@ form span:not(:first-child) {
     margin-left: 0.5rem;
 }
 
-.param_form select {
+.param_form select:not(:first-child) {
     margin-left: 0.25rem;
 }
 

@@ -9,6 +9,8 @@ let popup = document.querySelector("div.popup");
 let charts_container = document.querySelectorAll("div.charts_container");
 let chart_2d_div = document.querySelector("div.chart_2d_div");
 let chart_2d_div_template = chart_2d_div.innerHTML;
+let chart_3d_div = document.querySelector("div.chart_3d_div");
+let chart_3d_div_template = chart_3d_div.innerHTML;
 let select_culture_template = document.querySelector(".select_culture_template");
 let select_field_template = document.querySelector(".select_field_template");
 let select_param_template = document.querySelector(".select_param_template");
@@ -52,6 +54,8 @@ function doRequest() {
                 email = getEmail(xhr);
                 addSelects(chart_2d_div, 0);
                 addOtherStuff(chart_2d_div, 0);
+                addSelects(chart_3d_div, 1);
+                addOtherStuff(chart_3d_div, 1);
                 search.year1.onkeyup = find;
                 search.year1.onclick = find;
                 search.year2.onkeyup = find;
@@ -63,12 +67,19 @@ function doRequest() {
                 }
                 search.calculate.onclick = calc.bind(null, main_table_body, main_table_header);
                 add_2d_button.onclick = addChartDiv.bind(null, 0);
+                add_3d_button.onclick = addChartDiv.bind(null, 1);
 
                 new ResizeSensor(wrapper[1].querySelector("div.charts_container"), function() {
                     onPlotlyResise(wrapper[1]);
                 })
                 wrapper[1].onscroll = function() {
                     onPlotlyResise(wrapper[1]);
+                }
+                new ResizeSensor(wrapper[2].querySelector("div.charts_container"), function() {
+                    onPlotlyResise(wrapper[2]);
+                })
+                wrapper[2].onscroll = function() {
+                    onPlotlyResise(wrapper[2]);
                 }
             }
         }
@@ -79,6 +90,8 @@ function addChartDiv(type) {
     let chart_div = document.createElement("div");
     if (type == 0) {
         chart_div.innerHTML = chart_2d_div_template;
+    } else if (type == 1) {
+        chart_div.innerHTML = chart_3d_div_template;
     }
     chart_div.className = "chart_div";
     charts_container[type].querySelector("form.new_chart_form").before(chart_div);
@@ -93,42 +106,36 @@ function addOtherStuff(chart_div, type) {
     let data = [],
         data_im = {};
     let plotly_num = document.querySelectorAll(".plotly_div").length;
+    add_chart_button.onclick = addChart.bind(null, chart_div, data, data_im, type, plotly_num);
     if (type == 0) {
-        console.log("onclick")
-        add_chart_button.onclick = addChart.bind(null, chart_div, data, data_im, type, plotly_num);
-    }
-    let auto_arima_checkbox = chart_div.querySelector(".auto_arima_checkbox");
-    auto_arima_checkbox.id += "_" + plotly_num;
-    let auto_arima_checkbox_label = chart_div.querySelector(".auto_arima_checkbox_label");
-    auto_arima_checkbox_label.setAttribute("for", auto_arima_checkbox.id);
+        let auto_arima_checkbox = chart_div.querySelector(".auto_arima_checkbox");
+        auto_arima_checkbox.id += "_" + plotly_num;
+        let auto_arima_checkbox_label = chart_div.querySelector(".auto_arima_checkbox_label");
+        auto_arima_checkbox_label.setAttribute("for", auto_arima_checkbox.id);
 
-    let imitation_checkbox = chart_div.querySelector(".imitation_checkbox");
-    imitation_checkbox.id += "_" + plotly_num;
-    let imitation_checkbox_label = chart_div.querySelector(".imitation_checkbox_label");
-    imitation_checkbox_label.setAttribute("for", imitation_checkbox.id);
+        let imitation_checkbox = chart_div.querySelector(".imitation_checkbox");
+        imitation_checkbox.id += "_" + plotly_num;
+        let imitation_checkbox_label = chart_div.querySelector(".imitation_checkbox_label");
+        imitation_checkbox_label.setAttribute("for", imitation_checkbox.id);
+    }
 }
 
 function addSelects(chart_div, type) {
     let param_form = chart_div.querySelector(".param_form");
-    let x_select = addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
-    x_select.querySelector(".year").selected = true;
     let x_select_field = addSelect(param_form, select_field_template, "x_select_field", chart_div.querySelector("span.axis_x_span"));
     addOptions(x_select_field, fields_list, "cadastral");
     let x_select_culture = addSelect(param_form, select_culture_template, "x_select_culture", chart_div.querySelector("span.axis_x_span"));
     addOptions(x_select_culture, cultures_list, "name");
+    let x_select = addSelect(param_form, select_param_template, "x_select_param", chart_div.querySelector("span.axis_y_span"));
+    x_select.querySelector(".year").selected = true;
 
     /*let y_select_culture = addSelect(param_form, select_culture_template, "y_select_culture", null, chart_div.querySelector("span.axis_y_span"));
     addOptions(y_select_culture, cultures_list, "name");
     let y_select_field = addSelect(param_form, select_field_template, "y_select_field", null, chart_div.querySelector("span.axis_y_span"));
     addOptions(y_select_field, fields_list, "cadastral");*/
     addSelect(param_form, select_param_template, "y_select_param", null, chart_div.querySelector("span.axis_y_span"));
-
     if (type == 1) {
-        addSelect(param_form, select_param_template, "z_select_param", chart_div.querySelector("span.axis_z_span"));
-        let z_select_field = addSelect(param_form, select_field_template, "z_select_field", null, chart_div.querySelector("span.axis_z_span"));
-        addOptions(z_select_field, fields_list, "cadastral");
-        let z_select_culture = addSelect(param_form, select_culture_template, "z_select_culture", null, chart_div.querySelector("span.axis_z_span"));
-        addOptions(z_select_culture, cultures_list, "name");
+        addSelect(param_form, select_param_template, "z_select_param", null, chart_div.querySelector("span.axis_z_span"));
     }
 
     function addSelect(form, select_template, name, before, after) {

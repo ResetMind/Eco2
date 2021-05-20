@@ -78,7 +78,7 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
         }
 
         if (type == 1) {
-            let z = parseFloat(tds[z_col].innerHTML);
+            let z = parseFloat(cells[z_col].innerHTML);
             if (isNaN(z)) {
                 z_arr.push(null);
             } else {
@@ -106,9 +106,9 @@ function addChart(chart_div, data, data_im, type, plotly_num) {
             newPlot(chart_div.querySelector(".plotly_div"), data, type);
             addChartRectangle(chart_div, data, data_im, name, 0, plotly_num);
         } else if (type == 1) {
-            //addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_text, y_text, z_text, colors[color_index], "normal");
-            //newPlot(chart_div.querySelector(".plotly_div"), data, type);
-            //addChartRectangle(chart_div, data, name, "1").onclick = onChartrectangleClick.bind(null, chart_div, trends, interpolation, data, name, "1", plotly_num);
+            addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_text, y_text, z_text, colors[color_index], "normal");
+            newPlot(chart_div.querySelector(".plotly_div"), data, type);
+            addChartRectangle(chart_div, data, data_im, name, 1, plotly_num);
         }
     }
 
@@ -165,6 +165,43 @@ function addTo2DData(data, x_arr, y_arr, year_arr, name, short_name, x_name, y_n
     //console.log(data);
 }
 
+function addTo3DData(data, x_arr, y_arr, z_arr, year_arr, name, x_name, y_name, z_name, color, which) {
+    let y_arr_sorted = [],
+        z_arr_sorted = [],
+        year_arr_sorted = [];
+    //сортировка по возрастанию х
+    let x_arr_sorted = x_arr.slice();
+    x_arr_sorted.sort(function(a, b) { return a - b });
+    for (let k = 0; k < x_arr.length; k++) {
+        let old_index = getArrayIndex(x_arr, x_arr_sorted[k]);
+        y_arr_sorted.push(y_arr[old_index]);
+        z_arr_sorted.push(z_arr[old_index]);
+        year_arr_sorted.push(year_arr[old_index]);
+        x_arr[old_index] = null;
+    }
+    let trace = {
+        years: year_arr_sorted,
+        x: x_arr_sorted,
+        y: y_arr_sorted,
+        z: z_arr_sorted,
+        type: "mesh3d",
+        opacity: 0.8,
+        color: color,
+        line: {
+            color: color
+        },
+        name: name,
+        year_name: "Год",
+        x_name: x_name,
+        y_name: y_name,
+        z_name: z_name,
+        connectgaps: true,
+        showlegend: true,
+        which: which
+    };
+    data.push(trace);
+}
+
 function newPlot(plotly_div, data, type) {
     Plotly.newPlot(plotly_div, getValidatedData(data, type), setChartLayout(plotly_div), { scrollZoom: true, responsive: true });
 }
@@ -178,7 +215,7 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
     chart_rectangle.querySelector("span.delete_chart").onclick = deleteChartRectangle;
     chart_rectangle.onclick = onChartRectangleClick;
     //
-    chart_rectangle.dispatchEvent(new Event("click"));
+    //chart_rectangle.dispatchEvent(new Event("click"));
 
     function deleteChartRectangle() {
         window.event.stopPropagation();
@@ -190,23 +227,23 @@ function addChartRectangle(chart_div, data, data_im, name, type, plotly_num) {
         if (data_index != -1) {
             data.splice(getDataIndex(data, name), 1);
         }
-        deleteAnalisis(name + " (тренд)");
-        deleteAnalisis(name + " (прогноз)");
+        if (type == 0) {
+            deleteAnalisis(name + " (тренд)");
+            deleteAnalisis(name + " (прогноз)");
+            for (let i = 0; i < data.length; i++) {
+                if (data[i]["which"] == "normal") {
+                    addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"], plotly_num);
+                    addOn2DTrendsParamsChangeListeners(chart_div, data, data[i]["name"]);
+                }
+            }
+            function deleteAnalisis(name) {
+                while (getDataIndex(data, name) != -1) {
+                    data.splice(getDataIndex(data, name), 1);
+                    //console.log(data);
+                }
+            }
+        }
         newPlot(chart_div.querySelector(".plotly_div"), data, type);
-
-        for (let i = 0; i < data.length; i++) {
-            if (data[i]["which"] == "normal") {
-                addOn2DForecastParamsChangeListeners(chart_div, data, data_im, data[i]["name"], plotly_num);
-                addOn2DTrendsParamsChangeListeners(chart_div, data, data[i]["name"]);
-            }
-        }
-
-        function deleteAnalisis(name) {
-            while (getDataIndex(data, name) != -1) {
-                data.splice(getDataIndex(data, name), 1);
-                //console.log(data);
-            }
-        }
     }
 
     function onChartRectangleClick() {
@@ -745,7 +782,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                             x_new.push(x_new.last() + 1);
                         }
                     }
-                    if (values.length == 1 /*&& y_name.includes("X")*/) updateForecastServer(y_name, x_new, yhat);
+                    if (values.length == 1 /*&& y_name.includes("X")*/ ) updateForecastServer(y_name, x_new, yhat);
                     if (i == 0) showForecast(x_new, yhat, p, d, q, k, n, auto, mse, llf);
                     if (forecast_2d_form.imitation_checkbox.checked) {
                         let color = colors[getFreeColor(data_im[name])];
@@ -780,14 +817,14 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                 let forecast = {};
                 try {
                     forecast = JSON.parse(xhr.response.forecast_result[0].forecast);
-                } catch(e) {}
-                if(!forecast[culture_name]) {
+                } catch (e) {}
+                if (!forecast[culture_name]) {
                     forecast[culture_name] = {};
                 }
-                if(!forecast[culture_name][y_name]) {
+                if (!forecast[culture_name][y_name]) {
                     forecast[culture_name][y_name] = {};
                 }
-                for(let i = 0; i < x_arr.length; i++) {
+                for (let i = 0; i < x_arr.length; i++) {
                     forecast[culture_name][y_name][x_arr[i]] = y_arr[i];
                 }
                 console.log(forecast);
@@ -798,7 +835,7 @@ function addOn2DForecastParamsChangeListeners(chart_div, data, data_im, name, pl
                     } else {
                         console.log(xhr.response);
                         if (xhr.response == null) return;
-                        
+
                     }
                 }
             }
