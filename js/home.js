@@ -5,6 +5,9 @@ let bd_e_preloader = document.querySelector(".preloader span.bd_e");
 let dropdown_button = document.querySelector("a.dropdown_button");
 let dropdown_content = document.querySelector("ul.dropdown_content");
 let save_button = dropdown_content.querySelector("a.save_button");
+let import_button = dropdown_content.querySelector("a.import_button");
+let export_button = dropdown_content.querySelector("a.export_button");
+let file_upload = document.querySelector("input.file_upload");
 let popup = document.querySelector("div.popup");
 let map_div = document.querySelector("div.map_div");
 let map = map_div.querySelector("#map");
@@ -14,11 +17,9 @@ let select_culture = map_div.querySelector("select.select_culture");
 let year_slider = map_div.querySelector("input.year_slider");
 let year_span = map_div.querySelector("span.year_span");
 let ymap = null;
+let table_bodies_inners = [];
 
 doRequest();
-
-wrapper[0].style.display = "none";
-wrapper[1].style.display = "flex";
 
 dropdown_button.onmousedown = function() {
     dropdown_content.classList.toggle("active");
@@ -35,6 +36,80 @@ map_button.onclick = function() {
     } else {
         fadeOut(map_div);
         map.innerHTML = "";
+    }
+}
+
+save_button.onclick = function() {
+    saveTable(table[0], "factors");
+    saveTable(table[1], "fields");
+    saveTable(table[2], "cultures");
+}
+
+import_button.onclick = function() {
+    file_upload.click();
+}
+
+file_upload.onchange = function(e) {
+    let files = e.target.files,
+        f = files[0];
+    let reader = new FileReader();
+    reader.onload = function(e) {
+        let data = new Uint8Array(e.target.result);
+        let workbook = XLSX.read(data, { type: "array" });
+        let errors = "";
+        let sheet0 = workbook.Sheets["Факторы погоды"];
+        let sheet1 = workbook.Sheets["Поля"];
+        let sheet2 = workbook.Sheets["Культуры"];
+        if(!sheet0) errors += "Отсутствует лист Факторы погоды<br>";
+        if(!sheet1) errors += "Отсутствует лист Поля<br>";
+        if(!sheet2) errors += "Отсутствует лист Культуры<br>";
+        if(errors != "") {
+            showPopup(popup, errors, true);
+            return;
+        }
+        let json_sheet0 = XLSX.utils.sheet_to_json(sheet0, {defval: null});
+        let json_sheet1 = XLSX.utils.sheet_to_json(sheet1, {defval: null});
+        let json_sheet2 = XLSX.utils.sheet_to_json(sheet2, {defval: null});
+        console.log(json_sheet1)
+        try {
+            if(Object.keys(json_sheet0[0]).length != 21) errors += "Факторы погоды: кол-во столбцов не равно 21<br>";
+            if(Object.keys(json_sheet1[0]).length != 3) errors += "Поля: кол-во столбцов не равно 3<br>";
+            if(Object.keys(json_sheet2[0]).length != 1) errors += "Культуры: кол-во столбцов не равно 1<br>";
+        } catch(e){}
+        
+        if(errors != "") {
+            showPopup(popup, errors, true);
+            return;
+        }
+        for(let i = 0; i < table.length; i++) {
+            table[i].querySelector(".table_body").innerHTML = table_bodies_inners[i];
+        }
+        fillTable(table[0], json_sheet0);
+        fillTable(table[1], json_sheet1);
+        fillTable(table[2], json_sheet2);
+    };
+    reader.readAsArrayBuffer(f);
+}
+
+export_button.onclick = function() {
+    let c_table0 = getCombinedTable(table[0]);
+    let c_table1 = getCombinedTable(table[1]);
+    let c_table2 = getCombinedTable(table[2]);
+    let sheet0 = XLSX.utils.table_to_sheet(c_table0);
+    let sheet1 = XLSX.utils.table_to_sheet(c_table1);
+    let sheet2 = XLSX.utils.table_to_sheet(c_table2);
+    let workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, sheet0, "Факторы погоды");
+    XLSX.utils.book_append_sheet(workbook, sheet1, "Поля");
+    XLSX.utils.book_append_sheet(workbook, sheet2, "Культуры");
+    XLSX.writeFile(workbook, "tables " + getDate() + ".xlsx");
+
+    function getCombinedTable(table) {
+        let table_header = table.querySelector("table.table_header");
+        let table_body = table.querySelector("table.table_body");
+        let c_table = document.createElement("table");
+        c_table.innerHTML = table_header.innerHTML.replace("</tbody>", "") + table_body.innerHTML.replace("<tbody>", "");
+        return c_table;
     }
 }
 
@@ -65,6 +140,7 @@ function doRequest() { // +
                 fadeOut(document.querySelector(".preloader"));
                 onRadioChange();
             }
+            table_bodies_inners = [table[0].querySelector(".table_body").innerHTML, table[1].querySelector(".table_body").innerHTML, table[2].querySelector(".table_body").innerHTML];
             fillTable(table[0], xhr.response.factors_rows);
             fillTable(table[1], xhr.response.fields_rows);
             fillTable(table[2], xhr.response.cultures_rows);
@@ -80,38 +156,33 @@ function doRequest() { // +
             setInputEngine(table[2]);
         }
     }
-
-    function fillTable(table, data) { // +
-        let table_body = table.querySelector("table.table_body");
-        for (let k = 0; k < data.length; k++) {
-            let rows = table_body.querySelectorAll("tr");
-            if (rows.length < k + 1) {
-                let new_row = createNewRow(table_body);
-                let ref = rows[rows.length - 1];
-                ref.parentNode.insertBefore(new_row, ref.nextSibling);
-            }
-            rows = table_body.querySelectorAll("tr");
-            let cells = rows[rows.length - 1].querySelectorAll("td");
-            let j = 0;
-            for (let key in data[k]) {
-                cells[j].innerHTML = data[k][key];
-                j++;
-            }
-        }
-
-        function createNewRow(table_body) { // +
-            let first_row = table_body.querySelector("tr");
-            let new_row = document.createElement("tr");
-            new_row.innerHTML = first_row.innerHTML;
-            return new_row;
-        }
-    }
 }
 
-save_button.onclick = function() {
-    saveTable(table[0], "factors");
-    saveTable(table[1], "fields");
-    saveTable(table[2], "cultures");
+function fillTable(table, data) { // +
+    let table_body = table.querySelector("table.table_body");
+    for (let k = 0; k < data.length; k++) {
+        let rows = table_body.querySelectorAll("tr");
+        if (rows.length < k + 1) {
+            let new_row = createNewRow(table_body);
+            let ref = rows[rows.length - 1];
+            ref.parentNode.insertBefore(new_row, ref.nextSibling);
+        }
+        rows = table_body.querySelectorAll("tr");
+        let cells = rows[rows.length - 1].querySelectorAll("td");
+        let j = 0;
+        for (let key in data[k]) {
+            cells[j].innerHTML = data[k][key];
+            j++;
+            if(j == cells.length) break;
+        }
+    }
+
+    function createNewRow(table_body) { // +
+        let first_row = table_body.querySelector("tr");
+        let new_row = document.createElement("tr");
+        new_row.innerHTML = first_row.innerHTML;
+        return new_row;
+    }
 }
 
 function saveTable(table, name) {
@@ -150,13 +221,18 @@ function saveTable(table, name) {
         console.log(array)
         return JSON.stringify(array);
     }
+}
 
-    function getTime() {
-        let date = new Date();
-        let h = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-        let m = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-        return h + ":" + m;
-    }
+function getDate() {
+    let d = new Date();
+    return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + "_" + getTime().replace(":", "-");
+}
+
+function getTime() {
+    let date = new Date();
+    let h = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+    let m = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+    return h + ":" + m;
 }
 
 function showMap() {

@@ -126,3 +126,18 @@ input[type="range"]:focus::-moz-range-thumb {
     background: var(--accent);
     transition: 0.3s;
 }
+
+.file_upload {
+    background: var(--secondary2);
+    opacity: 0.8;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99999;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

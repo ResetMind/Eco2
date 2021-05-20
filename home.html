@@ -19,16 +19,17 @@
 
 <body>
     <div class="preloader">
-        <span class="bd_e error">bd_e</span>
+        <span class="bd_e error"></span>
     </div>
+    <input type="file" id="file_upload" class="file_upload" name="name" style="display: none;" accept=".xlsx"/>
     <div class="container">
         <header>
             <ul class="navigation">
                 <li><a class="dropdown_button">Файл</a>
                     <ul class="dropdown_content">
                         <li><a class="save_button">Сохранить</a></li>
-                        <li><a>Экспорт</a></li>
-                        <li><a>Импорт</a></li>
+                        <li><a class="export_button">Экспорт</a></li>
+                        <li><a class="import_button">Импорт</a></li>
                     </ul>
                 <li><a href="calculate.html">Расчет</a>
                 <li><a href="settings.html">Настройки</a>
@@ -187,6 +188,7 @@
     </div>
 
     <script src="css-element-queries-1.2.1/src/ResizeSensor.js"></script>
+    <script src="js\xlsx.full.min.js"></script>
     <script src="js/common.js" defer></script>
     <script src="js/table_engine.js" defer></script>
     <script src="js/context_engine.js" defer></script>
