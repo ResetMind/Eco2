@@ -154,6 +154,7 @@ function doRequest() { // +
             setInputEngine(table[0]);
             setInputEngine(table[1]);
             setInputEngine(table[2]);
+            setAutosave();
         }
     }
 }

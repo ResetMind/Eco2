@@ -15,6 +15,7 @@ let bd_e_preloader = document.querySelector(".preloader span.bd_e");
 let send_email_e = document.querySelector(".settings_form .send_email_e");
 let popup = document.querySelector("div.popup");
 let theme_radios = document.querySelectorAll("input[type=\"radio\"].theme_rad");
+let autosave_radios = document.querySelectorAll("input[type=\"radio\"].autosave_rad");
 
 doRequest();
 
@@ -49,6 +50,18 @@ name.oninput = checkName.bind(null, name, name_e);
 password1.oninput = checkPassword1.bind(null, password1, password1_e, password2, password2_e);
 password2.oninput = checkPassword2.bind(null, password1, password2, password2_e);
 
+function onAutosaveChange() {
+    if(getCookie("autosave") == 0) autosave_radios[0].checked = true;
+    else if(getCookie("autosave") == 1) autosave_radios[1].checked = true;
+    else if(getCookie("autosave") == 2) autosave_radios[2].checked = true;
+    else if(getCookie("autosave") == 3) autosave_radios[3].checked = true;
+    for (let i = 0; i < autosave_radios.length; i++) {
+        autosave_radios[i].onchange = function() {
+            setAutosaveCookie(i);
+        };
+    }
+}
+
 function onThemeChange() {
     if(getCookie("theme") == 1) {
         theme_radios[1].checked = true;
@@ -74,8 +87,6 @@ function doRequest() {
             if (!checkAccessServer(xhr)) {
                 window.location.href = "login.html?access=false";
                 return;
-            } else {
-                fadeOut(document.querySelector(".preloader"));
             }
             if (xhr.response.email != null) {
                 email.value = xhr.response.email;
@@ -84,6 +95,8 @@ function doRequest() {
                 name.value = xhr.response.name;
             }
             onThemeChange();
+            onAutosaveChange();
+            fadeOut(document.querySelector(".preloader"));
         }
     }
 }
