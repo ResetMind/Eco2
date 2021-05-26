@@ -12,6 +12,10 @@
     padding: 0.5rem 0;
 }
 
+.ver_error {
+    color: var(--error);
+}
+
 .info_span {
     text-align: center;
     margin-bottom: 1rem;
@@ -87,6 +91,10 @@ input, form > div {
     transition-duration: 0.3s;
 }
 
+span.show {
+    animation: show_span ease-out 0.3s forwards;
+}
+
 @keyframes show_span {
     from {
         line-height: 0;
@@ -101,6 +109,10 @@ input, form > div {
     }
 }
 
+span.close {
+    animation: close_span ease-out 0.3s forwards;
+}
+
 @keyframes close_span {
     from {
         line-height: 1.5;
@@ -113,12 +125,4 @@ input, form > div {
         line-height: 0;
         opacity: 0;
     }
-}
-
-span.show {
-    animation: show_span ease-out 0.3s forwards;
-}
-
-span.close {
-    animation: close_span ease-out 0.3s forwards;
 }

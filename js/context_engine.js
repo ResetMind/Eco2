@@ -342,7 +342,7 @@ function setLeftContextMenu(table) { //div.table
     function createFieldsContext(cell) {
         left_context_menu.innerHTML = "";
         let fields_body_cells = document.querySelectorAll("table.fields td");
-        for (let i = 0; i < fields_body_cells.length; i++) {
+        for (let i = 0; i < fields_body_cells.length; i+=3) {
             let li = document.createElement("li");
             li.innerHTML = fields_body_cells[i].innerHTML;
             if (!left_context_menu.innerHTML.includes(li.innerHTML)) {

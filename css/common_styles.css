@@ -352,7 +352,7 @@ td.error {
 
 .context_menu {
     position: absolute;
-    max-height: 12rem;
+    max-height: 13rem;
     overflow: auto;
     -webkit-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
     -moz-box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.19);
