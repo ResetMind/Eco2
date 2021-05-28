@@ -294,8 +294,7 @@ function find() {
             setTableEngine(table[0]);
             //
             let chart_div = document.querySelector(".chart_div")
-            let add_chart_button = chart_div.querySelector("span.add_chart");
-            add_chart_button.dispatchEvent(new Event("click"));
+            
         }
     }
 
